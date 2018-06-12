@@ -28,21 +28,27 @@
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)
 
-typedef struct
+enum TEX
 {
-	FLOAT x, y, z, rhw;
-	DWORD	color;
-	FLOAT	tu, tv;
-}CustomVertex;
+	g_backgroundTex,
+	g_frameTex,
+	g_titleLogoTex,
+	g_tetminoITex,
+	g_tetminoJTex,
+	g_tetminoLTex,
+	g_tetminoSTex,
+	g_tetminoZTex,
+	g_tetminoTTex,
+	g_tetminoOTex,
+	g_texMax
+};
 
-typedef struct
+enum FONT
 {
-	FLOAT x, y, xScale, yScale;
-}ImageState;
-
-extern ImageState g_tetminoState;
-extern ImageState g_GameoverStrState;
-extern ImageState g_scoreStrState;
+	g_gameoverFont,
+	g_scoreFont,
+	g_fontMax
+};
 
 typedef struct
 {
@@ -59,27 +65,12 @@ typedef struct
 }MovMinoNumoOfArBuf;
 
 extern MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
-
-enum TEX
-{
-	g_backgroundTex,
-	g_frameTex,
-	g_tetminoTex,
-	g_texMax
-};
-
-enum FONT
-{
-	g_gameoverFont,
-	g_scoreFont,
-	g_fontMax
-};
+extern MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 
 extern INT g_tetminoNum;
 extern INT g_hold, g_next, g_nextNext;
 extern INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
-extern INT g_tetminoIBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_holdBoard[4][4];
 extern INT g_nextBoard[4][4];
 extern INT g_nextNextBoard[4][4];

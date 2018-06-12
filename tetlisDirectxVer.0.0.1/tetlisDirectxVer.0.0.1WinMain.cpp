@@ -25,6 +25,7 @@ Tetmino g_tetmino[7] =
 };
 
 MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
+MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 
 INT g_tetminoNum;
 INT g_hold = -1, g_next, g_nextNext;

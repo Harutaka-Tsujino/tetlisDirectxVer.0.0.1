@@ -119,7 +119,37 @@ VOID CreateTextureFromFile(VOID)
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
 		"tetlimino.png",
-		&g_pTexture[g_tetminoTex]);
+		&g_pTexture[g_tetminoITex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockBrightStone.jpg",
+		&g_pTexture[g_tetminoJTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockDarkstone.jpg",
+		&g_pTexture[g_tetminoLTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockDirt.jpg",
+		&g_pTexture[g_tetminoSTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockPsychedelia.png",
+		&g_pTexture[g_tetminoZTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockStoneHT.png",
+		&g_pTexture[g_tetminoTTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockMoss.png",
+		&g_pTexture[g_tetminoOTex]);
 
 	return;
 }

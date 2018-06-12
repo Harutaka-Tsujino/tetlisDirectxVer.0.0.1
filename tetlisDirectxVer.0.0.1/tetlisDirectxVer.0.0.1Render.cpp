@@ -142,11 +142,11 @@ VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, Cu
 	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Background, sizeof(CustomVertex));
 
 	/////////////////////////////////////////////////////////////////
-	//ï¿½eï¿½gï¿½ï¿½ï¿½Xï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½Ì‚Sï¿½ï¿½ï¿½_ï¿½ï¿½tetlisBoardï¿½Ì”zï¿½ï¿½Ôï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ÄÝ’è‚·ï¿½ï¿½
+	//ƒeƒgƒŠƒXƒuƒƒbƒN‚Ì‚S’¸“_‚ðtetlisBoard‚Ì”z—ñ”Ô†‚ð—p‚¢‚ÄÝ’è‚·‚é
 	SetBlockVerticesAndRender(cusV4Tetmino);
 
 	//////////////////////////////////////////
-	//ï¿½eï¿½gï¿½ï¿½ï¿½~ï¿½mï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ì‚Sï¿½ï¿½ï¿½_ï¿½ï¿½Ý’ï¿½Aï¿½`ï¿½ï¿½
+	//ƒeƒgƒŠƒ~ƒmƒ^[ƒQƒbƒg‚Ì‚S’¸“_‚ðÝ’èA•`‰æ
 	SetTetliminoTargetTextureAndRender(cusV4Tetmino);
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_frameTex]);
@@ -160,7 +160,7 @@ VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, Cu
 	g_pFont[g_scoreFont]->DrawText(NULL, g_scoreArray, -1, rectScoreStr, NULL, GAMEOVER_COLOR);
 
 	/////////////////////////////////////////////////////////
-	//ï¿½zï¿½[ï¿½ï¿½ï¿½hï¿½Aï¿½lï¿½Nï¿½Xï¿½gï¿½Aï¿½lï¿½Nï¿½Xï¿½gï¿½lï¿½Nï¿½Xï¿½gï¿½ï¿½4ï¿½ï¿½ï¿½_ï¿½ï¿½Ý’ï¿½Aï¿½`ï¿½ï¿½
+	//ƒz[ƒ‹ƒhAƒlƒNƒXƒgAƒlƒNƒXƒgƒlƒNƒXƒg‚Ì4’¸“_‚ðÝ’èA•`‰æ
 	SetHoldNextNextNextVerticesAndRender(cusV4Tetmino);
 
 	g_pD3dDevice->EndScene();
@@ -178,27 +178,102 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 			{
 				cusV4Tetmino->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
 				cusV4Tetmino->y = 52.f + column * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino+1)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino+1)->y = 52.f + column * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino+2)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino+2)->y = 52.f + column * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				(cusV4Tetmino+3)->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino+3)->y = 52.f + column * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTex]);
+				(cusV4Tetmino + 1)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				(cusV4Tetmino + 1)->y = 52.f + column * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				(cusV4Tetmino + 2)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				(cusV4Tetmino + 2)->y = 52.f + column * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				(cusV4Tetmino + 3)->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				(cusV4Tetmino + 3)->y = 52.f + column * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+
+				switch (g_tetlisBoard[column][row] % 10)
+				{
+				case 0:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
+					break;
+				case 1:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoJTex]);
+					break;
+				case 2:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoLTex]);
+					break;
+				case 3:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoSTex]);
+					break;
+				case 4:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoZTex]);
+					break;
+				case 5:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTTex]);
+					break;
+				case 6:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
+					break;
+				}
+
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
 			}
 		}
 	}
 
-	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Frame, sizeof(CustomVertex));
 	return;
 }
 
+VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino)
+{
+	for (INT block = 0; block < 4; block++)
 	{
-		g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, rectGameoverStr, NULL, GAMEOVER_COLOR);
+		cusV4Tetmino->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		cusV4Tetmino->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		(cusV4Tetmino + 1)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		(cusV4Tetmino + 1)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		(cusV4Tetmino + 2)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		(cusV4Tetmino + 2)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		(cusV4Tetmino + 3)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		(cusV4Tetmino + 3)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+
+		switch (g_tetminoNum)
+		{
+		case 0:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
+			break;
+		case 1:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoJTex]);
+			break;
+		case 2:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoLTex]);
+			break;
+		case 3:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoSTex]);
+			break;
+		case 4:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoZTex]);
+			break;
+		case 5:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTTex]);
+			break;
+		case 6:
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
+			break;
+		}
+		
+		for (INT coordinate = 0; coordinate < 4; coordinate++)
+		{
+			(cusV4Tetmino + coordinate)->color -= 0x88000000;
+		}
+
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
+
+		for (INT coordinate = 0; coordinate < 4; coordinate++)
+		{
+			(cusV4Tetmino + coordinate)->color += 0x88000000;
+		}
 	}
+	
+	return;
+}
 
-
+VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
+{
 	for (int coordinateY = 0; coordinateY < 4; coordinateY++)
 	{
 		for (int coordinateX = 0; coordinateX < 4; coordinateX++)
@@ -207,12 +282,38 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 			{
 				cusV4Tetmino->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
 				cusV4Tetmino->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino+1)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino+1)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino+2)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino+2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				(cusV4Tetmino+3)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino+3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				(cusV4Tetmino + 1)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				(cusV4Tetmino + 1)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				(cusV4Tetmino + 2)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				(cusV4Tetmino + 2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				(cusV4Tetmino + 3)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				
+				switch (g_holdBoard[coordinateY][coordinateX] % 10)
+				{
+				case 0:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
+					break;
+				case 1:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoJTex]);
+					break;
+				case 2:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoLTex]);
+					break;
+				case 3:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoSTex]);
+					break;
+				case 4:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoZTex]);
+					break;
+				case 5:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTTex]);
+					break;
+				case 6:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
+					break;
+				}
+
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
 			}
 
@@ -226,7 +327,32 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 				(cusV4Tetmino + 2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				(cusV4Tetmino + 3)->x = 252.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
 				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTex]);
+				
+				switch (g_nextBoard[coordinateY][coordinateX] % 10)
+				{
+				case 0:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
+					break;
+				case 1:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoJTex]);
+					break;
+				case 2:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoLTex]);
+					break;
+				case 3:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoSTex]);
+					break;
+				case 4:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoZTex]);
+					break;
+				case 5:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTTex]);
+					break;
+				case 6:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
+					break;
+				}
+
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
 			}
 
@@ -240,13 +366,36 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 				(cusV4Tetmino + 2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				(cusV4Tetmino + 3)->x = 402.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
 				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTex]);
+				
+				switch (g_nextNextBoard[coordinateY][coordinateX] % 10)
+				{
+				case 0:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
+					break;
+				case 1:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoJTex]);
+					break;
+				case 2:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoLTex]);
+					break;
+				case 3:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoSTex]);
+					break;
+				case 4:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoZTex]);
+					break;
+				case 5:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTTex]);
+					break;
+				case 6:
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
+					break;
+				}
+
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
 			}
 		}
 	}
-
-	g_pD3dDevice->EndScene();
 
 	return;
 }

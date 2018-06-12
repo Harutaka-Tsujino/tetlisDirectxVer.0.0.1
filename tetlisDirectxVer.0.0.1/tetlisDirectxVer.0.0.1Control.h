@@ -52,6 +52,9 @@ VOID DownTetlimino(BOOL *canInputDA);
 //テトリミノのハードドロップに関する関数
 VOID HardDropTetlimino(VOID);
 
+//テトリミノのターゲットの座標を合わせる関数
+VOID SetTetliminoTarget(VOID);
+
 //テトリミノの自動落下に関する関数
 VOID CountToDawnTetlimino(INT *downCount);
 

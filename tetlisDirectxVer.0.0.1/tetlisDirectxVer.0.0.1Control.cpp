@@ -212,6 +212,14 @@ VOID Control(VOID)
 				//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
 				//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
 				ShiftTetlisLine();
+
+				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+				SynchroTetlisBoardBufToTetlisBoard();
+
+				////////////////////////////////////////
+				//ハードドロップと同じ原理を利用している
+				SetTetliminoTarget();
 			}
 
 			memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -233,6 +241,9 @@ VOID Control(VOID)
 			//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
 			CheckGameover(&isGameover);
 
+			memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+			SynchroTetlisBoardBufToTetlisBoard();
 		}
 	}
 
@@ -710,6 +721,30 @@ VOID HardDropTetlimino(VOID)
 	}
 
 	return;
+}
+
+VOID SetTetliminoTarget(VOID)
+{
+	for (INT column = 1; column < TETLIS_HEIGHT; column++)
+	{
+		if ((g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[0][0] + column][(g_movMinoNumOfArBuf.YX[0][1])] != -1) ||
+			(g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[1][0] + column][(g_movMinoNumOfArBuf.YX[1][1])] != -1) ||
+			(g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[2][0] + column][(g_movMinoNumOfArBuf.YX[2][1])] != -1) ||
+			(g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[3][0] + column][(g_movMinoNumOfArBuf.YX[3][1])] != -1))
+		{
+			for (INT block = 0; block < 4; block++)
+			{
+				g_targetMinoNumOfArBuf.YX[block][0] = g_movMinoNumOfArBuf.YX[block][0];
+				g_targetMinoNumOfArBuf.YX[block][1] = g_movMinoNumOfArBuf.YX[block][1];
+				g_targetMinoNumOfArBuf.YX[block][0] += column - 1;
+			}
+
+			break;
+		}
+	}
+
+	return;
+
 }
 
 VOID CountToDawnTetlimino(INT *downCount)
