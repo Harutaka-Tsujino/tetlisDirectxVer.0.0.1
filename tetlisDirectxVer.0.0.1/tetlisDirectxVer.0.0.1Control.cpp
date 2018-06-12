@@ -610,8 +610,8 @@ VOID RotateTetlimino(INT *minoIRoatationCount, INT currentTetmino)
 							{
 								for (INT block = 0; block < 4; block++)
 								{
-									swap[block] = g_movMinoNumOfArBuf.YX[block][1] - backupY2X2[1] + backupY2X2[0] - 1;
-									g_movMinoNumOfArBuf.YX[block][1] = (-(g_movMinoNumOfArBuf.YX[block][0] - backupY2X2[0])) + 2;
+									swap[block] = (g_movMinoNumOfArBuf.YX[block][1] - backupY2X2[1]) + backupY2X2[0] - 1;
+									g_movMinoNumOfArBuf.YX[block][1] = (-(g_movMinoNumOfArBuf.YX[block][0] - backupY2X2[0])) + backupY2X2[1] + 2;
 									g_movMinoNumOfArBuf.YX[block][0] = swap[block];
 								}
 
