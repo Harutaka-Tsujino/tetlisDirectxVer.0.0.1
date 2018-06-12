@@ -44,7 +44,7 @@ VOID HoldTetlimino(BOOL *canHold, INT *currentTetmino, BOOL *canCreate, BOOL *wa
 VOID ShiftTetliminoX(INT shiftX, BOOL *canInputRA);
 
 //テトリミノの回転に関する関数
-VOID RotateTetlimino(BOOL *minoIRoatationCount, INT currentTetmino);
+VOID RotateTetlimino(INT *minoIRoatationCount, INT currentTetmino);
 
 //テトリミノのY軸方向の移動に関する関数
 VOID DownTetlimino(BOOL *canInputDA);
@@ -67,7 +67,7 @@ VOID ShiftTetlisLine(VOID);
 //テトリスのスコアに関する関数
 VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf);
 
-//ゲームオーバーか、否かを調べるする関数
+//ゲームオーバーか、否かを調べる関数
 VOID CheckGameover(BOOL *isGameover);
 
 #endif

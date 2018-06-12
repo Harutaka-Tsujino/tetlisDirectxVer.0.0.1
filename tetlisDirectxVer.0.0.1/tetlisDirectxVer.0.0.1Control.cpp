@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Control
 // 
-// DATE 2018.06.09
+// DATE 2018.06.12
 // VER.0.0.1
 //
 // Author Harutaka-Tsujino
@@ -29,8 +29,9 @@ VOID Control(VOID)
 		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputR = true, canInputSpace = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 		//生成されるのテトリミノ種類を決める
 		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0, prevRKeyState, prevSpaceKeyState, currentTetmino = rand() % 7;
-
+		
 		INT lineCount = 0;
+
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 };
 
 		//テトリス配列にテトリス配列バッファーの要素全てをコピーしている
@@ -501,14 +502,15 @@ VOID ShiftTetliminoX(INT shiftX,BOOL *canInputRA)
 
 VOID RotateTetlimino(INT *minoIRoatationCount, INT currentTetmino)
 {
-
 	memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 	SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 	SynchroTetlisBoardBufToTetlisBoard();
 
 	INT swap[4];
 	INT backupY2X2[2] = { g_movMinoNumOfArBuf.YX[2][0], g_movMinoNumOfArBuf.YX[2][1] };
+
 	*minoIRoatationCount = (*minoIRoatationCount > 3) ? 0 : *minoIRoatationCount;
+
 	if (currentTetmino == 0)
 	{
 		for (INT block = 0; block < 4; block++)
@@ -528,10 +530,13 @@ VOID RotateTetlimino(INT *minoIRoatationCount, INT currentTetmino)
 				g_movMinoNumOfArBuf.YX[block][1] += 1;
 				break;
 			}
-			backupY2X2[0] = g_movMinoNumOfArBuf.YX[2][0];
-			backupY2X2[1] = g_movMinoNumOfArBuf.YX[2][1];
+
 		}
+
+		backupY2X2[0] = g_movMinoNumOfArBuf.YX[2][0];
+		backupY2X2[1] = g_movMinoNumOfArBuf.YX[2][1];
 	}
+
 	if (currentTetmino != 6)
 	{
 		if (g_tetlisBoardBuf[(g_movMinoNumOfArBuf.YX[0][1] - backupY2X2[1]) + backupY2X2[0]][(-(g_movMinoNumOfArBuf.YX[0][0] - backupY2X2[0])) + backupY2X2[1]] == -1 &&
@@ -545,6 +550,7 @@ VOID RotateTetlimino(INT *minoIRoatationCount, INT currentTetmino)
 				g_movMinoNumOfArBuf.YX[block][1] = (-(g_movMinoNumOfArBuf.YX[block][0] - backupY2X2[0])) + backupY2X2[1];
 				g_movMinoNumOfArBuf.YX[block][0] = swap[block];
 			}
+
 			*minoIRoatationCount += 1;
 		}
 
@@ -678,6 +684,7 @@ VOID DownTetlimino(BOOL *canInputDA)
 		{
 			g_movMinoNumOfArBuf.YX[block][0] += 1;
 		}
+		
 		*canInputDA = false;
 	}
 	
@@ -697,6 +704,7 @@ VOID HardDropTetlimino(VOID)
 			{
 				g_movMinoNumOfArBuf.YX[block][0] += column - 1;
 			}
+
 			break;
 		}
 	}
@@ -785,7 +793,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 			g_tetlisBoardBuf[column][9] != -1 &&
 			g_tetlisBoardBuf[column][10] != -1)
 		{
-			for (INT row = 0; row < TETLIS_WIDTH; row++)
+			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
 				g_tetlisBoard[column][row] = -1;
 			}
@@ -794,8 +802,11 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 		}
 	}
 
+	SynchroTetlisBoardBufToTetlisBoard();
+
 	return;
 }
+
 VOID ShiftTetlisLine(VOID)
 {
 	for (INT column = 3; column < TETLIS_HEIGHT - 1; column++)
@@ -822,11 +833,13 @@ VOID ShiftTetlisLine(VOID)
 				g_tetlisBoardBuf[column + 1][9] == -1 &&
 				g_tetlisBoardBuf[column + 1][10] == -1)
 			{
-				for (int coordinateX = 1; coordinateX < 11; coordinateX++)
+				for (int coordinateX = 1; coordinateX < TETLIS_WIDTH - 1; coordinateX++)
 				{
 					g_tetlisBoard[column + 1][coordinateX] = g_tetlisBoard[column][coordinateX];
 					g_tetlisBoard[column][coordinateX] = -1;
 				}
+
+				SynchroTetlisBoardBufToTetlisBoard();
 			}
 		}
 	}

@@ -13,10 +13,6 @@
 #include "tetlisDirectxVer.0.0.1Render.h"
 #include "tetlisDirectxVer.0.0.1WinMain.h"
 
-ImageState g_tetminoState = { 0.f, 0.f, 32.f / 2, 32.f / 2 };
-ImageState g_GameoverStrState = { 990,790,800.f, 450.f };
-ImageState g_scoreStrState = { 1200.f,790.f,400.f, 225.f };
-
 Tetmino g_tetmino[7] =
 {
 	{ 0,'I',1,4,1,5,1,6,1,7 },
@@ -34,7 +30,6 @@ INT g_tetminoNum;
 INT g_hold = -1, g_next, g_nextNext;
 INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
-INT g_tetminoIBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 INT g_holdBoard[4][4];
 INT g_nextBoard[4][4];
 INT g_nextNextBoard[4][4];
@@ -133,6 +128,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 			}
 		}
 	}
+
 	timeEndPeriod(1);
 
 	//ƒƒ‚ƒŠŠJ•ú
@@ -157,8 +153,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)////
 			PostQuitMessage(0);
 			break;
 		}
+
 		break;
 	}
+
 	return DefWindowProc(hWnd, iMsg, wParam, lParam);
 }
 
@@ -168,16 +166,20 @@ VOID FreeDx(VOID)///////////////////////////////////////////////////////////////
 	{
 		g_pDKeyDevice->Unacquire();
 	}
+
 	SAFE_RELEASE(g_pDKeyDevice);
 	SAFE_RELEASE(g_pDinput);
+
 	for (int coordinateX = 0; coordinateX < g_texMax; coordinateX++)
 	{
 		SAFE_RELEASE(g_pTexture[coordinateX]);
 	}
+
 	for (int coordinateX = 0; coordinateX < g_fontMax; coordinateX++)
 	{
 		SAFE_RELEASE(g_pFont[coordinateX]);
 	}
+
 	SAFE_RELEASE(g_pD3dDevice);
 	SAFE_RELEASE(g_pDirect3D);
 }
