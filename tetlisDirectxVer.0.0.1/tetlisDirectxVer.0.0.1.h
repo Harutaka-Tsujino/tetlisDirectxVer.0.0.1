@@ -4,6 +4,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <windows.h>
+#include <stdio.h>
 #include <d3dx9.h>
 #include <dinput.h>
 
@@ -40,6 +41,7 @@ enum TEX
 	g_tetminoZTex,
 	g_tetminoTTex,
 	g_tetminoOTex,
+	g_tetminoTarTex,
 	g_texMax
 };
 

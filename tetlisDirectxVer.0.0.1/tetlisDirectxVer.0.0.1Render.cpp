@@ -51,6 +51,14 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
 	/**/};
 	/**/
+	/**/CustomVertex cusV4TarTetmino[4]
+	/**/{
+	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	/**/	{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	/**/	{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	/**/};
+	/**/
 	/**/RECT rectGameoverStr
 	/**/{
 	/**/	(LONG)(g_GameoverStrState.x - g_GameoverStrState.xScale),(LONG)(g_GameoverStrState.y - g_GameoverStrState.yScale),(LONG)(g_GameoverStrState.x + g_GameoverStrState.xScale),(LONG)(g_GameoverStrState.y + g_GameoverStrState.yScale)
@@ -64,7 +72,7 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//画面表示関係の処理、カスタムバーテックスをg_tetlisBoardの配列番号を用いて、書き換えテトリスを表示している
-	DisplayScreen(cusV4Background, cusV4Tetmino, cusV4Frame, &rectGameoverStr, &rectScoreStr);
+	DisplayScreen(cusV4Background, cusV4Tetmino, cusV4Frame, cusV4TarTetmino, &rectGameoverStr, &rectScoreStr);
 
 	//画面表示が行われたことをバックバッファーに伝える
 	g_pD3dDevice->Present(NULL, NULL, NULL, NULL);
@@ -93,46 +101,7 @@ VOID SetFocusOfViewOverall(VOID)
 	return;
 }
 
-VOID CreateCustomVertex(VOID)
-{
-	static CustomVertex cusV4Background[4]
-	{
-		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
-	{ 1600.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
-	{ 1600.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
-	{ 0.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
-	};
-
-	static CustomVertex cusV4Frame[4]
-	{
-		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
-	{ 1600.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
-	{ 1600.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
-	{ 0.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
-	};
-
-	static CustomVertex cusV4Tetmino[4]
-	{
-		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
-		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
-		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
-		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
-	};
-
-	static RECT rectGameoverStr
-	{
-		(LONG)(g_GameoverStrState.x - g_GameoverStrState.xScale),(LONG)(g_GameoverStrState.y - g_GameoverStrState.yScale),(LONG)(g_GameoverStrState.x + g_GameoverStrState.xScale),(LONG)(g_GameoverStrState.y + g_GameoverStrState.yScale)
-	};
-
-	static RECT rectScoreStr
-	{
-		(LONG)(g_scoreStrState.x - g_scoreStrState.xScale + 700),(LONG)(g_scoreStrState.y - g_scoreStrState.yScale),(LONG)(g_scoreStrState.x + g_scoreStrState.xScale),(LONG)(g_scoreStrState.y + g_scoreStrState.yScale)
-	};
-
-	return;
-}
-
-VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, CustomVertex *cusV4Frame, RECT *rectGameoverStr, RECT *rectScoreStr)
+VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, CustomVertex *cusV4Frame, CustomVertex *cusV4TarTetmino, RECT *rectGameoverStr, RECT *rectScoreStr)
 {
 	g_pD3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0x00, 0x00, 0x00), 1.0, 0);
 
@@ -147,7 +116,7 @@ VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, Cu
 
 	//////////////////////////////////////////
 	//テトリミノターゲットの４頂点を設定、描画
-	SetTetliminoTargetTextureAndRender(cusV4Tetmino);
+	SetTetliminoTargetTextureAndRender(cusV4Tetmino, cusV4TarTetmino);
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_frameTex]);
 	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Frame, sizeof(CustomVertex));
@@ -218,57 +187,63 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 	return;
 }
 
-VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino)
+VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino, CustomVertex *cusV4TarTetmino)
 {
+	////////////////////////////////////////////////////
+	//flameCountとマスクを用いアルファ値を書き換えている
+	UnderGoChangeTarAlpha(cusV4TarTetmino);
+
 	for (INT block = 0; block < 4; block++)
 	{
-		cusV4Tetmino->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4Tetmino->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-		(cusV4Tetmino + 1)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		(cusV4Tetmino + 1)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-		(cusV4Tetmino + 2)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		(cusV4Tetmino + 2)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-		(cusV4Tetmino + 3)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		(cusV4Tetmino + 3)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4TarTetmino->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		cusV4TarTetmino->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		(cusV4TarTetmino + 1)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		(cusV4TarTetmino + 1)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		(cusV4TarTetmino + 2)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		(cusV4TarTetmino + 2)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		(cusV4TarTetmino + 3)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		(cusV4TarTetmino + 3)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
-		switch (g_tetminoNum)
-		{
-		case 0:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
-			break;
-		case 1:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoJTex]);
-			break;
-		case 2:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoLTex]);
-			break;
-		case 3:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoSTex]);
-			break;
-		case 4:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoZTex]);
-			break;
-		case 5:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTTex]);
-			break;
-		case 6:
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
-			break;
-		}
-		
-		for (INT coordinate = 0; coordinate < 4; coordinate++)
-		{
-			(cusV4Tetmino + coordinate)->color -= 0x88000000;
-		}
-
-		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
-
-		for (INT coordinate = 0; coordinate < 4; coordinate++)
-		{
-			(cusV4Tetmino + coordinate)->color += 0x88000000;
-		}
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTarTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4TarTetmino, sizeof(CustomVertex));
 	}
 	
+	return;
+}
+
+VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino)
+{
+	static INT frameCount = 0;
+
+	if (frameCount < 64)
+	{
+		for (INT coordinate = 0; coordinate < 4; coordinate++)
+		{	
+			DWORD alpha = 255 - 4 * frameCount;
+
+			(cusV4TarTetmino + coordinate)->color &= 0xffffff;
+			(cusV4TarTetmino + coordinate)->color += alpha * 0x1000000;
+		}
+	}
+
+	else
+	{
+		for (INT coordinate = 0; coordinate < 4; coordinate++)
+		{
+			DWORD alpha = 4 * frameCount;
+			
+			(cusV4TarTetmino + coordinate)->color &= 0xffffff;
+			(cusV4TarTetmino + coordinate)->color += alpha * 0x1000000;
+		}
+
+		if (frameCount == 127)
+		{
+			frameCount = 0;
+		}
+	}
+
+	frameCount++;
+
 	return;
 }
 

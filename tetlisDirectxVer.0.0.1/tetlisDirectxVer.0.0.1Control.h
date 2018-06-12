@@ -2,7 +2,6 @@
 #define TETLIS_DIRECTX_VER_0_0_1_CONTROL_H
 
 #include <windows.h>
-#include <stdio.h>
 #include <dinput.h>
 
 //ƒeƒgƒŠƒX‚È‚Ç‚Ì‘€ì‚ÉŠÖ‚·‚éŠÖ”

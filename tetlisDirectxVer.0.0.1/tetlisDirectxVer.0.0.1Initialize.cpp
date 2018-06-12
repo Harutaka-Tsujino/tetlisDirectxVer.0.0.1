@@ -151,6 +151,11 @@ VOID CreateTextureFromFile(VOID)
 		"blockMoss.png",
 		&g_pTexture[g_tetminoOTex]);
 
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"blockTarget.png",
+		&g_pTexture[g_tetminoTarTex]);
+
 	return;
 }
 

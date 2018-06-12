@@ -65,11 +65,7 @@ VOID Control(VOID)
 			for (g_tetminoNum = 0; g_tetminoNum < 7; g_tetminoNum++)
 			{
 				if (g_tetmino[g_tetminoNum].number == currentTetmino)
-				{
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-					
+				{	
 					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 					//g_canCreateを確認しtrueならばg_movMinoNumOfArBufにcurrentTetminoと同じ種類のテトリミノ初期座標を代入し、キー入力のフラグ、
 					//I型のテトリミノが何回転したかを確認するカウント、ホールドが行われたか否かのフラグを初期状態に戻し、g_canCreateをfalseにする
