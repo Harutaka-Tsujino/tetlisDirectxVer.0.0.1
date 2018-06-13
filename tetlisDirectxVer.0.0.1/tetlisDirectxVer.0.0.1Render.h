@@ -2,7 +2,6 @@
 #define TETLIS_DEIRECT_VER_0_0_1_RENDER_H
 
 #include <windows.h>
-#include <d3dx9.h>
 
 typedef struct
 {
@@ -34,6 +33,9 @@ VOID DisplayScreen(CustomVertex * cusV4Background, CustomVertex *cusV4Tetmino, C
 
 //テトリスのブロックの４頂点を設定し、描画する関数
 VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino);
+
+//カスタムバーテックスのtu,tvをデフォルトに戻す関数
+VOID ResetCustomVertexTuTv(CustomVertex *cusV4Tetmino);
 
 //ホールド、ネクスト、ネクストネクストの４頂点を設定し、描画する関数
 VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino);

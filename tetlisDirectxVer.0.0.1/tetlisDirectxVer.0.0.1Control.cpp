@@ -10,6 +10,7 @@
 #include "tetlisDirectxVer.0.0.1.h"
 #include "tetlisDirectxVer.0.0.1Initialize.h"
 #include "tetlisDirectxVer.0.0.1Control.h"
+#include <dinput.h>
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
@@ -59,7 +60,8 @@ VOID Control(VOID)
 				//ニューゲーム(一番最初のフレーム)時にはg_nextとg_nextNextは初期化されていないので初期化し、isNewGameをfalseにする
 				InitNextAndNextNext(&isNewGame);
 				InitTetlisBoard();
-				InitTetlisBoardBuf();
+				ChooseAndCpyTetlisBoardSourceToBoard();
+				memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 			}
 
 			for (g_tetminoNum = 0; g_tetminoNum < 7; g_tetminoNum++)
@@ -181,7 +183,7 @@ VOID Control(VOID)
 				SynchroTetlisBoardBufToTetlisBoard();
 				
 				/*テトリミノ下方を確認し、そこが空欄ではない場合カウントをとり、FLAME_PER_STOPに達した場合
-				可動テトリミノのナンバーに10を足し(簡単に可動か非可動を判別するため)、新しい可動テトリミノを生成する*/
+				可動テトリミノのナンバーに100を足し(簡単に可動か非可動を判別するため)、新しい可動テトリミノを生成する*/
 				/////////////////////////////////////////////////////////////////////////////////////////////////
 				//g_movMinoNumOfArBuf+1をした配列番号を用いg_tetlisBoardBufを参照し、空欄(-1)以外が入っていた場合
 				//カウントを１増やし、一定値ならばcurrentTetmino + 10をg_tetlisBoardに代入し、
@@ -240,6 +242,24 @@ VOID Control(VOID)
 			memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 			SynchroTetlisBoardBufToTetlisBoard();
+		}
+	}
+
+	return;
+}
+
+////////////////////////////////////////////
+//テトリス配列に選ばれたパターンをコピーする
+VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID)
+{
+	for (INT line = 19; line < 140; line += 3)
+	{
+		for (INT column = 0; column < 3; column++)
+		{
+			for (INT row = 0; row < 12; row++)
+			{
+				g_tetlisBoard[line + column][row] = g_tetlisBoardSource[column][row];
+			}
 		}
 	}
 
@@ -398,15 +418,16 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 	*stopCount = 0;
 	*downCount = 0;
 	*scoreBuf = 0;
+	g_deletedLineCount;
 	g_hold = -1;
 	g_next = rand() % 7;
 	g_nextNext = rand() % 7;
 	*currentTetmino = rand() % 7;
 	*minoIRoatationCount = 0;
 
-	InitTetlisBoardBuf();
+	ChooseAndCpyTetlisBoardSourceToBoard();
 	UpdateHoldNextNextNextBoard();
-	memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+	memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 
 	return;
 }
@@ -781,7 +802,7 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 				{
 					if (g_tetlisBoard[column][row] == *currentTetmino)
 					{
-						g_tetlisBoard[column][row] = *currentTetmino + 10;
+						g_tetlisBoard[column][row] = *currentTetmino + 100;
 					}
 				}
 			}
@@ -830,6 +851,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 			}
 
 			*lineCount += 1;
+			g_deletedLineCount++;
 		}
 	}
 
@@ -905,13 +927,7 @@ VOID CheckGameover(BOOL *isGameover)
 {
 	for (INT coordinateX = 1; coordinateX < 11; coordinateX++)
 	{
-		if (g_tetlisBoardBuf[3][coordinateX] == 10 ||
-			g_tetlisBoardBuf[3][coordinateX] == 11 ||
-			g_tetlisBoardBuf[3][coordinateX] == 12 ||
-			g_tetlisBoardBuf[3][coordinateX] == 13 ||
-			g_tetlisBoardBuf[3][coordinateX] == 14 ||
-			g_tetlisBoardBuf[3][coordinateX] == 15 ||
-			g_tetlisBoardBuf[3][coordinateX] == 16)
+		if (g_tetlisBoardBuf[3 + g_deletedLineCount][coordinateX] != -1)
 		{
 			*isGameover = true;
 		}

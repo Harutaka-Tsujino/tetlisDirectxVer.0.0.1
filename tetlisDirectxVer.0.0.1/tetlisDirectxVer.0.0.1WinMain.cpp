@@ -12,6 +12,7 @@
 #include "tetlisDirectxVer.0.0.1Control.h"
 #include "tetlisDirectxVer.0.0.1Render.h"
 #include "tetlisDirectxVer.0.0.1WinMain.h"
+#include <time.h>
 
 Tetmino g_tetmino[7] =
 {
@@ -28,7 +29,14 @@ MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
 MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 
 INT g_tetminoNum;
+INT g_deletedLineCount = 0;
 INT g_hold = -1, g_next, g_nextNext;
+INT g_tetlisBoardSource[3][TETLIS_WIDTH] =
+{
+	{9,110,110,110,-1,-1,110,121,110,110,-1,9},
+	{9,110,110,132,-1,110,110,110,110,110,110,9},
+	{9,110,-1,110,110,110,110,110,110,110,110,9}
+};
 INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 INT g_holdBoard[4][4];

@@ -2,10 +2,12 @@
 #define TETLIS_DIRECTX_VER_0_0_1_CONTROL_H
 
 #include <windows.h>
-#include <dinput.h>
 
 //テトリスなどの操作に関する関数
 VOID Control(VOID);
+
+//テトリス配列に選ばれたパターンをコピーする関数
+VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID);
 
 //テトリスボードを初期化する関数
 VOID InitTetlisBoard(VOID);

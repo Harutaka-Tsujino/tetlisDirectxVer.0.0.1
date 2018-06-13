@@ -10,6 +10,7 @@
 #include "tetlisDirectxVer.0.0.1.h"
 #include "tetlisDirectxVer.0.0.1Initialize.h"
 #include "tetlisDirectxVer.0.0.1Render.h"
+#include <d3dx9.h>
 
 ImageState g_tetminoState = { 0.f, 0.f, 30.f / 2, 30.f / 2 };
 ImageState g_GameoverStrState = { 990,790,800.f, 450.f };
@@ -146,15 +147,19 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 			if ((g_tetlisBoard[column][row] != -1) && (g_tetlisBoard[column][row] != 9))
 			{
 				cusV4Tetmino->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino->y = 52.f + column * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				(cusV4Tetmino + 1)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 1)->y = 52.f + column * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				(cusV4Tetmino + 1)->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				(cusV4Tetmino + 2)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 2)->y = 52.f + column * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				(cusV4Tetmino + 2)->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				(cusV4Tetmino + 3)->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino + 3)->y = 52.f + column * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				(cusV4Tetmino + 3)->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+			
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_integratedBlockTex]);
 
-				switch (g_tetlisBoard[column][row] % 10)
+				ResetCustomVertexTuTv(cusV4Tetmino);
+				
+				switch (g_tetlisBoard[column][row] % 100)
 				{
 				case 0:
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
@@ -177,6 +182,66 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 				case 6:
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;
+				case 10:
+					cusV4Tetmino->tu = 100.f / 512;
+					cusV4Tetmino->tv = 50.f / 256;
+					(cusV4Tetmino + 1)->tu = 150.f / 512;
+					(cusV4Tetmino + 1)->tv = 50.f / 256;
+					(cusV4Tetmino + 2)->tu = 150.f / 512;
+					(cusV4Tetmino + 2)->tv = 100.f / 256;
+					(cusV4Tetmino + 3)->tu = 100.f / 512;
+					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					break;
+				case 21:
+					cusV4Tetmino->tu = 50.f / 512;
+					cusV4Tetmino->tv = 50.f / 256;
+					(cusV4Tetmino + 1)->tu = 100.f / 512;
+					(cusV4Tetmino + 1)->tv = 50.f / 256;
+					(cusV4Tetmino + 2)->tu = 100.f / 512;
+					(cusV4Tetmino + 2)->tv = 100.f / 256;
+					(cusV4Tetmino + 3)->tu = 50.f / 512;
+					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					break;
+				case 20:
+					cusV4Tetmino->tu = 50.f / 512;
+					cusV4Tetmino->tv = 50.f / 256;
+					(cusV4Tetmino + 1)->tu = 100.f / 512;
+					(cusV4Tetmino + 1)->tv = 50.f / 256;
+					(cusV4Tetmino + 2)->tu = 100.f / 512;
+					(cusV4Tetmino + 2)->tv = 100.f / 256;
+					(cusV4Tetmino + 3)->tu = 50.f / 512;
+					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					break;
+				case 32:
+					cusV4Tetmino->tu = 0.f;
+					cusV4Tetmino->tv = 50.f / 256;
+					(cusV4Tetmino + 1)->tu = 50.f / 512;
+					(cusV4Tetmino + 1)->tv = 50.f / 256;
+					(cusV4Tetmino + 2)->tu = 50.f / 512;
+					(cusV4Tetmino + 2)->tv = 100.f / 256;
+					(cusV4Tetmino + 3)->tu = 0.f;
+					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					break;
+				case 31:
+					cusV4Tetmino->tu = 0.f;
+					cusV4Tetmino->tv = 50.f / 256;
+					(cusV4Tetmino + 1)->tu = 50.f / 512;
+					(cusV4Tetmino + 1)->tv = 50.f / 256;
+					(cusV4Tetmino + 2)->tu = 50.f / 512;
+					(cusV4Tetmino + 2)->tv = 100.f / 256;
+					(cusV4Tetmino + 3)->tu = 0.f;
+					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					break;
+				case 30:
+					cusV4Tetmino->tu = 0.f;
+					cusV4Tetmino->tv = 50.f / 256;
+					(cusV4Tetmino + 1)->tu = 50.f / 512;
+					(cusV4Tetmino + 1)->tv = 50.f / 256;
+					(cusV4Tetmino + 2)->tu = 50.f / 512;
+					(cusV4Tetmino + 2)->tv = 100.f / 256;
+					(cusV4Tetmino + 3)->tu = 0.f;
+					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					break;
 				}
 
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
@@ -187,8 +252,26 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 	return;
 }
 
+////////////////////////////////////////////////
+//カスタムバーテックスのtu、tvをデフォルトに戻す
+VOID ResetCustomVertexTuTv(CustomVertex *cusV4Tetmino)
+{
+	cusV4Tetmino->tu = 0.f;
+	cusV4Tetmino->tv = 0.f;
+	(cusV4Tetmino + 1)->tu = 1.f;
+	(cusV4Tetmino + 1)->tv = 0.f;
+	(cusV4Tetmino + 2)->tu = 1.f;
+	(cusV4Tetmino + 2)->tv = 1.f;
+	(cusV4Tetmino + 3)->tu = 0.f;
+	(cusV4Tetmino + 3)->tv = 1.f;
+
+	return;
+}
+
 VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino, CustomVertex *cusV4TarTetmino)
 {
+	ResetCustomVertexTuTv(cusV4Tetmino);
+
 	////////////////////////////////////////////////////
 	//flameCountとマスクを用いアルファ値を書き換えている
 	UnderGoChangeTarAlpha(cusV4TarTetmino);
@@ -196,13 +279,13 @@ VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino, CustomVertex
 	for (INT block = 0; block < 4; block++)
 	{
 		cusV4TarTetmino->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4TarTetmino->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4TarTetmino->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 		(cusV4TarTetmino + 1)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		(cusV4TarTetmino + 1)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		(cusV4TarTetmino + 1)->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 		(cusV4TarTetmino + 2)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		(cusV4TarTetmino + 2)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		(cusV4TarTetmino + 2)->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 		(cusV4TarTetmino + 3)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		(cusV4TarTetmino + 3)->y = 52.f + g_targetMinoNumOfArBuf.YX[block][0] * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		(cusV4TarTetmino + 3)->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTarTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4TarTetmino, sizeof(CustomVertex));
@@ -249,6 +332,8 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino)
 
 VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
 {
+	ResetCustomVertexTuTv(cusV4Tetmino);
+
 	for (int coordinateY = 0; coordinateY < 4; coordinateY++)
 	{
 		for (int coordinateX = 0; coordinateX < 4; coordinateX++)
@@ -264,7 +349,7 @@ VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
 				(cusV4Tetmino + 3)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
 				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				
-				switch (g_holdBoard[coordinateY][coordinateX] % 10)
+				switch (g_holdBoard[coordinateY][coordinateX] % 100)
 				{
 				case 0:
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
@@ -303,7 +388,7 @@ VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
 				(cusV4Tetmino + 3)->x = 252.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
 				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				
-				switch (g_nextBoard[coordinateY][coordinateX] % 10)
+				switch (g_nextBoard[coordinateY][coordinateX] % 100)
 				{
 				case 0:
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);

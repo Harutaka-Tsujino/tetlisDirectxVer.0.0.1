@@ -2,7 +2,6 @@
 #define TETLIS_DIRECTX_VER_0_0_1_WINMAIN_H
 
 #include <windows.h>
-#include <time.h>
 
 //プロシージャの生成関数
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);

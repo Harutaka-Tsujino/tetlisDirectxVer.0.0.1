@@ -19,7 +19,7 @@
 #define DISPLAY_WIDTH 1600
 #define DISPLAY_HEIGHT 900
 #define TETLIS_WIDTH 12
-#define TETLIS_HEIGHT 24
+#define TETLIS_HEIGHT 140
 #define SHIFT_FRAME_COUNTER 6
 #define DOWN_FRAME_COUNTER 2
 #define FLAME_PER_DOWN 30
@@ -41,7 +41,11 @@ enum TEX
 	g_tetminoZTex,
 	g_tetminoTTex,
 	g_tetminoOTex,
+	g_tetminoDirtTex,
+	g_tetminoStoneTex,
+	g_tetminoIronTex,
 	g_tetminoTarTex,
+	g_integratedBlockTex,
 	g_texMax
 };
 
@@ -70,7 +74,9 @@ extern MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
 extern MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 
 extern INT g_tetminoNum;
+extern INT g_deletedLineCount;
 extern INT g_hold, g_next, g_nextNext;
+extern INT g_tetlisBoardSource[3][TETLIS_WIDTH];
 extern INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_holdBoard[4][4];

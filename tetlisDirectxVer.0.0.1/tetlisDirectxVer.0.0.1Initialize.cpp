@@ -156,6 +156,11 @@ VOID CreateTextureFromFile(VOID)
 		"blockTarget.png",
 		&g_pTexture[g_tetminoTarTex]);
 
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"block_integrated_illust_HT.png",
+		&g_pTexture[g_integratedBlockTex]);
+
 	return;
 }
 
