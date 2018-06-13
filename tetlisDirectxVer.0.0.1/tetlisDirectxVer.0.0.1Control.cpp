@@ -252,7 +252,7 @@ VOID Control(VOID)
 //テトリス配列に選ばれたパターンをコピーする
 VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID)
 {
-	for (INT line = 19; line < 140; line += 3)
+	for (INT line = 19; line < 137; line += 3)
 	{
 		for (INT column = 0; column < 3; column++)
 		{
@@ -862,38 +862,28 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 
 VOID ShiftTetlisLine(VOID)
 {
-	for (INT column = 3; column < TETLIS_HEIGHT - 1; column++)
+	for (INT column = TETLIS_HEIGHT - 1; column > 3; column--)
 	{
-		if (g_tetlisBoardBuf[column][1] != -1 ||
-			g_tetlisBoardBuf[column][2] != -1 ||
-			g_tetlisBoardBuf[column][3] != -1 ||
-			g_tetlisBoardBuf[column][4] != -1 ||
-			g_tetlisBoardBuf[column][5] != -1 ||
-			g_tetlisBoardBuf[column][6] != -1 ||
-			g_tetlisBoardBuf[column][7] != -1 ||
-			g_tetlisBoardBuf[column][8] != -1 ||
-			g_tetlisBoardBuf[column][9] != -1 ||
-			g_tetlisBoardBuf[column][10] != -1)
+		if (g_tetlisBoardBuf[column][1] == -1 &&
+			g_tetlisBoardBuf[column][2] == -1 &&
+			g_tetlisBoardBuf[column][3] == -1 &&
+			g_tetlisBoardBuf[column][4] == -1 &&
+			g_tetlisBoardBuf[column][5] == -1 &&
+			g_tetlisBoardBuf[column][6] == -1 &&
+			g_tetlisBoardBuf[column][7] == -1 &&
+			g_tetlisBoardBuf[column][8] == -1 &&
+			g_tetlisBoardBuf[column][9] == -1 &&
+			g_tetlisBoardBuf[column][10] == -1)
 		{
-			if (g_tetlisBoardBuf[column + 1][1] == -1 &&
-				g_tetlisBoardBuf[column + 1][2] == -1 &&
-				g_tetlisBoardBuf[column + 1][3] == -1 &&
-				g_tetlisBoardBuf[column + 1][4] == -1 &&
-				g_tetlisBoardBuf[column + 1][5] == -1 &&
-				g_tetlisBoardBuf[column + 1][6] == -1 &&
-				g_tetlisBoardBuf[column + 1][7] == -1 &&
-				g_tetlisBoardBuf[column + 1][8] == -1 &&
-				g_tetlisBoardBuf[column + 1][9] == -1 &&
-				g_tetlisBoardBuf[column + 1][10] == -1)
+			for (INT coordinateY = column; coordinateY > 3; coordinateY--)
 			{
-				for (int coordinateX = 1; coordinateX < TETLIS_WIDTH - 1; coordinateX++)
+				for (INT coordinateX = 1; coordinateX < TETLIS_WIDTH - 1; coordinateX++)
 				{
-					g_tetlisBoard[column + 1][coordinateX] = g_tetlisBoard[column][coordinateX];
-					g_tetlisBoard[column][coordinateX] = -1;
+					g_tetlisBoard[coordinateY][coordinateX] = g_tetlisBoard[coordinateY - 1][coordinateX];
 				}
-
-				SynchroTetlisBoardBufToTetlisBoard();
 			}
+
+			SynchroTetlisBoardBufToTetlisBoard();
 		}
 	}
 
