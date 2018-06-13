@@ -44,7 +44,7 @@
     <ClInclude Include="tetlisDirectxVer.0.0.1Control.h">
       <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="tetlisDirectxVer.0.0.1.h">
+    <ClInclude Include="tetlisDirectxVer.0.0.1Union.h">
       <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

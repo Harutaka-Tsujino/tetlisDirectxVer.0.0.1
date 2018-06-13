@@ -132,7 +132,7 @@
     <ClCompile Include="tetlisDirectxVer.0.0.1WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tetlisDirectxVer.0.0.1.h" />
+    <ClInclude Include="tetlisDirectxVer.0.0.1Union.h" />
     <ClInclude Include="tetlisDirectxVer.0.0.1Control.h" />
     <ClInclude Include="tetlisDirectxVer.0.0.1Initialize.h" />
     <ClInclude Include="tetlisDirectxVer.0.0.1Render.h" />
