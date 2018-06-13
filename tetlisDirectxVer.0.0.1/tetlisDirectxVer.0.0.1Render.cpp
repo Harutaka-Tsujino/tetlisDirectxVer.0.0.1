@@ -14,7 +14,7 @@
 
 ImageState g_tetminoState = { 0.f, 0.f, 30.f / 2, 30.f / 2 };
 ImageState g_GameoverStrState = { 990,790,800.f, 450.f };
-ImageState g_scoreStrState = { 1200.f,790.f,400.f, 225.f };
+ImageState g_scoreStrState = { 800.f,790.f,400.f, 225.f };
 
 
 VOID Render(VOID)//////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, Cu
 		g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, rectGameoverStr, NULL, GAMEOVER_COLOR);
 	}
 
-	g_pFont[g_scoreFont]->DrawText(NULL, g_scoreArray, -1, rectScoreStr, NULL, GAMEOVER_COLOR);
+	g_pFont[g_scoreFont]->DrawText(NULL, g_scoreArray, -1, rectScoreStr, DT_RIGHT, GAMEOVER_COLOR);
 
 	/////////////////////////////////////////////////////////
 	//ホールド、ネクスト、ネクストネクストの4頂点を設定、描画
