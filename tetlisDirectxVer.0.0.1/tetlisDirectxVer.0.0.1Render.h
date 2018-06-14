@@ -37,20 +37,29 @@ VOID SetViewPointOverall(VOID);
 //総合的な視野角の設定をする関数
 VOID SetFocusOfViewOverall(VOID);
 
-//画面を表示させる関数
-VOID DisplayScreen(CustomVertex * cusV4Background, CustomVertex *cusV4Tetmino, CustomVertex *cusV4Frame,CustomVertex *cusV4TarTetmino, RECT *rectGameoverStr, RECT *rectScoreStr);
+//背景を描画する関数
+VOID RenderBackground(VOID);
+
+//額縁を描画する関数
+VOID RnderFrame(VOID);
+
+//ゲームオーバー時の文字列を描画する関数
+VOID RenderGameoverStr(VOID);
+
+//スコアの文字列を描画する関数
+VOID RenderScoreStr(VOID);
 
 //テトリスのブロックの４頂点を設定し、描画する関数
-VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino);
+VOID SetBlockVerticesAndRender(VOID);
 
 //カスタムバーテックスのtu,tvをデフォルトに戻す関数
-VOID ResetCustomVertexTuTv(CustomVertex *cusV4Tetmino);
+VOID ResetCustomVertexTuTv(VOID);
 
 //ホールド、ネクスト、ネクストネクストの４頂点を設定し、描画する関数
-VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino);
+VOID SetHoldNextNextNextVerticesAndRender(VOID);
 
 //テトリミノのターゲットの４頂点を設定し、描画する関数
-VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino, CustomVertex *cusV4TarTetmino);
+VOID SetTetliminoTargetTextureAndRender(VOID);
 
 //ターゲットブロックのアルファ値を点滅させるために変換する関数
 VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino);

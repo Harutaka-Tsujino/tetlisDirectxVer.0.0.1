@@ -27,53 +27,42 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	//視野角の設定、最後に絶対座標への変換を行う
 	SetFocusOfViewOverall();
 	
-	//カスタムバーテックスの生成///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**/CustomVertex cusV4Background[4]
-	/**/	{
-	/**/	{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
-	/**/	{ 1600.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
-	/**/	{ 1600.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
-	/**/	{ 0.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
-	/**/};
-	/**/
-	/**/CustomVertex cusV4Frame[4]
-	/**/{
-	/**/	{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
-	/**/	{ 1600.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
-	/**/	{ 1600.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
-	/**/	{ 0.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
-	/**/};
-	/**/
-	/**/CustomVertex cusV4Tetmino[4]
-	/**/{
-	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
-	/**/	{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
-	/**/	{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
-	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
-	/**/};
-	/**/
-	/**/CustomVertex cusV4TarTetmino[4]
-	/**/{
-	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
-	/**/	{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
-	/**/	{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
-	/**/	{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
-	/**/};
-	/**/
-	/**/RECT rectGameoverStr
-	/**/{
-	/**/	(LONG)(g_GameoverStrState.x - g_GameoverStrState.xScale),(LONG)(g_GameoverStrState.y - g_GameoverStrState.yScale),(LONG)(g_GameoverStrState.x + g_GameoverStrState.xScale),(LONG)(g_GameoverStrState.y + g_GameoverStrState.yScale)
-	/**/};
-	/**/
-	/**/RECT rectScoreStr
-	/**/{
-	/**/	(LONG)(g_scoreStrState.x - g_scoreStrState.xScale + 700),(LONG)(g_scoreStrState.y - g_scoreStrState.yScale),(LONG)(g_scoreStrState.x + g_scoreStrState.xScale),(LONG)(g_scoreStrState.y + g_scoreStrState.yScale)
-	/**/};
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//画面の消去
+	g_pD3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0x00, 0x00, 0x00), 1.0, 0);
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//画面表示関係の処理、カスタムバーテックスをg_tetlisBoardの配列番号を用いて、書き換えテトリスを表示している
-	DisplayScreen(cusV4Background, cusV4Tetmino, cusV4Frame, cusV4TarTetmino, &rectGameoverStr, &rectScoreStr);
+	//描画開始
+	g_pD3dDevice->BeginScene();
+
+	////////////
+	//背景の描画
+	RenderBackground();
+
+	/////////////////////////////////////////////////////////////////
+	//テトリスブロックの４頂点をtetlisBoardの配列番号を用いて設定する
+	SetBlockVerticesAndRender();
+
+	//////////////////////////////////////////
+	//テトリミノターゲットの４頂点を設定、描画
+	SetTetliminoTargetTextureAndRender();
+
+	////////////
+	//額縁の描画
+	RnderFrame();
+
+	////////////////////////////////
+	//ゲームオーバー時の文字列の描画
+	RenderGameoverStr();
+
+	////////////////////
+	//スコア文字列の描画
+	RenderScoreStr();
+
+	/////////////////////////////////////////////////////////
+	//ホールド、ネクスト、ネクストネクストの4頂点を設定、描画
+	SetHoldNextNextNextVerticesAndRender();
+
+	//描画の終了
+	g_pD3dDevice->EndScene();
 
 	//画面表示が行われたことをバックバッファーに伝える
 	g_pD3dDevice->Present(NULL, NULL, NULL, NULL);
@@ -102,62 +91,50 @@ VOID SetFocusOfViewOverall(VOID)
 	return;
 }
 
-VOID DisplayScreen(CustomVertex *cusV4Background, CustomVertex *cusV4Tetmino, CustomVertex *cusV4Frame, CustomVertex *cusV4TarTetmino, RECT *rectGameoverStr, RECT *rectScoreStr)
+VOID RenderBackground(VOID)
 {
-	g_pD3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0x00, 0x00, 0x00), 1.0, 0);
-
-	g_pD3dDevice->BeginScene();
+	CustomVertex cusV4Background[4]
+	{
+		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
+		{ 1600.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
+		{ 1600.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
+		{ 0.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_backgroundTex]);
 	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Background, sizeof(CustomVertex));
 
-	/////////////////////////////////////////////////////////////////
-	//テトリスブロックの４頂点をtetlisBoardの配列番号を用いて設定する
-	SetBlockVerticesAndRender(cusV4Tetmino);
-
-	//////////////////////////////////////////
-	//テトリミノターゲットの４頂点を設定、描画
-	SetTetliminoTargetTextureAndRender(cusV4Tetmino, cusV4TarTetmino);
-
-	g_pD3dDevice->SetTexture(0, g_pTexture[g_frameTex]);
-	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Frame, sizeof(CustomVertex));
-
-	if (g_showGameoverStr)
-	{
-		g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, rectGameoverStr, NULL, GAMEOVER_COLOR);
-	}
-
-	g_pFont[g_scoreFont]->DrawText(NULL, g_scoreArray, -1, rectScoreStr, DT_RIGHT, GAMEOVER_COLOR);
-
-	/////////////////////////////////////////////////////////
-	//ホールド、ネクスト、ネクストネクストの4頂点を設定、描画
-	SetHoldNextNextNextVerticesAndRender(cusV4Tetmino);
-
-	g_pD3dDevice->EndScene();
-
 	return;
 }
 
-VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
+VOID SetBlockVerticesAndRender(VOID)
 {
+	
+
 	for (int column = 0; column < TETLIS_HEIGHT; column++)
 	{
 		for (int row = 0; row < TETLIS_HEIGHT; row++)
 		{
+			CustomVertex cusV4Tetmino[4]
+			{
+				{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+				{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+				{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+				{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+			};
+
 			if ((g_tetlisBoard[column][row] != -1) && (g_tetlisBoard[column][row] != 9))
 			{
-				cusV4Tetmino->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 1)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 1)->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 2)->x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 2)->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				(cusV4Tetmino + 3)->x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino + 3)->y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[0].x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[0].y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[1].y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[2].x = 624.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[2].y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].x = 624.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[3].y = 52.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 			
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_integratedBlockTex]);
-
-				ResetCustomVertexTuTv(cusV4Tetmino);
 				
 				switch (g_tetlisBoard[column][row] % 100)
 				{
@@ -252,49 +229,39 @@ VOID SetBlockVerticesAndRender(CustomVertex *cusV4Tetmino)
 	return;
 }
 
-////////////////////////////////////////////////
-//カスタムバーテックスのtu、tvをデフォルトに戻す
-VOID ResetCustomVertexTuTv(CustomVertex *cusV4Tetmino)
+VOID SetTetliminoTargetTextureAndRender(VOID)
 {
-	cusV4Tetmino->tu = 0.f;
-	cusV4Tetmino->tv = 0.f;
-	(cusV4Tetmino + 1)->tu = 1.f;
-	(cusV4Tetmino + 1)->tv = 0.f;
-	(cusV4Tetmino + 2)->tu = 1.f;
-	(cusV4Tetmino + 2)->tv = 1.f;
-	(cusV4Tetmino + 3)->tu = 0.f;
-	(cusV4Tetmino + 3)->tv = 1.f;
-
-	return;
-}
-
-VOID SetTetliminoTargetTextureAndRender(CustomVertex *cusV4Tetmino, CustomVertex *cusV4TarTetmino)
-{
-	ResetCustomVertexTuTv(cusV4Tetmino);
+	CustomVertex cusV4Tetmino[4]
+	{
+		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
 
 	////////////////////////////////////////////////////
 	//flameCountとマスクを用いアルファ値を書き換えている
-	UnderGoChangeTarAlpha(cusV4TarTetmino);
+	UnderGoChangeTarAlpha(cusV4Tetmino);
 
 	for (INT block = 0; block < 4; block++)
 	{
-		cusV4TarTetmino->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4TarTetmino->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-		(cusV4TarTetmino + 1)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		(cusV4TarTetmino + 1)->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-		(cusV4TarTetmino + 2)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		(cusV4TarTetmino + 2)->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-		(cusV4TarTetmino + 3)->x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		(cusV4TarTetmino + 3)->y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4Tetmino[0].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		cusV4Tetmino[0].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4Tetmino[1].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		cusV4Tetmino[1].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4Tetmino[2].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		cusV4Tetmino[2].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4Tetmino[3].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		cusV4Tetmino[3].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTarTex]);
-		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4TarTetmino, sizeof(CustomVertex));
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
 	}
 	
 	return;
 }
 
-VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino)
+VOID UnderGoChangeTarAlpha(CustomVertex *cusV4Tetmino)
 {
 	static INT frameCount = 0;
 
@@ -304,8 +271,8 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino)
 		{	
 			DWORD alpha = 255 - 4 * frameCount;
 
-			(cusV4TarTetmino + coordinate)->color &= 0xffffff;
-			(cusV4TarTetmino + coordinate)->color += alpha * 0x1000000;
+			(cusV4Tetmino + coordinate)->color &= 0xffffff;
+			(cusV4Tetmino + coordinate)->color += alpha * 0x1000000;
 		}
 	}
 
@@ -315,8 +282,8 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino)
 		{
 			DWORD alpha = 4 * frameCount;
 			
-			(cusV4TarTetmino + coordinate)->color &= 0xffffff;
-			(cusV4TarTetmino + coordinate)->color += alpha * 0x1000000;
+			(cusV4Tetmino + coordinate)->color &= 0xffffff;
+			(cusV4Tetmino + coordinate)->color += alpha * 0x1000000;
 		}
 
 		if (frameCount == 127)
@@ -330,9 +297,58 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino)
 	return;
 }
 
-VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
+VOID RnderFrame(VOID)
 {
-	ResetCustomVertexTuTv(cusV4Tetmino);
+	CustomVertex cusV4Frame[4]
+	{
+		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
+		{ 1600.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
+		{ 1600.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
+		{ 0.f, 900.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	g_pD3dDevice->SetTexture(0, g_pTexture[g_frameTex]);
+	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Frame, sizeof(CustomVertex));
+
+	return;
+}
+
+VOID RenderGameoverStr(VOID)
+{
+	RECT rectGameoverStr
+	{
+		(LONG)(g_GameoverStrState.x - g_GameoverStrState.xScale), (LONG)(g_GameoverStrState.y - g_GameoverStrState.yScale), (LONG)(g_GameoverStrState.x + g_GameoverStrState.xScale), (LONG)(g_GameoverStrState.y + g_GameoverStrState.yScale)
+	};
+
+	if (g_showGameoverStr)
+	{
+		g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, &rectGameoverStr, NULL, GAMEOVER_COLOR);
+	}
+
+	return;
+}
+
+VOID RenderScoreStr(VOID)
+{
+	RECT rectScoreStr
+	{
+		(LONG)(g_scoreStrState.x - g_scoreStrState.xScale + 700), (LONG)(g_scoreStrState.y - g_scoreStrState.yScale), (LONG)(g_scoreStrState.x + g_scoreStrState.xScale), (LONG)(g_scoreStrState.y + g_scoreStrState.yScale)
+	};
+
+	g_pFont[g_scoreFont]->DrawText(NULL, g_scoreArray, -1, &rectScoreStr, DT_RIGHT, GAMEOVER_COLOR);
+
+	return;
+}
+
+VOID SetHoldNextNextNextVerticesAndRender(VOID)
+{
+	CustomVertex cusV4Tetmino[4]
+	{
+		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
 
 	for (int coordinateY = 0; coordinateY < 4; coordinateY++)
 	{
@@ -340,14 +356,14 @@ VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
 		{
 			if (g_holdBoard[coordinateY][coordinateX] != -1)
 			{
-				cusV4Tetmino->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 1)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 1)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 2)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				(cusV4Tetmino + 3)->x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[0].x= 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[0].y= 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[1].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[2].x = 100.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[2].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].x = 100.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[3].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				
 				switch (g_holdBoard[coordinateY][coordinateX] % 100)
 				{
@@ -379,14 +395,14 @@ VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
 
 			if (g_nextBoard[coordinateY][coordinateX] != -1)
 			{
-				cusV4Tetmino->x = 252.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 1)->x = 252.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 1)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 2)->x = 252.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				(cusV4Tetmino + 3)->x = 252.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[0].x = 252.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[0].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].x = 252.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[1].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[2].x = 252.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[2].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].x = 252.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[3].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				
 				switch (g_nextBoard[coordinateY][coordinateX] % 100)
 				{
@@ -418,14 +434,14 @@ VOID SetHoldNextNextNextVerticesAndRender(CustomVertex *cusV4Tetmino)
 
 			if (g_nextNextBoard[coordinateY][coordinateX] != -1)
 			{
-				cusV4Tetmino->x = 402.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 1)->x = 402.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 1)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-				(cusV4Tetmino + 2)->x = 402.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				(cusV4Tetmino + 2)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-				(cusV4Tetmino + 3)->x = 402.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				(cusV4Tetmino + 3)->y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[0].x = 402.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[0].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].x = 402.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[1].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[2].x = 402.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+				cusV4Tetmino[2].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].x = 402.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[3].y = 52.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				
 				switch (g_nextNextBoard[coordinateY][coordinateX] % 10)
 				{
