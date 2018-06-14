@@ -209,7 +209,7 @@ VOID Control(VOID)
 				/////////////////////////////////////////////////////////////////////////////////////////////
 				//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
 				//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-				ShiftTetlisLine();
+				ShiftTetlisLine(&lineCount);
 
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -832,7 +832,11 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 
 VOID DeleteAndCountFilledLine(INT *lineCount)
 {
-	for (INT column = 1; column < TETLIS_HEIGHT - 1; column++)
+	INT firstDeletedColumn = 0;
+	INT additionalDeletableNum = 0;
+	BOOL isFirstDeletedLine = true;
+
+	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
 		if (g_tetlisBoardBuf[column][1] != -1 &&
 			g_tetlisBoardBuf[column][2] != -1 &&
@@ -859,6 +863,12 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 				g_deletedLineCount++;
 			}
 			
+			if (isFirstDeletedLine)
+			{
+				firstDeletedColumn = column;
+				isFirstDeletedLine = false;
+			}
+
 			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
 				g_tetlisBoard[column][row] = -1;
@@ -868,37 +878,86 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 		}
 	}
 
+	switch (*lineCount)
+	{
+	case 1:
+		additionalDeletableNum = 0;
+		break;
+	case 2:
+		additionalDeletableNum = 2;
+		break;
+	case 3:
+		additionalDeletableNum = 4;
+		break;
+	case 4:
+		additionalDeletableNum = 7;
+		break;
+	}
+
+	INT oneRow = 1;
+	INT loopLimiter = ((firstDeletedColumn + oneRow + additionalDeletableNum)>TETLIS_HEIGHT - oneRow) ?
+		TETLIS_HEIGHT - oneRow : firstDeletedColumn + oneRow + additionalDeletableNum;
+
+	for (INT row = firstDeletedColumn + oneRow; row < loopLimiter ; row++)
+	{
+		if (g_tetlisBoardBuf[row][1] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][2] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][3] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][4] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][5] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][6] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][7] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][8] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][9] % 100 >= 10 ||
+			g_tetlisBoardBuf[row][10] % 100 >= 10)
+		{
+			g_deletedLineCount++;
+		}
+
+		for (INT column = 1; column < TETLIS_WIDTH - 1; column++)
+		{
+			g_tetlisBoard[row][column] = -1;
+		}
+	}
+
 	SynchroTetlisBoardBufToTetlisBoard();
 
 	return;
 }
 
-VOID ShiftTetlisLine(VOID)
+VOID ShiftTetlisLine(INT *lineCount)
 {
-	for (INT column = TETLIS_HEIGHT - 1; column > 3; column--)
+	static INT prevDeletedLineCount = g_deletedLineCount;
+	for (; prevDeletedLineCount < g_deletedLineCount + (*lineCount); prevDeletedLineCount++)
 	{
-		if (g_tetlisBoardBuf[column][1] == -1 &&
-			g_tetlisBoardBuf[column][2] == -1 &&
-			g_tetlisBoardBuf[column][3] == -1 &&
-			g_tetlisBoardBuf[column][4] == -1 &&
-			g_tetlisBoardBuf[column][5] == -1 &&
-			g_tetlisBoardBuf[column][6] == -1 &&
-			g_tetlisBoardBuf[column][7] == -1 &&
-			g_tetlisBoardBuf[column][8] == -1 &&
-			g_tetlisBoardBuf[column][9] == -1 &&
-			g_tetlisBoardBuf[column][10] == -1)
+		for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 		{
-			for (INT coordinateY = column; coordinateY > 3; coordinateY--)
+			if (g_tetlisBoardBuf[column][1] == -1 &&
+				g_tetlisBoardBuf[column][2] == -1 &&
+				g_tetlisBoardBuf[column][3] == -1 &&
+				g_tetlisBoardBuf[column][4] == -1 &&
+				g_tetlisBoardBuf[column][5] == -1 &&
+				g_tetlisBoardBuf[column][6] == -1 &&
+				g_tetlisBoardBuf[column][7] == -1 &&
+				g_tetlisBoardBuf[column][8] == -1 &&
+				g_tetlisBoardBuf[column][9] == -1 &&
+				g_tetlisBoardBuf[column][10] == -1)
 			{
-				for (INT coordinateX = 1; coordinateX < TETLIS_WIDTH - 1; coordinateX++)
+				for (INT coordinateY = column; coordinateY > 3; coordinateY--)
 				{
-					g_tetlisBoard[coordinateY][coordinateX] = g_tetlisBoard[coordinateY - 1][coordinateX];
+					for (INT coordinateX = 1; coordinateX < TETLIS_WIDTH - 1; coordinateX++)
+					{
+						g_tetlisBoard[coordinateY][coordinateX] = g_tetlisBoard[coordinateY - 1][coordinateX];
+						g_tetlisBoard[coordinateY - 1][coordinateX] = -1;
+					}
 				}
-			}
 
-			SynchroTetlisBoardBufToTetlisBoard();
+				SynchroTetlisBoardBufToTetlisBoard();
+			}
 		}
 	}
+
+	prevDeletedLineCount -= (*lineCount);
 
 	return;
 }
