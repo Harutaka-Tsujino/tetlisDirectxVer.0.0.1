@@ -38,7 +38,7 @@ VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino);
 
 //テトリスに関するデータを初期状態に戻す関数
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
-	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount);
+	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount);
 
 //テトリミノを生成に関する関数
 VOID CreateTetlimino(INT currentTetmino, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputRA, 
@@ -75,7 +75,7 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 VOID DeleteAndCountFilledLine(INT *lineCount);
 
 //消されたテトリスのライン部分にずらす関数
-VOID ShiftTetlisLine(INT *lineCount);
+VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount);
 
 //テトリスのスコアに関する関数
 VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf);

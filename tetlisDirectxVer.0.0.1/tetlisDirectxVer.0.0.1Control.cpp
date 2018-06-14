@@ -29,7 +29,7 @@ VOID Control(VOID)
 
 		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputR = true, canInputSpace = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 		//生成されるのテトリミノ種類を決める
-		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0, prevRKeyState, prevSpaceKeyState, currentTetmino = rand() % 7;
+		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0, prevRKeyState, prevSpaceKeyState, currentTetmino = rand() % 7, prevDeletedLineCount = 0;
 		
 		INT lineCount = 0;
 
@@ -44,7 +44,7 @@ VOID Control(VOID)
 			///////////////////////////////////////////////////////////////////////////
 			//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
 			ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
-				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount);
+				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &prevDeletedLineCount);
 		}
 
 		if (isGameover)
@@ -62,6 +62,7 @@ VOID Control(VOID)
 				InitTetlisBoard();
 				ChooseAndCpyTetlisBoardSourceToBoard();
 				memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				isNewGame = false;
 			}
 
 			for (g_tetminoNum = 0; g_tetminoNum < 7; g_tetminoNum++)
@@ -209,7 +210,7 @@ VOID Control(VOID)
 				/////////////////////////////////////////////////////////////////////////////////////////////
 				//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
 				//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-				ShiftTetlisLine(&lineCount);
+				ShiftTetlisLine(&lineCount,&prevDeletedLineCount);
 
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -400,7 +401,7 @@ VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino)
 }
 
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
-	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount)
+	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount)
 {
 	g_showGameoverStr = false;
 	*isGameover = false;
@@ -418,13 +419,15 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 	*stopCount = 0;
 	*downCount = 0;
 	*scoreBuf = 0;
-	g_deletedLineCount;
+	g_deletedLineCount = 0;
 	g_hold = -1;
 	g_next = rand() % 7;
 	g_nextNext = rand() % 7;
 	*currentTetmino = rand() % 7;
 	*minoIRoatationCount = 0;
+	*prevDeletedLineCount = 0;
 
+	InitTetlisBoard();
 	ChooseAndCpyTetlisBoardSourceToBoard();
 	UpdateHoldNextNextNextBoard();
 	memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -480,7 +483,6 @@ VOID InitNextAndNextNext(BOOL *isNewGame)
 {
 	g_next = rand() % 7;
 	g_nextNext = rand() % 7;
-	*isNewGame = false;
 
 	return;
 }
@@ -925,10 +927,10 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 	return;
 }
 
-VOID ShiftTetlisLine(INT *lineCount)
+VOID ShiftTetlisLine(INT *lineCount,INT *prevDeletedLineCount)
 {
-	static INT prevDeletedLineCount = g_deletedLineCount;
-	for (; prevDeletedLineCount < g_deletedLineCount + (*lineCount); prevDeletedLineCount++)
+	*prevDeletedLineCount = g_deletedLineCount;
+	for (; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount)*3; *prevDeletedLineCount += 1)
 	{
 		for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 		{
@@ -957,7 +959,7 @@ VOID ShiftTetlisLine(INT *lineCount)
 		}
 	}
 
-	prevDeletedLineCount -= (*lineCount);
+	prevDeletedLineCount -= (*lineCount) * 3;
 
 	return;
 }
