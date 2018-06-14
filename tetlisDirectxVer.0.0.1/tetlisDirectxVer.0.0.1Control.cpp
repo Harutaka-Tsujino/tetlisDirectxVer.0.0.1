@@ -7,7 +7,7 @@
 // Author Harutaka-Tsujino
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "tetlisDirectxVer.0.0.1Union.h"
+#include "tetlisDirectxVer.0.0.1Common.h"
 #include "tetlisDirectxVer.0.0.1Initialize.h"
 #include "tetlisDirectxVer.0.0.1Control.h"
 #include <dinput.h>

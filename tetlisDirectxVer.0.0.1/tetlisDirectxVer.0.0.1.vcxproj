@@ -122,7 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="tetlisDirectxVer.0.0.1.cpp" />
+    <ClCompile Include="tetlisDirectxVer.0.0.1Common.cpp" />
     <ClCompile Include="tetlisDirectxVer.0.0.1Control.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\glaca\source\repos\tetlisDirectxVer.0.0.1\tetlisDirectxVer.0.0.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\glaca\source\repos\tetlisDirectxVer.0.0.1\tetlisDirectxVer.0.0.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -132,7 +132,7 @@
     <ClCompile Include="tetlisDirectxVer.0.0.1WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tetlisDirectxVer.0.0.1Union.h" />
+    <ClInclude Include="tetlisDirectxVer.0.0.1Common.h" />
     <ClInclude Include="tetlisDirectxVer.0.0.1Control.h" />
     <ClInclude Include="tetlisDirectxVer.0.0.1Initialize.h" />
     <ClInclude Include="tetlisDirectxVer.0.0.1Render.h" />
