@@ -160,64 +160,64 @@ VOID SetBlockVerticesAndRender(VOID)
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;
 				case 10:
-					cusV4Tetmino->tu = 100.f / 512;
-					cusV4Tetmino->tv = 50.f / 256;
-					(cusV4Tetmino + 1)->tu = 150.f / 512;
-					(cusV4Tetmino + 1)->tv = 50.f / 256;
-					(cusV4Tetmino + 2)->tu = 150.f / 512;
-					(cusV4Tetmino + 2)->tv = 100.f / 256;
-					(cusV4Tetmino + 3)->tu = 100.f / 512;
-					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					cusV4Tetmino[0].tu = 100.f / 512;
+					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[1].tu = 150.f / 512;
+					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[2].tu = 150.f / 512;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 100.f / 512;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				case 21:
-					cusV4Tetmino->tu = 50.f / 512;
-					cusV4Tetmino->tv = 50.f / 256;
-					(cusV4Tetmino + 1)->tu = 100.f / 512;
-					(cusV4Tetmino + 1)->tv = 50.f / 256;
-					(cusV4Tetmino + 2)->tu = 100.f / 512;
-					(cusV4Tetmino + 2)->tv = 100.f / 256;
-					(cusV4Tetmino + 3)->tu = 50.f / 512;
-					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					cusV4Tetmino[0].tu = 50.f / 512;
+					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[1].tu = 100.f / 512;
+					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[2].tu = 100.f / 512;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 50.f / 512;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				case 20:
-					cusV4Tetmino->tu = 50.f / 512;
-					cusV4Tetmino->tv = 50.f / 256;
-					(cusV4Tetmino + 1)->tu = 100.f / 512;
-					(cusV4Tetmino + 1)->tv = 50.f / 256;
-					(cusV4Tetmino + 2)->tu = 100.f / 512;
-					(cusV4Tetmino + 2)->tv = 100.f / 256;
-					(cusV4Tetmino + 3)->tu = 50.f / 512;
-					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					cusV4Tetmino[0].tu = 50.f / 512;
+					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[1].tu = 100.f / 512;
+					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[2].tu = 100.f / 512;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 50.f / 512;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				case 32:
-					cusV4Tetmino->tu = 0.f;
-					cusV4Tetmino->tv = 50.f / 256;
-					(cusV4Tetmino + 1)->tu = 50.f / 512;
-					(cusV4Tetmino + 1)->tv = 50.f / 256;
-					(cusV4Tetmino + 2)->tu = 50.f / 512;
-					(cusV4Tetmino + 2)->tv = 100.f / 256;
-					(cusV4Tetmino + 3)->tu = 0.f;
-					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					cusV4Tetmino[0].tu = 0.f;
+					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[1].tu = 50.f / 512;
+					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[2].tu = 50.f / 512;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 0.f;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				case 31:
-					cusV4Tetmino->tu = 0.f;
-					cusV4Tetmino->tv = 50.f / 256;
-					(cusV4Tetmino + 1)->tu = 50.f / 512;
-					(cusV4Tetmino + 1)->tv = 50.f / 256;
-					(cusV4Tetmino + 2)->tu = 50.f / 512;
-					(cusV4Tetmino + 2)->tv = 100.f / 256;
-					(cusV4Tetmino + 3)->tu = 0.f;
-					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					cusV4Tetmino[0].tu = 0.f;
+					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[1].tu = 50.f / 512;
+					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[2].tu = 50.f / 512;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 0.f;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				case 30:
-					cusV4Tetmino->tu = 0.f;
-					cusV4Tetmino->tv = 50.f / 256;
-					(cusV4Tetmino + 1)->tu = 50.f / 512;
-					(cusV4Tetmino + 1)->tv = 50.f / 256;
-					(cusV4Tetmino + 2)->tu = 50.f / 512;
-					(cusV4Tetmino + 2)->tv = 100.f / 256;
-					(cusV4Tetmino + 3)->tu = 0.f;
-					(cusV4Tetmino + 3)->tv = 100.f / 256;
+					cusV4Tetmino[0].tu = 0.f;
+					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[1].tu = 50.f / 512;
+					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[2].tu = 50.f / 512;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 0.f;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				}
 
@@ -233,10 +233,10 @@ VOID SetTetliminoTargetTextureAndRender(VOID)
 {
 	CustomVertex cusV4Tetmino[4]
 	{
-		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
-		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
-		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
-		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1/512.f, 147/256.f },
+		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 50/512.f, 147/256.f },
+		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 50/512.f, 196/256.f },
+		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y + g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1/512.f, 196/256.f }
 	};
 
 	////////////////////////////////////////////////////
@@ -245,16 +245,16 @@ VOID SetTetliminoTargetTextureAndRender(VOID)
 
 	for (INT block = 0; block < 4; block++)
 	{
-		cusV4Tetmino[0].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4Tetmino[0].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-		cusV4Tetmino[1].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		cusV4Tetmino[1].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
-		cusV4Tetmino[2].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		cusV4Tetmino[2].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
-		cusV4Tetmino[3].x = 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4Tetmino[3].y = 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4Tetmino[0].x =2+ 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		cusV4Tetmino[0].y =2+ 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4Tetmino[1].x =-2+ 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		cusV4Tetmino[1].y =2+ 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4Tetmino[2].x =-2+ 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
+		cusV4Tetmino[2].y =-2+ 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4Tetmino[3].x =2+ 624.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+		cusV4Tetmino[3].y =-2+ 52.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
-		g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoTarTex]);
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_integratedBlockTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
 	}
 	
