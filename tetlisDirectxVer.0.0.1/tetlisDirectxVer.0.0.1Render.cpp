@@ -160,64 +160,64 @@ VOID SetBlockVerticesAndRender(VOID)
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;
 				case 10:
-					cusV4Tetmino[0].tu = 100.f / 512;
-					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[0].tu = 101.f / 512;
+					cusV4Tetmino[0].tv = 51.f / 256;
 					cusV4Tetmino[1].tu = 150.f / 512;
-					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[1].tv = 51.f / 256;
 					cusV4Tetmino[2].tu = 150.f / 512;
-					cusV4Tetmino[2].tv = 100.f / 256;
-					cusV4Tetmino[3].tu = 100.f / 512;
-					cusV4Tetmino[3].tv = 100.f / 256;
+					cusV4Tetmino[2].tv = 97.f / 256;
+					cusV4Tetmino[3].tu = 101.f / 512;
+					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
 				case 21:
-					cusV4Tetmino[0].tu = 50.f / 512;
-					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[0].tu = 51.f / 512;
+					cusV4Tetmino[0].tv = 51.f / 256;
 					cusV4Tetmino[1].tu = 100.f / 512;
-					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[1].tv = 51.f / 256;
 					cusV4Tetmino[2].tu = 100.f / 512;
-					cusV4Tetmino[2].tv = 100.f / 256;
-					cusV4Tetmino[3].tu = 50.f / 512;
-					cusV4Tetmino[3].tv = 100.f / 256;
+					cusV4Tetmino[2].tv = 97.f / 256;
+					cusV4Tetmino[3].tu = 51.f / 512;
+					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
 				case 20:
-					cusV4Tetmino[0].tu = 50.f / 512;
-					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[0].tu = 51.f / 512;
+					cusV4Tetmino[0].tv = 51.f / 256;
 					cusV4Tetmino[1].tu = 100.f / 512;
-					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[1].tv = 51.f / 256;
 					cusV4Tetmino[2].tu = 100.f / 512;
-					cusV4Tetmino[2].tv = 100.f / 256;
-					cusV4Tetmino[3].tu = 50.f / 512;
-					cusV4Tetmino[3].tv = 100.f / 256;
+					cusV4Tetmino[2].tv = 97.f / 256;
+					cusV4Tetmino[3].tu = 51.f / 512;
+					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
 				case 32:
 					cusV4Tetmino[0].tu = 0.f;
-					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[0].tv = 51.f / 256;
 					cusV4Tetmino[1].tu = 50.f / 512;
-					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[1].tv = 51.f / 256;
 					cusV4Tetmino[2].tu = 50.f / 512;
-					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[2].tv = 97.f / 256;
 					cusV4Tetmino[3].tu = 0.f;
-					cusV4Tetmino[3].tv = 100.f / 256;
+					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
 				case 31:
 					cusV4Tetmino[0].tu = 0.f;
-					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[0].tv = 51.f / 256;
 					cusV4Tetmino[1].tu = 50.f / 512;
-					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[1].tv = 51.f / 256;
 					cusV4Tetmino[2].tu = 50.f / 512;
-					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[2].tv = 97.f / 256;
 					cusV4Tetmino[3].tu = 0.f;
-					cusV4Tetmino[3].tv = 100.f / 256;
+					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
 				case 30:
 					cusV4Tetmino[0].tu = 0.f;
-					cusV4Tetmino[0].tv = 50.f / 256;
+					cusV4Tetmino[0].tv = 51.f / 256;
 					cusV4Tetmino[1].tu = 50.f / 512;
-					cusV4Tetmino[1].tv = 50.f / 256;
+					cusV4Tetmino[1].tv = 51.f / 256;
 					cusV4Tetmino[2].tu = 50.f / 512;
-					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[2].tv = 97.f / 256;
 					cusV4Tetmino[3].tu = 0.f;
-					cusV4Tetmino[3].tv = 100.f / 256;
+					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
 				}
 
