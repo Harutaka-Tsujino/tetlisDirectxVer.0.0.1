@@ -845,13 +845,26 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 			g_tetlisBoardBuf[column][9] != -1 &&
 			g_tetlisBoardBuf[column][10] != -1)
 		{
+			if (g_tetlisBoardBuf[column][1]%100 >= 10 ||
+				g_tetlisBoardBuf[column][2]%100 >= 10 ||
+				g_tetlisBoardBuf[column][3]%100 >= 10 ||
+				g_tetlisBoardBuf[column][4]%100 >= 10 ||
+				g_tetlisBoardBuf[column][5]%100 >= 10 ||
+				g_tetlisBoardBuf[column][6]%100 >= 10 ||
+				g_tetlisBoardBuf[column][7]%100 >= 10 ||
+				g_tetlisBoardBuf[column][8]%100 >= 10 ||
+				g_tetlisBoardBuf[column][9]%100 >= 10 ||
+				g_tetlisBoardBuf[column][10]%100 >= 10)
+			{
+				g_deletedLineCount++;
+			}
+			
 			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
 				g_tetlisBoard[column][row] = -1;
 			}
 
-			*lineCount += 1;
-			g_deletedLineCount++;
+			*lineCount += 1;	
 		}
 	}
 
