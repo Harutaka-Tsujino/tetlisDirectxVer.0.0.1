@@ -25,8 +25,8 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"winmm.lib")
 
-#define DISPLAY_WIDTH 1600
-#define DISPLAY_HEIGHT 900
+#define DISPLAY_WIDTH 1280
+#define DISPLAY_HEIGHT 720
 #define TETLIS_WIDTH 12
 #define TETLIS_HEIGHT 140
 #define SHIFT_FRAME_COUNTER 6
