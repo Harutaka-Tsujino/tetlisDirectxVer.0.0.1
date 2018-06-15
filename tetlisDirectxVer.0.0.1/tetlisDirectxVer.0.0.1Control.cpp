@@ -930,7 +930,26 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 VOID ShiftTetlisLine(INT *lineCount,INT *prevDeletedLineCount)
 {
 	*prevDeletedLineCount = g_deletedLineCount;
-	for (; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount)*3; *prevDeletedLineCount += 1)
+
+	INT additionalDeletableLine = 0;
+
+	switch (*lineCount)
+	{
+	case 2:
+		additionalDeletableLine = 2;
+
+		break;
+	case 3:
+		additionalDeletableLine = 4;
+
+		break;
+	case 4:
+		additionalDeletableLine = 7;
+
+		break;
+	}
+
+	for (; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount) + additionalDeletableLine; *prevDeletedLineCount += 1)
 	{
 		for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 		{
@@ -959,7 +978,7 @@ VOID ShiftTetlisLine(INT *lineCount,INT *prevDeletedLineCount)
 		}
 	}
 
-	prevDeletedLineCount -= (*lineCount) * 3;
+	prevDeletedLineCount -= (*lineCount) + additionalDeletableLine;
 
 	return;
 }
