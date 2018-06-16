@@ -1009,7 +1009,7 @@ VOID CheckGameover(BOOL *isGameover)
 {
 	for (INT coordinateX = 1; coordinateX < 11; coordinateX++)
 	{
-		if (g_tetlisBoardBuf[3 + g_deletedLineCount][coordinateX] != -1)
+		if (g_tetlisBoardBuf[4 + g_deletedLineCount][coordinateX] != -1)
 		{
 			*isGameover = true;
 		}
