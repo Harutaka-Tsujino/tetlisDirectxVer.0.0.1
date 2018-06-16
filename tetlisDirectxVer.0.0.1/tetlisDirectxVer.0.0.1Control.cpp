@@ -31,7 +31,7 @@ VOID Control(VOID)
 		//生成されるのテトリミノ種類を決める
 		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0, prevRKeyState, prevSpaceKeyState, currentTetmino = rand() % 7, prevDeletedLineCount = 0;
 		
-		INT lineCount = 0;
+		INT lineCount = 0, additionalDeletableLine = 0;
 
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 };
 
@@ -200,7 +200,7 @@ VOID Control(VOID)
 				//そろっている列があるか確認しカウントをとる
 				//////////////////////////////////////////////////////////////////////////////
 				//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合カウントをとり空欄にする
-				DeleteAndCountFilledLine(&lineCount);
+				DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
 
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -210,7 +210,7 @@ VOID Control(VOID)
 				/////////////////////////////////////////////////////////////////////////////////////////////
 				//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
 				//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-				ShiftTetlisLine(&lineCount,&prevDeletedLineCount);
+				ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
 
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -301,10 +301,12 @@ VOID InitTetlisBoardBuf(VOID)
 		for (INT row = 0; row < TETLIS_WIDTH; row++)
 		{
 			g_tetlisBoardBuf[column][row] = -1;
+
 			if (row == TETLIS_WIDTH - 12 || row == TETLIS_WIDTH - 1)
 			{
 				g_tetlisBoardBuf[column][row] = 9;
 			}
+
 			if (column == TETLIS_HEIGHT - 1)
 			{
 				g_tetlisBoardBuf[column][row] = 9;
@@ -832,10 +834,9 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 	return;
 }
 
-VOID DeleteAndCountFilledLine(INT *lineCount)
+VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 {
 	INT firstDeletedColumn = 0;
-	INT additionalDeletableNum = 0;
 	BOOL isFirstDeletedLine = true;
 
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
@@ -873,7 +874,23 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 
 			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
-				g_tetlisBoard[column][row] = -1;
+				if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+				{
+					if (g_tetlisBoardBuf[column][row] == 30)
+					{
+						g_tetlisBoard[column][row] = -1;
+					}
+
+					else
+					{
+						g_tetlisBoard[column][row] -= 1;
+					}
+				}
+
+				else
+				{
+					g_tetlisBoard[column][row] = -1;
+				}
 			}
 
 			*lineCount += 1;	
@@ -883,22 +900,22 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 	switch (*lineCount)
 	{
 	case 1:
-		additionalDeletableNum = 0;
+		*additionalDeletableLine = 0;
 		break;
 	case 2:
-		additionalDeletableNum = 2;
+		*additionalDeletableLine = 2;
 		break;
 	case 3:
-		additionalDeletableNum = 4;
+		*additionalDeletableLine = 4;
 		break;
 	case 4:
-		additionalDeletableNum = 7;
+		*additionalDeletableLine = 7;
 		break;
 	}
 
 	INT oneRow = 1;
-	INT loopLimiter = ((firstDeletedColumn + oneRow + additionalDeletableNum)>TETLIS_HEIGHT - oneRow) ?
-		TETLIS_HEIGHT - oneRow : firstDeletedColumn + oneRow + additionalDeletableNum;
+	INT loopLimiter = ((firstDeletedColumn + oneRow + *additionalDeletableLine)>TETLIS_HEIGHT - oneRow) ?
+		TETLIS_HEIGHT - oneRow : firstDeletedColumn + oneRow + *additionalDeletableLine;
 
 	for (INT row = firstDeletedColumn + oneRow; row < loopLimiter ; row++)
 	{
@@ -927,29 +944,11 @@ VOID DeleteAndCountFilledLine(INT *lineCount)
 	return;
 }
 
-VOID ShiftTetlisLine(INT *lineCount,INT *prevDeletedLineCount)
+VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine)
 {
 	*prevDeletedLineCount = g_deletedLineCount;
 
-	INT additionalDeletableLine = 0;
-
-	switch (*lineCount)
-	{
-	case 2:
-		additionalDeletableLine = 2;
-
-		break;
-	case 3:
-		additionalDeletableLine = 4;
-
-		break;
-	case 4:
-		additionalDeletableLine = 7;
-
-		break;
-	}
-
-	for (; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount) + additionalDeletableLine; *prevDeletedLineCount += 1)
+	for (; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount) + (*additionalDeletableLine); *prevDeletedLineCount += 1)
 	{
 		for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 		{
@@ -978,7 +977,7 @@ VOID ShiftTetlisLine(INT *lineCount,INT *prevDeletedLineCount)
 		}
 	}
 
-	prevDeletedLineCount -= (*lineCount) + additionalDeletableLine;
+	prevDeletedLineCount -= (*lineCount) + (*additionalDeletableLine);
 
 	return;
 }

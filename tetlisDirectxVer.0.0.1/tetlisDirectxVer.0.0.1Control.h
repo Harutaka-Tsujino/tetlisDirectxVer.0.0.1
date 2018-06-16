@@ -72,10 +72,10 @@ VOID CountToDawnTetlimino(INT *downCount);
 VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, BOOL *canHold, BOOL *wasHold);
 
 //そろったテトリスのラインを消しカウントをとる関数
-VOID DeleteAndCountFilledLine(INT *lineCount);
+VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine);
 
 //消されたテトリスのライン部分にずらす関数
-VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount);
+VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine);
 
 //テトリスのスコアに関する関数
 VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf);
