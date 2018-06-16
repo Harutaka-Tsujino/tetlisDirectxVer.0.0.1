@@ -211,8 +211,9 @@ HRESULT InitDfont(HWND hWnd)
 
 VOID CreateFont(VOID)
 {
-	D3DXCreateFont(g_pD3dDevice, 160, 80, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_gameoverFont]);
+	D3DXCreateFont(g_pD3dDevice, 120, 60, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_gameoverFont]);
 	D3DXCreateFont(g_pD3dDevice, 40, 20, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_scoreFont]);
+	D3DXCreateFont(g_pD3dDevice, 40, 20, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_undergroundFont]);
 
 	return;
 }

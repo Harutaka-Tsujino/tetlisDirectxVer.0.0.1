@@ -18,8 +18,9 @@ typedef struct
 }ImageState;
 
 extern ImageState g_tetminoState;
-extern ImageState g_GameoverStrState;
+extern ImageState g_gameoverStrState;
 extern ImageState g_scoreStrState;
+extern ImageState g_undergroundStrState;
 
 typedef struct
 {
@@ -48,6 +49,9 @@ VOID RenderGameoverStr(VOID);
 
 //スコアの文字列を描画する関数
 VOID RenderScoreStr(VOID);
+
+//どのくらい地面を掘り進んだかの文字列を描画する関数
+VOID RenderUndergroundStr(VOID);
 
 //テトリスのブロックの４頂点を設定し、描画する関数
 VOID SetBlockVerticesAndRender(VOID);

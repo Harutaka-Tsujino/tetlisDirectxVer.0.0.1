@@ -46,6 +46,7 @@ INT g_nextNextBoard[4][4];
 BOOL g_showGameoverStr = false;
 
 CHAR g_scoreArray[8];
+CHAR g_undergroundArray[5];
 
 ////////////////////////////////////
 //ウィンドウの生成、エントリポイント
@@ -53,28 +54,28 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 {
 	srand((unsigned int)time(NULL));
 	//ウィンドウの生成////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**/HWND hWnd = NULL;
-	/**/MSG	msg;
-	/**/
-	/**/static CHAR szAppName[] = "TETLIS";
-	/**/WNDCLASSEX wndclass;
-	/**/
-	/**/wndclass.cbSize = sizeof(wndclass);
-	/**/wndclass.style = CS_HREDRAW | CS_VREDRAW;
-	/**/wndclass.lpfnWndProc = WndProc;
-	/**/wndclass.cbClsExtra = 0;
-	/**/wndclass.cbWndExtra = 0;
-	/**/wndclass.hInstance = hInst;
-	/**/wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	/**/wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	/**/wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	/**/wndclass.lpszMenuName = NULL;
-	/**/wndclass.lpszClassName = szAppName;
-	/**/wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-	/**/
-	/**/RegisterClassEx(&wndclass);
-	/**/
-	/**/hWnd = CreateWindow(szAppName, szAppName, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, DISPLAY_WIDTH, DISPLAY_HEIGHT, NULL, NULL, hInst, NULL);
+	HWND hWnd = NULL;
+	MSG	msg;
+	
+	static CHAR szAppName[] = "TETLIS";
+	WNDCLASSEX wndclass;
+	
+	wndclass.cbSize = sizeof(wndclass);
+	wndclass.style = CS_HREDRAW | CS_VREDRAW;
+	wndclass.lpfnWndProc = WndProc;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = hInst;
+	wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = szAppName;
+	wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	
+	RegisterClassEx(&wndclass);
+	
+	hWnd = CreateWindow(szAppName, szAppName, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, DISPLAY_WIDTH, DISPLAY_HEIGHT, NULL, NULL, hInst, NULL);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//ウィンドウを見えるようにする

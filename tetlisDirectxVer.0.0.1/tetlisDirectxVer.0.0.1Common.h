@@ -17,9 +17,7 @@
 #include <d3dx9.h>
 #include <dinput.h>
 
-#pragma comment(lib,"d3dxof.lib")
 #pragma comment(lib,"d3dx9d.lib")
-#pragma comment(lib,"ddraw.lib")
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -62,6 +60,7 @@ enum FONT
 {
 	g_gameoverFont,
 	g_scoreFont,
+	g_undergroundFont,
 	g_fontMax
 };
 
@@ -95,5 +94,6 @@ extern INT g_nextNextBoard[4][4];
 extern BOOL g_showGameoverStr;
 
 extern CHAR g_scoreArray[8];
+extern CHAR g_undergroundArray[5];
 
 #endif

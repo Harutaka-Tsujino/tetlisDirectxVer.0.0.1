@@ -13,9 +13,9 @@
 #include <d3dx9.h>
 
 ImageState g_tetminoState = { 0.f, 0.f, 30.f / 2, 30.f / 2 };
-ImageState g_GameoverStrState = { 990,790,800.f, 450.f };
+ImageState g_gameoverStrState = { 990,790,800.f, 450.f };
 ImageState g_scoreStrState = { 800.f,790.f,400.f, 225.f };
-
+ImageState g_undergroundStrState = { 800.f,500.f,400.f, 225.f };
 
 VOID Render(VOID)//////////////////////////////////////////////////////////////////////////////////
 {
@@ -56,6 +56,10 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	////////////////////
 	//スコア文字列の描画
 	RenderScoreStr();
+
+	//////////////////////////////////////
+	//どのくらい掘り進んだかの文字列の描画
+	RenderUndergroundStr();
 
 	/////////////////////////////////////////////////////////
 	//ホールド、ネクスト、ネクストネクストの4頂点を設定、描画
@@ -317,7 +321,7 @@ VOID RenderGameoverStr(VOID)
 {
 	RECT rectGameoverStr
 	{
-		(LONG)(g_GameoverStrState.x - g_GameoverStrState.xScale), (LONG)(g_GameoverStrState.y - g_GameoverStrState.yScale), (LONG)(g_GameoverStrState.x + g_GameoverStrState.xScale), (LONG)(g_GameoverStrState.y + g_GameoverStrState.yScale)
+		(LONG)(g_gameoverStrState.x - g_gameoverStrState.xScale), (LONG)(g_gameoverStrState.y - g_gameoverStrState.yScale), (LONG)(g_gameoverStrState.x + g_gameoverStrState.xScale), (LONG)(g_gameoverStrState.y + g_gameoverStrState.yScale)
 	};
 
 	if (g_showGameoverStr)
@@ -336,6 +340,19 @@ VOID RenderScoreStr(VOID)
 	};
 
 	g_pFont[g_scoreFont]->DrawText(NULL, g_scoreArray, -1, &rectScoreStr, DT_RIGHT, GAMEOVER_COLOR);
+
+	return;
+}
+
+VOID RenderUndergroundStr(VOID)
+{
+	RECT rectUndergroundStr
+	{
+		(LONG)(g_undergroundStrState.x - g_undergroundStrState.xScale), (LONG)(g_undergroundStrState.y - g_undergroundStrState.yScale), (LONG)(g_undergroundStrState.x + g_undergroundStrState.xScale), (LONG)(g_undergroundStrState.y + g_undergroundStrState.yScale)
+	};
+
+	sprintf(g_undergroundArray, "%d", g_deletedLineCount);
+		g_pFont[g_undergroundFont]->DrawText(NULL, g_undergroundArray, -1, &rectUndergroundStr, DT_RIGHT, GAMEOVER_COLOR);
 
 	return;
 }
