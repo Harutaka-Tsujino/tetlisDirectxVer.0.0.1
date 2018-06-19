@@ -938,15 +938,72 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 		break;
 	}
 
-	INT oneRow = 1;
-	INT loopLimiter = ((firstDeletedColumn + oneRow + *additionalDeletableLine)>TETLIS_HEIGHT - oneRow) ?
-		TETLIS_HEIGHT - oneRow : firstDeletedColumn + oneRow + *additionalDeletableLine;
+	INT loopLimiter = ((firstDeletedColumn + 1 + *additionalDeletableLine)>TETLIS_HEIGHT - 1) ?
+		TETLIS_HEIGHT - 1 : firstDeletedColumn + 1 + *additionalDeletableLine;
 
-	for (INT row = firstDeletedColumn + oneRow; row < loopLimiter ; row++)
+	for (INT column = firstDeletedColumn + 1; column < loopLimiter ; column++)
 	{
-			for (INT column = 1; column < TETLIS_WIDTH - 1; column++)
+		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 		{
-			g_tetlisBoard[row][column] = -1;
+			if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+			{
+				if (g_tetlisBoardBuf[column][row] % 100 == 30)
+				{
+					g_tetlisBoard[column][row] = -1;
+				}
+
+				else
+				{
+					switch (*lineCount)
+					{
+					case 1:
+						switch (g_tetlisBoard[column][row] % 100)
+						{
+						case 21:
+							g_tetlisBoard[column][row] -= 1;
+							g_durableBlockBeared[column][row] = 1;
+							break;
+						case 32:
+							g_tetlisBoard[column][row] -= 1;
+							g_durableBlockBeared[column][row] = 1;
+							break;
+						case 31:
+							g_tetlisBoard[column][row] -= 1;
+							g_durableBlockBeared[column][row] = 1;
+							break;
+						}
+
+						break;
+					case 2:
+						switch (g_tetlisBoard[column][row] % 100)
+						{
+						case 21:
+							g_tetlisBoard[column][row] = -1;
+							break;
+						case 32:
+							g_tetlisBoard[column][row] -= 1;
+							g_durableBlockBeared[column][row] = 1;
+							break;
+						case 31:
+							g_tetlisBoard[column][row]  = -1;
+							break;
+						}
+
+						break;
+					case 3:
+						g_tetlisBoard[column][row] = -1;
+						break;
+					case 4:
+						g_tetlisBoard[column][row] = -1;
+						break;
+					}
+				}
+			}
+
+			else
+			{
+				g_tetlisBoard[column][row] = -1;
+			}
 		}
 	}
 
@@ -1003,30 +1060,6 @@ VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalD
 	return;
 }
 
-VOID CountDeletedLine(VOID)
-{
-	g_deletedLineCount = 0;
-
-	for (INT column = 19; column < TETLIS_HEIGHT - 2; column++)
-	{
-		if (!(g_tetlisBoardBuf[column][1] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][2] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][3] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][4] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][5] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][6] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][7] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][8] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][9] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][10] % 100 >= 10))
-		{
-			g_deletedLineCount++;
-		}
-	}
-
-	return;
-}
-
 VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row)
 {
 	if (!(g_durableBlockBeared[column][row] == 1))
@@ -1054,6 +1087,30 @@ VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row)
 					}
 				}
 			}
+		}
+	}
+
+	return;
+}
+
+VOID CountDeletedLine(VOID)
+{
+	g_deletedLineCount = 0;
+
+	for (INT column = 19; column < TETLIS_HEIGHT - 2; column++)
+	{
+		if (!(g_tetlisBoardBuf[column][1] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][2] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][3] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][4] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][5] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][6] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][7] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][8] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][9] % 100 >= 10 ||
+			g_tetlisBoardBuf[column][10] % 100 >= 10))
+		{
+			g_deletedLineCount++;
 		}
 	}
 
