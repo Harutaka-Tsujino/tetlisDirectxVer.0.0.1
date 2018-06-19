@@ -27,6 +27,9 @@ VOID InitTetlisBoardBuf(VOID);
 //ホールド、ネクスト、ネクストネクストを初期化する関数
 VOID InitNextAndNextNext(BOOL *isNewGame);
 
+//g_durableBlockBearedを初期化する関数
+VOID InitDurableBlockBeared(VOID);
+
 //ホールド、ネクスト、ネクストネクストボードの中身を更新する関数
 VOID UpdateHoldNextNextNextBoard(VOID);
 
@@ -76,6 +79,12 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine);
 
 //消されたテトリスのライン部分にずらす関数
 VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine);
+
+//耐久値ブロックが関わったブロックずらしをする関数
+VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row);
+
+//消されたテトリスのラインを数える関数
+VOID CountDeletedLine(VOID);
 
 //テトリスのスコアに関する関数
 VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf);
