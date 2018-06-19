@@ -917,7 +917,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					g_tetlisBoard[column][row] = -1;
 				}
 			}
-
+			
 			*lineCount += 1;
 		}
 	}
@@ -1042,7 +1042,7 @@ VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row)
 			{
 				if (g_tetlisBoardBuf[coordinateY][coordinateX] != -1)
 				{
-					for (INT numOfArY = column; numOfArY < TETLIS_HEIGHT - 2; numOfArY++)
+					for (INT numOfArY = coordinateY + 1; numOfArY < TETLIS_HEIGHT - 2; numOfArY++)
 					{
 						if (g_tetlisBoardBuf[numOfArY][coordinateX] != -1)
 						{
