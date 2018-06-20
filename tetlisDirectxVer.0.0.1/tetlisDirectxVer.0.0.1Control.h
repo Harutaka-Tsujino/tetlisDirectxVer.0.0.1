@@ -41,7 +41,7 @@ VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino);
 
 //テトリスに関するデータを初期状態に戻す関数
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
-	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount);
+	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount, BOOL *deletedLine, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine);
 
 //テトリミノを生成に関する関数
 VOID CreateTetlimino(INT currentTetmino, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputRA, 
@@ -49,6 +49,9 @@ VOID CreateTetlimino(INT currentTetmino, BOOL *canInputLA, BOOL *canInputDA, BOO
 
 //キー入力をカウントをとり可能にする関数
 VOID CountToMakeFlagTrue(BOOL *canInputLA, INT *lACount);
+
+//フラグをカウントをとりオフにする関数
+VOID CountToMakeFlagFalse(BOOL *canInputLA, INT *lACount);
 
 //テトリミノをホールドすることに関する関数
 VOID HoldTetlimino(BOOL *canHold, INT *currentTetmino, BOOL *canCreate, BOOL *wasHold);
@@ -75,7 +78,7 @@ VOID CountToDawnTetlimino(INT *downCount);
 VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, BOOL *canHold, BOOL *wasHold);
 
 //そろったテトリスのラインを消しカウントをとる関数
-VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine);
+VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine,BOOL *deletedLine);
 
 //消されたテトリスのライン部分にずらす関数
 VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine);
