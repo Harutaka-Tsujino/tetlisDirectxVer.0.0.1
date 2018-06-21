@@ -926,6 +926,22 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 	INT firstDeletedColumn = 0;
 	BOOL isFirstDeletedLine = true;
+	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
+	{
+		if (g_tetlisBoardBuf[column][1] % 100 != -1 &&
+			g_tetlisBoardBuf[column][2] % 100 != -1 &&
+			g_tetlisBoardBuf[column][3] % 100 != -1 &&
+			g_tetlisBoardBuf[column][4] % 100 != -1 &&
+			g_tetlisBoardBuf[column][5] % 100 != -1 &&
+			g_tetlisBoardBuf[column][6] % 100 != -1 &&
+			g_tetlisBoardBuf[column][7] % 100 != -1 &&
+			g_tetlisBoardBuf[column][8] % 100 != -1 &&
+			g_tetlisBoardBuf[column][9] % 100 != -1 &&
+			g_tetlisBoardBuf[column][10] % 100 != -1)
+		{
+			*lineCount += 1;
+		}
+	}
 
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
