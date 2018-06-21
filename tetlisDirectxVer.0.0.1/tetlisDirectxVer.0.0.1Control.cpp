@@ -579,7 +579,9 @@ VOID HoldTetlimino(BOOL *canHold, INT *currentTetmino, BOOL *canCreate, BOOL *wa
 		if (g_hold == -1)
 		{
 			g_hold = *currentTetmino;
-			*currentTetmino = rand() % 7;
+			*currentTetmino = g_next;
+			g_next = g_nextNext;
+			g_nextNext = rand() % 7;
 		}
 
 		else
