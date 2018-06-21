@@ -1048,7 +1048,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 							g_reduceBlockDurPosition[column][row] = 1;
 							break;
 						case 32:
-							g_tetlisBoard[column][row] -= 1;
+							g_tetlisBoard[column][row] -= 2;
 							g_durableBlockBeared[column][row] = 1;
 							g_reduceBlockDurPosition[column][row] = 1;
 							break;
