@@ -1174,16 +1174,16 @@ VOID CountDeletedLine(VOID)
 
 	for (INT column = 19; column < TETLIS_HEIGHT - 2; column++)
 	{
-		if (!(g_tetlisBoardBuf[column][1] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][2] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][3] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][4] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][5] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][6] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][7] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][8] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][9] % 100 >= 10 ||
-			g_tetlisBoardBuf[column][10] % 100 >= 10))
+		if (!(g_tetlisBoardBuf[column][1] % 100 == 10 ||
+			g_tetlisBoardBuf[column][2] % 100 == 10 ||
+			g_tetlisBoardBuf[column][3] % 100 == 10 ||
+			g_tetlisBoardBuf[column][4] % 100 == 10 ||
+			g_tetlisBoardBuf[column][5] % 100 == 10 ||
+			g_tetlisBoardBuf[column][6] % 100 == 10 ||
+			g_tetlisBoardBuf[column][7] % 100 == 10 ||
+			g_tetlisBoardBuf[column][8] % 100 == 10 ||
+			g_tetlisBoardBuf[column][9] % 100 == 10 ||
+			g_tetlisBoardBuf[column][10] % 100 == 10))
 		{
 			g_deletedLineCount++;
 		}
