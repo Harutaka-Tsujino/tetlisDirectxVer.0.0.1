@@ -41,6 +41,12 @@ VOID SetFocusOfViewOverall(VOID);
 //背景を描画する関数
 VOID RenderBackground(VOID);
 
+//ラインが消された時のエフェクトを描画する関数
+VOID SetDeletedLineEffectTextureAndRender(VOID);
+
+//カウントによりエフェクトのアニメーション用の設定を行う関数
+VOID CauntToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCaunt, CustomVertex *cusV4DeletedLineEffect);
+
 //額縁を描画する関数
 VOID RnderFrame(VOID);
 

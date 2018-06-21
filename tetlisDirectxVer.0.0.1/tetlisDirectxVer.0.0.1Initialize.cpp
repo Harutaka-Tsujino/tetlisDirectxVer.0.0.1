@@ -161,6 +161,11 @@ VOID CreateTextureFromFile(VOID)
 		"block_integrated_illust_HT.png",
 		&g_pTexture[g_integratedBlockTex]);
 
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"deletedLine.png",
+		&g_pTexture[g_reduceBlockDurTex]);
+
 	return;
 }
 

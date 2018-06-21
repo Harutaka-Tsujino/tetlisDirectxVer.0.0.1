@@ -53,6 +53,7 @@ enum TEX
 	g_tetminoIronTex,
 	g_tetminoTarTex,
 	g_integratedBlockTex,
+	g_reduceBlockDurTex,
 	g_texMax
 };
 

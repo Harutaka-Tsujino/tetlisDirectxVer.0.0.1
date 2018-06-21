@@ -10,15 +10,19 @@
 #include "tetlisDirectxVer.0.0.1Common.h"
 #include "tetlisDirectxVer.0.0.1Initialize.h"
 #include "tetlisDirectxVer.0.0.1Render.h"
+#include "tetlisDirectxVer.0.0.1Control.h"
 #include <d3dx9.h>
 
 ImageState g_tetminoState = { 0.f, 0.f, 30.f / 2, 30.f / 2 };
+ImageState g_deletedLineEffectState = { 545.f,0.f,150.f,15.f };
 ImageState g_gameoverStrState = { 990,790,800.f, 450.f };
 ImageState g_scoreStrState = { 800.f,790.f,400.f, 225.f };
 ImageState g_undergroundStrState = { 800.f,500.f,400.f, 225.f };
 
 VOID Render(VOID)//////////////////////////////////////////////////////////////////////////////////
 {
+	static INT toDeleteTargetBlockCount = 0, prevDeletedLineState;
+
 	//////////////////////////////////////////////
 	//視点位置の設定、最後に絶対座標への変換を行う
 	SetViewPointOverall();
@@ -33,17 +37,40 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	//描画開始
 	g_pD3dDevice->BeginScene();
 
-	////////////
-	//背景の描画
+
 	RenderBackground();
 
 	/////////////////////////////////////////////////////////////////
 	//テトリスブロックの４頂点をtetlisBoardの配列番号を用いて設定する
 	SetBlockVerticesAndRender();
+	
+	if (!prevDeletedLineState)
+	{
+		if (g_deletedLine)
+		{
+			toDeleteTargetBlockCount = 0;
+		}
+	}
 
-	//////////////////////////////////////////
-	//テトリミノターゲットの４頂点を設定、描画
-	SetTetliminoTargetTextureAndRender();
+	if (!g_deletedLine && !(0 < toDeleteTargetBlockCount&&toDeleteTargetBlockCount < 30))
+	{
+		//////////////////////////////////////////
+		//テトリミノターゲットの４頂点を設定、描画
+		SetTetliminoTargetTextureAndRender();
+	}
+
+	else
+	{
+		toDeleteTargetBlockCount++;
+		if (toDeleteTargetBlockCount == 30)
+		{
+			toDeleteTargetBlockCount = 0;
+		}
+	}
+
+	//////////////////////////////////////////////
+	//ラインが消された時のエフェクトを描画する関数
+	SetDeletedLineEffectTextureAndRender();
 
 	////////////
 	//額縁の描画
@@ -70,6 +97,8 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 
 	//画面表示が行われたことをバックバッファーに伝える
 	g_pD3dDevice->Present(NULL, NULL, NULL, NULL);
+
+	prevDeletedLineState = g_deletedLine;
 
 	return;
 }
@@ -113,8 +142,6 @@ VOID RenderBackground(VOID)
 
 VOID SetBlockVerticesAndRender(VOID)
 {
-	
-
 	for (int column = 0; column < TETLIS_HEIGHT; column++)
 	{
 		for (int row = 0; row < TETLIS_WIDTH; row++)
@@ -275,7 +302,7 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4Tetmino)
 		{	
 			DWORD alpha = 255 - 4 * frameCount;
 
-			(cusV4Tetmino + coordinate)->color &= 0xffffff;
+			(cusV4Tetmino + coordinate)->color &= 0x00ffffff;
 			(cusV4Tetmino + coordinate)->color += alpha * 0x1000000;
 		}
 	}
@@ -286,7 +313,7 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4Tetmino)
 		{
 			DWORD alpha = 4 * frameCount;
 			
-			(cusV4Tetmino + coordinate)->color &= 0xffffff;
+			(cusV4Tetmino + coordinate)->color &= 0x00ffffff;
 			(cusV4Tetmino + coordinate)->color += alpha * 0x1000000;
 		}
 
@@ -297,6 +324,86 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4Tetmino)
 	}
 
 	frameCount++;
+
+	return;
+}
+
+VOID SetDeletedLineEffectTextureAndRender(VOID)
+{
+	if (g_deletedLine)
+	{
+		INT additionalDeletedEffectScale = 0;
+		static INT deletedLineEffectCaunt = 0;
+
+		CustomVertex cusV4DeletedLineEffect[4]
+		{
+			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y + g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y + g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+		};
+		
+		///////////////////////////////////////////////////
+		//カウントを用いアニメーションを行うための設定を行う
+		CauntToAnimation(&additionalDeletedEffectScale, &deletedLineEffectCaunt, cusV4DeletedLineEffect);
+
+		for (INT column = 0; column < TETLIS_HEIGHT; column++)
+		{
+			if (g_reduceBlockDurPosition[column][1] ||
+				g_reduceBlockDurPosition[column][2] ||
+				g_reduceBlockDurPosition[column][3] ||
+				g_reduceBlockDurPosition[column][4] ||
+				g_reduceBlockDurPosition[column][5] ||
+				g_reduceBlockDurPosition[column][6] ||
+				g_reduceBlockDurPosition[column][7] ||
+				g_reduceBlockDurPosition[column][8] ||
+				g_reduceBlockDurPosition[column][9] ||
+				g_reduceBlockDurPosition[column][10])
+			{
+				g_deletedLineEffectState.xScale =15.f + additionalDeletedEffectScale;
+
+				cusV4DeletedLineEffect[0].x = 560.f - g_deletedLineEffectState.xScale;
+				cusV4DeletedLineEffect[0].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[1].x = 560.f + g_deletedLineEffectState.xScale;
+				cusV4DeletedLineEffect[1].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[2].x = 560.f + g_deletedLineEffectState.xScale;
+				cusV4DeletedLineEffect[2].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[3].x = 560.f - g_deletedLineEffectState.xScale;
+				cusV4DeletedLineEffect[3].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + g_deletedLineEffectState.yScale;
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_reduceBlockDurTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4DeletedLineEffect, sizeof(CustomVertex));
+			}
+		}
+	}
+
+	return;
+}
+
+VOID CauntToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCaunt, CustomVertex *cusV4DeletedLineEffect)
+{
+	if (g_deletedLine)
+	{
+		*additionalDeletedEffectScale = 10 * (*deletedLineEffectCaunt);
+
+		if ((*additionalDeletedEffectScale) > 150)
+		{
+			*additionalDeletedEffectScale = 150;
+		}
+
+		for (INT coordinate = 0; coordinate < 4; coordinate++)
+		{
+			(cusV4DeletedLineEffect + coordinate)->color &= 0x00FFFFFF;
+			(cusV4DeletedLineEffect + coordinate)->color += (0xFF - 8 * (*deletedLineEffectCaunt)) << 24;
+		}
+
+		*deletedLineEffectCaunt += 1;
+		if (*deletedLineEffectCaunt == 30)
+		{
+			*additionalDeletedEffectScale = 0;
+			*deletedLineEffectCaunt = 0;
+		}
+	}
 
 	return;
 }
@@ -373,8 +480,8 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 		{
 			if (g_holdBoard[coordinateY][coordinateX] != -1)
 			{
-				cusV4Tetmino[0].x= 235.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[0].y= 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[0].x = 235.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
+				cusV4Tetmino[0].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[1].x = 235.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
 				cusV4Tetmino[1].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[2].x = 235.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
