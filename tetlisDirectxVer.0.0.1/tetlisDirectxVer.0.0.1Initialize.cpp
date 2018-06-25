@@ -166,6 +166,11 @@ VOID CreateTextureFromFile(VOID)
 		"deletedLine.png",
 		&g_pTexture[g_reduceBlockDurTex]);
 
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"circuleEffect.png",
+		&g_pTexture[g_circuleEffectTex]);
+
 	return;
 }
 

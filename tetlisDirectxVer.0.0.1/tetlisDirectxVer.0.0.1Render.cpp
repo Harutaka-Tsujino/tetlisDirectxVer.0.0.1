@@ -62,7 +62,7 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	else
 	{
 		toDeleteTargetBlockCount++;
-		if (toDeleteTargetBlockCount == 30)
+		if (toDeleteTargetBlockCount == 45)
 		{
 			toDeleteTargetBlockCount = 0;
 		}
@@ -142,6 +142,55 @@ VOID RenderBackground(VOID)
 
 VOID SetBlockVerticesAndRender(VOID)
 {
+	static INT swellingUp = 0;
+	static INT swellingUpCount = 0;
+	static INT prevDeletedLineCount = 0;
+	static INT differenceDeletedLineCount = 0;
+
+	INT deletedLineCount = 0;
+
+	for (INT column = 19; column < TETLIS_HEIGHT - 2; column++)
+	{
+		if (!(g_tetlisBoardBuf[column][1] % 100 == 10 ||
+			g_tetlisBoardBuf[column][2] % 100 == 10 ||
+			g_tetlisBoardBuf[column][3] % 100 == 10 ||
+			g_tetlisBoardBuf[column][4] % 100 == 10 ||
+			g_tetlisBoardBuf[column][5] % 100 == 10 ||
+			g_tetlisBoardBuf[column][6] % 100 == 10 ||
+			g_tetlisBoardBuf[column][7] % 100 == 10 ||
+			g_tetlisBoardBuf[column][8] % 100 == 10 ||
+			g_tetlisBoardBuf[column][9] % 100 == 10 ||
+			g_tetlisBoardBuf[column][10] % 100 == 10))
+		{
+			deletedLineCount++;
+		}
+	}
+
+	if (!(g_deletedLine))
+	{
+		prevDeletedLineCount = deletedLineCount;
+	}
+	
+	if (g_deletedLine && (swellingUpCount == 0))
+	{
+		differenceDeletedLineCount = deletedLineCount - prevDeletedLineCount;
+	}
+
+	if (g_deletedLine)
+	{
+		swellingUpCount++;
+		if ((swellingUpCount > 30) && (swellingUp < differenceDeletedLineCount * 30))
+		{
+			swellingUp += 15;
+		}
+	}
+
+	else
+	{
+		swellingUpCount = 0;
+		swellingUp = 0;
+	}
+
 	for (int column = 0; column < TETLIS_HEIGHT; column++)
 	{
 		for (int row = 0; row < TETLIS_WIDTH; row++)
@@ -157,13 +206,13 @@ VOID SetBlockVerticesAndRender(VOID)
 			if ((g_tetlisBoard[column][row] != -1) && (g_tetlisBoard[column][row] != 9))
 			{
 				cusV4Tetmino[0].x = 395.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[0].y = -35.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[0].y = -35.f-swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[1].x = 395.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				cusV4Tetmino[1].y = -35.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].y = -35.f- swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[2].x = 395.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				cusV4Tetmino[2].y = -35.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[2].y = -35.f- swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				cusV4Tetmino[3].x = 395.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[3].y = -35.f + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].y = -35.f- swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 			
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_integratedBlockTex]);
 				
@@ -330,22 +379,25 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4Tetmino)
 
 VOID SetDeletedLineEffectTextureAndRender(VOID)
 {
-	if (g_deletedLine)
+	static INT renderEffectCount = 0;
+
+	if (g_deletedLine && (renderEffectCount < 30))
 	{
 		INT additionalDeletedEffectScale = 0;
-		static INT deletedLineEffectCaunt = 0;
+		static INT deletedLineEffectCount = 0;
 
 		CustomVertex cusV4DeletedLineEffect[4]
 		{
+
 			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
 			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
 			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y + g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
 			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y + g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
 		};
-		
+
 		///////////////////////////////////////////////////
 		//カウントを用いアニメーションを行うための設定を行う
-		CauntToAnimation(&additionalDeletedEffectScale, &deletedLineEffectCaunt, cusV4DeletedLineEffect);
+		CountToAnimation(&additionalDeletedEffectScale, &deletedLineEffectCount, cusV4DeletedLineEffect);
 
 		for (INT column = 0; column < TETLIS_HEIGHT; column++)
 		{
@@ -360,7 +412,7 @@ VOID SetDeletedLineEffectTextureAndRender(VOID)
 				g_reduceBlockDurPosition[column][9] ||
 				g_reduceBlockDurPosition[column][10])
 			{
-				g_deletedLineEffectState.xScale =15.f + additionalDeletedEffectScale;
+				g_deletedLineEffectState.xScale = 15.f + additionalDeletedEffectScale;
 
 				cusV4DeletedLineEffect[0].x = 560.f - g_deletedLineEffectState.xScale;
 				cusV4DeletedLineEffect[0].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
@@ -375,16 +427,130 @@ VOID SetDeletedLineEffectTextureAndRender(VOID)
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4DeletedLineEffect, sizeof(CustomVertex));
 			}
 		}
+
+		CustomVertex cusV4DeletedCirculeEffect[4]
+		{
+			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y + g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y + g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+		};
+
+		typedef struct
+		{
+			INT effectDeflectionalScale[16];
+			INT effectDeflectionalPosX[16];
+			INT effectDeflectionalPosY[16];
+			INT effectDeflectionalDegree[16];
+			INT effectDeflectionalAppearanceTime[16];
+		}EffectDeflection;
+
+		static EffectDeflection effectDeflection[11];
+
+		static INT isFirstFrame, circuleEffectCount = 0;
+
+		if (!circuleEffectCount)
+		{
+			isFirstFrame = true;
+		}
+
+		else
+		{
+			isFirstFrame = false;
+		}
+
+		if (isFirstFrame)
+		{
+			for (INT line = 0; line < 11; line++)
+			{
+				for (INT effect = 0; effect < 16; effect++)
+				{
+					(effectDeflection + line)->effectDeflectionalScale[effect] = rand() % 7 + 10;
+					(effectDeflection + line)->effectDeflectionalPosX[effect] = rand() % 290;
+					(effectDeflection + line)->effectDeflectionalPosY[effect] = rand() % 20;
+					(effectDeflection + line)->effectDeflectionalDegree[effect] = rand() % 180;
+					(effectDeflection + line)->effectDeflectionalAppearanceTime[effect] = rand() % 12;
+				}
+			}
+
+			isFirstFrame = false;
+		}
+
+		INT line = 0;
+
+		for (INT column = 0; column < TETLIS_HEIGHT; column++)
+		{
+			if (g_reduceBlockDurPosition[column][1] ||
+				g_reduceBlockDurPosition[column][2] ||
+				g_reduceBlockDurPosition[column][3] ||
+				g_reduceBlockDurPosition[column][4] ||
+				g_reduceBlockDurPosition[column][5] ||
+				g_reduceBlockDurPosition[column][6] ||
+				g_reduceBlockDurPosition[column][7] ||
+				g_reduceBlockDurPosition[column][8] ||
+				g_reduceBlockDurPosition[column][9] ||
+				g_reduceBlockDurPosition[column][10])
+			{
+				for (INT effect = 0; effect < 16; effect++)
+				{
+					cusV4DeletedCirculeEffect->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) - (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					cusV4DeletedCirculeEffect->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					(cusV4DeletedCirculeEffect + 1)->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) - (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					(cusV4DeletedCirculeEffect + 1)->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					(cusV4DeletedCirculeEffect + 2)->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) - ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					(cusV4DeletedCirculeEffect + 2)->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					(cusV4DeletedCirculeEffect + 3)->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) - ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+					(cusV4DeletedCirculeEffect + 3)->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180) + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] *PI / 180);
+
+					DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
+
+					cusV4DeletedCirculeEffect->color = randomColor;
+					(cusV4DeletedCirculeEffect + 1)->color = randomColor;
+					(cusV4DeletedCirculeEffect + 2)->color = randomColor;
+					(cusV4DeletedCirculeEffect + 3)->color = randomColor;
+
+					INT timeFromAppearance = (circuleEffectCount - (effectDeflection + line)->effectDeflectionalAppearanceTime[effect]);
+
+					if ((0 <= timeFromAppearance) && (timeFromAppearance <= 17))
+					{
+						cusV4DeletedCirculeEffect->tu = ((timeFromAppearance / 3) * 64) / 512.f;
+						(cusV4DeletedCirculeEffect + 1)->tu = (((timeFromAppearance / 3 + 1) * 64) - 1) / 512.f;
+						(cusV4DeletedCirculeEffect + 2)->tu = (((timeFromAppearance / 3 + 1) * 64) - 1) / 512.f;
+						(cusV4DeletedCirculeEffect + 3)->tu = ((timeFromAppearance / 3) * 64) / 512.f;
+						g_pD3dDevice->SetTexture(0, g_pTexture[g_circuleEffectTex]);
+						g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4DeletedCirculeEffect, sizeof(CustomVertex));
+					}
+				}
+				line++;
+			}
+		}
+
+		circuleEffectCount++;
+		if (circuleEffectCount == 30)
+		{
+			circuleEffectCount = 0;
+			isFirstFrame = true;
+		}
+	}
+
+	if (g_deletedLine)
+	{
+		renderEffectCount++;
+	}
+
+	else
+	{
+		renderEffectCount = 0;
 	}
 
 	return;
 }
 
-VOID CauntToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCaunt, CustomVertex *cusV4DeletedLineEffect)
+VOID CountToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCount, CustomVertex *cusV4DeletedLineEffect)
 {
 	if (g_deletedLine)
 	{
-		*additionalDeletedEffectScale = 10 * (*deletedLineEffectCaunt);
+		*additionalDeletedEffectScale = 10 * (*deletedLineEffectCount);
 
 		if ((*additionalDeletedEffectScale) > 150)
 		{
@@ -394,14 +560,14 @@ VOID CauntToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectC
 		for (INT coordinate = 0; coordinate < 4; coordinate++)
 		{
 			(cusV4DeletedLineEffect + coordinate)->color &= 0x00FFFFFF;
-			(cusV4DeletedLineEffect + coordinate)->color += (0xFF - 8 * (*deletedLineEffectCaunt)) << 24;
+			(cusV4DeletedLineEffect + coordinate)->color += (0xFF - 8 * (*deletedLineEffectCount)) << 24;
 		}
 
-		*deletedLineEffectCaunt += 1;
-		if (*deletedLineEffectCaunt == 30)
+		*deletedLineEffectCount += 1;
+		if (*deletedLineEffectCount == 30)
 		{
 			*additionalDeletedEffectScale = 0;
-			*deletedLineEffectCaunt = 0;
+			*deletedLineEffectCount = 0;
 		}
 	}
 

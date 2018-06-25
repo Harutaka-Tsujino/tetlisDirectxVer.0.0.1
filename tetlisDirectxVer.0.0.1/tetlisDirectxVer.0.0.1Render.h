@@ -45,7 +45,7 @@ VOID RenderBackground(VOID);
 VOID SetDeletedLineEffectTextureAndRender(VOID);
 
 //カウントによりエフェクトのアニメーション用の設定を行う関数
-VOID CauntToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCaunt, CustomVertex *cusV4DeletedLineEffect);
+VOID CountToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCaunt, CustomVertex *cusV4DeletedLineEffect);
 
 //額縁を描画する関数
 VOID RnderFrame(VOID);

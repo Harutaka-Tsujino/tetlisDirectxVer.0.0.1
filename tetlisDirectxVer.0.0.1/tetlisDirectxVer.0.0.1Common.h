@@ -35,6 +35,7 @@
 #define GAMEOVER_COLOR (0xFF000000)
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)
+#define PI 3.141592
 
 enum TEX
 {
@@ -54,6 +55,7 @@ enum TEX
 	g_tetminoTarTex,
 	g_integratedBlockTex,
 	g_reduceBlockDurTex,
+	g_circuleEffectTex,
 	g_texMax
 };
 

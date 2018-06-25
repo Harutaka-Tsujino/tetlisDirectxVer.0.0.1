@@ -16,6 +16,7 @@ BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 INT g_deletedLine = false;
+INT g_deletedLineNum = 0;
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
@@ -37,7 +38,7 @@ VOID Control(VOID)
 		//生成されるのテトリミノ種類を決める
 		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0, prevRKeyState, prevSpaceKeyState, currentTetmino = rand() % 7, prevDeletedLineCount = 0, deletedLineCount = 0;
 		
-		static INT lineCount = 0, additionalDeletableLine = 0;
+		static INT additionalDeletableLine = 0;
 
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 };
 
@@ -50,7 +51,7 @@ VOID Control(VOID)
 			///////////////////////////////////////////////////////////////////////////
 			//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
 			ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
-				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &prevDeletedLineCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &prevDeletedLineCount, &deletedLineCount, &additionalDeletableLine);
 		}
 
 		if (isGameover)
@@ -212,29 +213,32 @@ VOID Control(VOID)
 				//そろっている列があるか確認しカウントをとる
 				//////////////////////////////////////////////////////////////////////////////
 				//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合空欄にする
-				DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
+				DeleteAndCountFilledLine(&additionalDeletableLine);
 
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 				SynchroTetlisBoardBufToTetlisBoard();
 
 				/////////////////////////////////////////////////////////////////////////////////
-				//lineCountの値によってscoreBufの増やす値を変え、文字列にしg_scoreArrayに代入する
-				GetScoreByLineCount(lineCount, &scoreBuf);
+				//g_deletedLineNumの値によってscoreBufの増やす値を変え、文字列にしg_scoreArrayに代入する
+				GetScoreByLineCount( &scoreBuf);
 
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 				SynchroTetlisBoardBufToTetlisBoard();
-
 			}
 
-			if (deletedLineCount == 29)
+			///////////////////////////////////////////////////////
+			//フラグがtrueならば、カウントをとりフラグをfalseにする
+			CountToMakeFlagFalse(&deletedLineCount);
+
+			if (deletedLineCount == 60)
 			{
 				//そろった列を空欄にして下にずらしている
 				/////////////////////////////////////////////////////////////////////////////////////////////
 				//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
 				//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-				ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
+				ShiftTetlisLine(&prevDeletedLineCount, &additionalDeletableLine);
 
 				//////////////////////////////////////////////////
 				//いくつ初期状態からラインを消されたか確認する関数
@@ -247,36 +251,32 @@ VOID Control(VOID)
 
 			if (deletedLineCount == 0)
 			{
+				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+				SynchroTetlisBoardBufToTetlisBoard();
+
 				////////////////////////////////////////
 				//ハードドロップと同じ原理を利用している
 				SetTetliminoTarget();
+
+				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+				SynchroTetlisBoardBufToTetlisBoard();
+
+				////////////////////////////////////////////////////////////////////////////////////////
+				//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
+				CheckGameover(&isGameover);
 			}
 
 			//キー入力状態を保存
 			prevRKeyState = diks[DIK_R] & 0x80;
 			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
-			
-			////////////////////////////////////////////////////////////////////////////////////////
-			//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
-			CheckGameover(&isGameover);
-
-			memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-			SynchroTetlisBoardBufToTetlisBoard();
 
 			//ホールド時にブロックが表示されているので消す
 			if (wasHold)
 			{
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 			}
-
-			///////////////////////////////////////////////////////
-			//フラグがtrueならば、カウントをとりフラグをfalseにする
-			CountToMakeFlagFalse(&deletedLineCount);
-
-			memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-			SynchroTetlisBoardBufToTetlisBoard();
 		}
 	}
 
@@ -467,7 +467,7 @@ VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino)
 }
 
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
-	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine)
+	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount, INT *deletedLineCount, INT *additionalDeletableLine)
 {
 	g_showGameoverStr = false;
 	*isGameover = false;
@@ -494,7 +494,7 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 	*prevDeletedLineCount = 0;
 	g_deletedLine = false;
 	*deletedLineCount = 0;
-	*lineCount = 0;
+	g_deletedLineNum = 0;
 	*additionalDeletableLine = 0;
 
 	InitTetlisBoard();
@@ -508,13 +508,24 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 VOID CreateTetlimino(INT currentTetmino, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputRA,
 	BOOL *canInputR, BOOL *canInputSpace, BOOL *wasHold, INT *stopCount, INT *downCount,INT *minoIRoatationCount, BOOL *canCreate)
 {
+	INT shiftY = 0;
+
 	if (*canCreate)
 	{
 		for (INT block = 0; block < 4; block++)
 		{
 			for (INT YX = 0; YX < 2; YX++)
 			{
-				g_movMinoNumOfArBuf.YX[block][YX] = g_tetmino[currentTetmino].yx[block][YX];
+				if (YX == 0)
+				{
+					shiftY = g_deletedLineCount;
+				}
+				else
+				{
+					shiftY = 0;
+				}
+
+				g_movMinoNumOfArBuf.YX[block][YX] = g_tetmino[currentTetmino].yx[block][YX] + shiftY;
 			}
 		}
 
@@ -539,7 +550,8 @@ VOID CountToMakeFlagTrue(BOOL *canInputLA,INT *lACount)
 	if (*canInputLA == 0)
 	{
 		*lACount += 1;
-		if (*lACount == SHIFT_FRAME_COUNTER)
+
+		if (*lACount == SHIFT_FRAME_COUNTER+1)
 		{
 			*canInputLA = true;
 			*lACount = 0;
@@ -554,7 +566,8 @@ VOID CountToMakeFlagFalse(INT *lACount)
 	if (g_deletedLine == 1)
 	{
 		*lACount += 1;
-		if (*lACount == 30)
+
+		if (*lACount == 60+1)
 		{
 			g_deletedLine = false;
 			*lACount = 0;
@@ -861,7 +874,9 @@ VOID CountToDawnTetlimino(INT *downCount)
 		(g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[2][0] + 1][g_movMinoNumOfArBuf.YX[2][1]] == -1) &&
 		(g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[3][0] + 1][g_movMinoNumOfArBuf.YX[3][1]] == -1))
 	{
-		if (*downCount == FLAME_PER_DOWN)
+		*downCount += 1;
+
+		if (*downCount == FLAME_PER_DOWN+1)
 		{
 			for (int block = 0; block < 4; block++)
 			{
@@ -870,8 +885,6 @@ VOID CountToDawnTetlimino(INT *downCount)
 
 			*downCount = 0;
 		}
-		
-		*downCount += 1;
 	}
 
 	return;
@@ -885,7 +898,7 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 		(g_tetlisBoardBuf[g_movMinoNumOfArBuf.YX[3][0] + 1][g_movMinoNumOfArBuf.YX[3][1]] != -1))
 	{
 		*stopCount += 1;
-		if (*stopCount == FLAME_PER_STOP)
+		if (*stopCount == FLAME_PER_STOP+1)
 		{
 			for (INT column = 0; column < TETLIS_HEIGHT; column++)
 			{
@@ -921,7 +934,7 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 	return;
 }
 
-VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
+VOID DeleteAndCountFilledLine(INT *additionalDeletableLine)
 {
 	InitDurableBlockBeared();
 	InitReduceBlockPosition();
@@ -941,7 +954,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 			g_tetlisBoardBuf[column][9] % 100 != -1 &&
 			g_tetlisBoardBuf[column][10] % 100 != -1)
 		{
-			*lineCount += 1;
+			g_deletedLineNum += 1;
 		}
 	}
 
@@ -977,7 +990,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 					else
 					{
-						switch (*lineCount)
+						switch (g_deletedLineNum)
 						{
 						case 1:
 							switch (g_tetlisBoard[column][row] % 100)
@@ -1048,7 +1061,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 		}
 	}
 
-	switch (*lineCount)
+	switch (g_deletedLineNum)
 	{
 	case 1:
 		*additionalDeletableLine = 0;
@@ -1081,7 +1094,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 				else
 				{
-					switch (*lineCount)
+					switch (g_deletedLineNum)
 					{
 					case 1:
 						switch (g_tetlisBoard[column][row] % 100)
@@ -1148,9 +1161,9 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 	return;
 }
 
-VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine)
+VOID ShiftTetlisLine(INT *prevDeletedLineCount, INT *additionalDeletableLine)
 {
-	for (*prevDeletedLineCount = g_deletedLineCount; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount) + (*additionalDeletableLine); *prevDeletedLineCount += 1)
+	for (*prevDeletedLineCount = g_deletedLineCount; (*prevDeletedLineCount) < g_deletedLineCount + (g_deletedLineNum) + (*additionalDeletableLine); *prevDeletedLineCount += 1)
 	{
 		for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 		{
@@ -1181,7 +1194,7 @@ VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalD
 		}
 	}
 
-	prevDeletedLineCount -= (*lineCount) + (*additionalDeletableLine);
+	prevDeletedLineCount -= (g_deletedLineNum) + (*additionalDeletableLine);
 
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
@@ -1193,7 +1206,7 @@ VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalD
 		}
 	}
 
-	*lineCount = 0;
+	g_deletedLineNum = 0;
 	*additionalDeletableLine = 0;
 
 	return;
@@ -1256,9 +1269,9 @@ VOID CountDeletedLine(VOID)
 	return;
 }
 
-VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf)
+VOID GetScoreByLineCount(INT *scoreBuf)
 {
-	switch (lineCount)
+	switch (g_deletedLineNum)
 	{
 	case 1:
 		*scoreBuf += 40;
