@@ -151,16 +151,16 @@ VOID SetBlockVerticesAndRender(VOID)
 
 	for (INT column = 19; column < TETLIS_HEIGHT - 2; column++)
 	{
-		if (!(g_tetlisBoardBuf[column][1] % 100 == 10 ||
-			g_tetlisBoardBuf[column][2] % 100 == 10 ||
-			g_tetlisBoardBuf[column][3] % 100 == 10 ||
-			g_tetlisBoardBuf[column][4] % 100 == 10 ||
-			g_tetlisBoardBuf[column][5] % 100 == 10 ||
-			g_tetlisBoardBuf[column][6] % 100 == 10 ||
-			g_tetlisBoardBuf[column][7] % 100 == 10 ||
-			g_tetlisBoardBuf[column][8] % 100 == 10 ||
-			g_tetlisBoardBuf[column][9] % 100 == 10 ||
-			g_tetlisBoardBuf[column][10] % 100 == 10))
+		INT numOfDirt = 0;
+		for (INT row = 1; row < TETLIS_WIDTH - 2; row++)
+		{
+			if (g_tetlisBoardBuf[column][row] % 100 == 10)
+			{
+				numOfDirt++;
+			}
+		}
+
+		if (numOfDirt < 4)
 		{
 			deletedLineCount++;
 		}
@@ -183,12 +183,16 @@ VOID SetBlockVerticesAndRender(VOID)
 		{
 			swellingUp += 15;
 		}
+
+		if (swellingUpCount == 60)
+		{
+			swellingUp = 0;
+		}
 	}
 
 	else
 	{
 		swellingUpCount = 0;
-		swellingUp = 0;
 	}
 
 	for (int column = 0; column < TETLIS_HEIGHT; column++)
