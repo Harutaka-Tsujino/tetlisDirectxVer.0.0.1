@@ -31,12 +31,25 @@ MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 INT g_tetminoNum;
 INT g_deletedLineCount = 0;
 INT g_hold = -1, g_next, g_nextNext;
-INT g_tetlisBoardSource[3][TETLIS_WIDTH] =
+INT g_tetlisBoardSource[][TETLIS_WIDTH] =
 {
-	{9,110,110,110,-1,-1,110,121,110,110,-1,9},
-	{9,110,110,132,-1,110,110,110,110,110,110,9},
-	{9,110,-1,110,110,110,110,110,110,110,110,9}
+	{ 9,110,110,110,-1,-1,110,121,110,110,-1,9 },
+	{ 9,110,110,132,-1,110,110,110,110,110,110,9 },
+	{ 9,110,-1,110,110,110,110,110,110,110,110,9 },
+
+	{ 9,110,110,110,110,132,132,132,-1,110,110,9 },
+	{ 9,110,110,-1,110,132,160,132,110,110,110,9 },
+	{ 9,110,110,110,110,132,132,132,110,110,-1,9 },
+
+	{ 9,110,110,110,110,110,110,110,110,110,-1,9 },
+	{ 9,110,110,110,110,110,-1,-1,110,110,110,9 },
+	{ 9,110,-1,110,110,110,110,-1,110,110,110,9 },
+
+	{ 9,110,121,121,121,-1,110,-1,110,110,110,9 },
+	{ 9,110,110,110,110,-1,110,110,132,110,-1,9 },
+	{ 9,-1,-1,-1,132,110,110,110,110,110,110,9 }
 };
+
 INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 INT g_holdBoard[4][4];
@@ -44,6 +57,7 @@ INT g_nextBoard[4][4];
 INT g_nextNextBoard[4][4];
 
 BOOL g_showGameoverStr = false;
+BOOL g_hardDropedTetmino = false;
 
 CHAR g_scoreArray[8];
 CHAR g_undergroundArray[5];

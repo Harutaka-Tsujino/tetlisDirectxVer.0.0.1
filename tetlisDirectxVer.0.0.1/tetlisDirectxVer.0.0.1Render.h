@@ -41,6 +41,9 @@ VOID SetFocusOfViewOverall(VOID);
 //背景を描画する関数
 VOID RenderBackground(VOID);
 
+//ハードドロップが行われた時のエフェクトを描画する関数
+VOID SetHardDropEffectTextureAndRender(VOID);
+
 //ラインが消された時のエフェクトを描画する関数
 VOID SetDeletedLineEffectTextureAndRender(VOID);
 

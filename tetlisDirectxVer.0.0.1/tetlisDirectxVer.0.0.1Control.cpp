@@ -834,6 +834,7 @@ VOID HardDropTetlimino(VOID)
 			for (int block = 0; block < 4; block++)
 			{
 				g_movMinoNumOfArBuf.YX[block][0] += column - 1;
+				g_hardDropedTetmino = true;
 			}
 
 			break;

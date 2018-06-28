@@ -56,6 +56,7 @@ enum TEX
 	g_integratedBlockTex,
 	g_reduceBlockDurTex,
 	g_circuleEffectTex,
+	g_treasureBoxTex,
 	g_texMax
 };
 
@@ -87,7 +88,7 @@ extern MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 extern INT g_tetminoNum;
 extern INT g_deletedLineCount;
 extern INT g_hold, g_next, g_nextNext;
-extern INT g_tetlisBoardSource[3][TETLIS_WIDTH];
+extern INT g_tetlisBoardSource[][TETLIS_WIDTH];
 extern INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_holdBoard[4][4];
@@ -95,6 +96,7 @@ extern INT g_nextBoard[4][4];
 extern INT g_nextNextBoard[4][4];
 
 extern BOOL g_showGameoverStr;
+extern BOOL g_hardDropedTetmino;
 
 extern CHAR g_scoreArray[8];
 extern CHAR g_undergroundArray[5];

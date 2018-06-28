@@ -68,6 +68,10 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 		}
 	}
 
+	//////////////////////////////////////////
+	//ハードドロップのエフェクトを描画する関数
+	SetHardDropEffectTextureAndRender();
+
 	//////////////////////////////////////////////
 	//ラインが消された時のエフェクトを描画する関数
 	SetDeletedLineEffectTextureAndRender();
@@ -126,7 +130,7 @@ VOID SetFocusOfViewOverall(VOID)
 
 VOID RenderBackground(VOID)
 {
-	CustomVertex cusV4Background[4]
+	CustomVertex cusV4Background[4] =
 	{
 		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
 		{ 1280.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
@@ -136,6 +140,159 @@ VOID RenderBackground(VOID)
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_backgroundTex]);
 	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Background, sizeof(CustomVertex));
+
+	return;
+}
+
+VOID SetHardDropEffectTextureAndRender(VOID)
+{
+	static INT hardDropEffectCount = 0;
+	static MovMinoNumoOfArBuf hardDropNumofArBuf;
+	static INT InitDeflecton = false;
+	static BOOL installatedBlock[4] = { 0,0,0,0 };
+
+	typedef struct
+	{
+		INT deflectionalPosX;
+		INT deflectionalInitialVelocityY;
+		INT deflectionalInitialVelocityX;
+	}ParticleDeflection;
+
+	static ParticleDeflection particleDeflection[12 * 4];
+
+	if (g_hardDropedTetmino)
+	{
+		InitDeflecton = true;
+	}
+
+	if (InitDeflecton&&hardDropEffectCount == 0)
+	{
+		memcpy(&hardDropNumofArBuf, &g_movMinoNumOfArBuf, sizeof(MovMinoNumoOfArBuf));
+
+		for (INT effect = 0; effect < 12 * 4; effect++)
+		{
+			(particleDeflection + effect)->deflectionalPosX = rand() % 30;
+			(particleDeflection + effect)->deflectionalInitialVelocityY = rand() % 15+1;
+			(particleDeflection + effect)->deflectionalInitialVelocityX = rand() % 15 - 7;
+		}
+
+		if (g_tetlisBoardBuf[hardDropNumofArBuf.YX[0][0] + 1][hardDropNumofArBuf.YX[0][1]] != -1)
+		{
+			installatedBlock[0] = true;
+		}
+
+		if (g_tetlisBoardBuf[hardDropNumofArBuf.YX[1][0] + 1][hardDropNumofArBuf.YX[1][1]] != -1)
+		{
+			installatedBlock[1] = true;
+		}
+
+		if (g_tetlisBoardBuf[hardDropNumofArBuf.YX[2][0] + 1][hardDropNumofArBuf.YX[2][1]] != -1)
+		{
+			installatedBlock[2] = true;
+		}
+
+		if (g_tetlisBoardBuf[hardDropNumofArBuf.YX[3][0] + 1][hardDropNumofArBuf.YX[3][1]] != -1)
+		{
+			installatedBlock[3] = true;
+		}
+
+		hardDropEffectCount++;
+	}
+
+	if (hardDropEffectCount)
+	{
+		CustomVertex CusV3HardDropParticleEffect[3] =
+		{
+			{ 0.f,0.f,1.f,1.f,0xFFFFFFFF,0.5f,0.f },
+			{ 0.f,0.f,1.f,1.f,0xFFFFFFFF,1.f,1.f },
+			{ 0.f,0.f,1.f,1.f,0xFFFFFFFF,0.f,1.f }
+		};
+
+		static FLOAT accelY = 0;
+
+		InitDeflecton = false;
+
+		for (INT effect = 0; effect < 12; effect++)
+		{
+			if (installatedBlock[0] == 1)
+			{
+				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount-1));
+
+				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount-1));
+
+				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 0 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount-1));
+
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
+			}
+
+			if (installatedBlock[1] == 1)
+			{
+				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
+			}
+
+			if (installatedBlock[2] == 1)
+			{
+				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
+			}
+
+			if (installatedBlock[3] == 1)
+			{
+				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
+			}
+		}
+
+		g_hardDropedTetmino = false;
+		hardDropEffectCount++;
+		accelY += 0.7f;
+
+		if (hardDropEffectCount == 30 + 1)
+		{
+			hardDropEffectCount = 0;
+			accelY = 0;
+			installatedBlock[0] = false;
+			installatedBlock[1] = false;
+			installatedBlock[2] = false;
+			installatedBlock[3] = false;
+		}
+	}
 
 	return;
 }
@@ -195,11 +352,11 @@ VOID SetBlockVerticesAndRender(VOID)
 		swellingUpCount = 0;
 	}
 
-	for (int column = 0; column < TETLIS_HEIGHT; column++)
+	for (int column = 4; column < TETLIS_HEIGHT; column++)
 	{
 		for (int row = 0; row < TETLIS_WIDTH; row++)
 		{
-			CustomVertex cusV4Tetmino[4]
+			CustomVertex cusV4Tetmino[4] =
 			{
 				{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
 				{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
@@ -315,7 +472,7 @@ VOID SetBlockVerticesAndRender(VOID)
 
 VOID SetTetliminoTargetTextureAndRender(VOID)
 {
-	CustomVertex cusV4Tetmino[4]
+	CustomVertex cusV4Tetmino[4] =
 	{
 		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 2/512.f, 152/256.f },
 		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 50/512.f, 152/256.f },
@@ -390,7 +547,7 @@ VOID SetDeletedLineEffectTextureAndRender(VOID)
 		INT additionalDeletedEffectScale = 0;
 		static INT deletedLineEffectCount = 0;
 
-		CustomVertex cusV4DeletedLineEffect[4]
+		CustomVertex cusV4DeletedLineEffect[4] =
 		{
 
 			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
@@ -432,7 +589,7 @@ VOID SetDeletedLineEffectTextureAndRender(VOID)
 			}
 		}
 
-		CustomVertex cusV4DeletedCirculeEffect[4]
+		CustomVertex cusV4DeletedCirculeEffect[4] =
 		{
 			{ g_deletedLineEffectState.x - g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
 			{ g_deletedLineEffectState.x + g_deletedLineEffectState.xScale, g_deletedLineEffectState.y - g_deletedLineEffectState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
@@ -580,7 +737,7 @@ VOID CountToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectC
 
 VOID RnderFrame(VOID)
 {
-	CustomVertex cusV4Frame[4]
+	CustomVertex cusV4Frame[4] =
 	{
 		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
 		{ 1280.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
@@ -636,7 +793,7 @@ VOID RenderUndergroundStr(VOID)
 
 VOID SetHoldNextNextNextVerticesAndRender(VOID)
 {
-	CustomVertex cusV4Tetmino[4]
+	CustomVertex cusV4Tetmino[4] =
 	{
 		{ g_tetminoState.x - g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
 		{ g_tetminoState.x + g_tetminoState.xScale, g_tetminoState.y - g_tetminoState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },

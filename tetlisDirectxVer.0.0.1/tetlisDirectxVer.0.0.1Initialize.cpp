@@ -171,6 +171,11 @@ VOID CreateTextureFromFile(VOID)
 		"circuleEffect.png",
 		&g_pTexture[g_circuleEffectTex]);
 
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"treasureBox.png",
+		&g_pTexture[g_treasureBoxTex]);
+	
 	return;
 }
 
