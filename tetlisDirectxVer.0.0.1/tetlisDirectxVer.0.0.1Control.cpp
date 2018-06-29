@@ -36,7 +36,7 @@ VOID Control(VOID)
 		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputR = true, canInputSpace = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 
 		//生成されるのテトリミノ種類を決める
-		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0, prevRKeyState, prevSpaceKeyState, currentTetmino = rand() % 7, prevDeletedLineCount = 0, deletedLineCount = 0;
+		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, prevDeletedLineCount = 0, deletedLineCount = 0;
 		
 		static INT lineCount = 0, additionalDeletableLine = 0;
 
@@ -166,16 +166,19 @@ VOID Control(VOID)
 					}
 
 					//ハードドロップ　テトリミノのブロックを一個づつ下方を確認し、そこが空欄ではない場合、そこから1つ上にワープさせる
-					if (diks[DIK_UP] & 0x80)
+					if (!(prevUpKeyState))
 					{
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
+						if (diks[DIK_UP] & 0x80)
+						{
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+							SynchroTetlisBoardBufToTetlisBoard();
 
-						///////////////////////////////////////////////////////////////////////////////////
-						//ループカウンタを用いg_tetlisBoardBufを参照し、空欄ではなかった場合g_movMinoNumOfArBufを
-						//ループカウンタ-1の場所にテトリミノを移動させる
-						HardDropTetlimino();
+							///////////////////////////////////////////////////////////////////////////////////
+							//ループカウンタを用いg_tetlisBoardBufを参照し、空欄ではなかった場合g_movMinoNumOfArBufを
+							//ループカウンタ-1の場所にテトリミノを移動させる
+							HardDropTetlimino();
+						}
 					}
 
 					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -271,6 +274,7 @@ VOID Control(VOID)
 			//キー入力状態を保存
 			prevRKeyState = diks[DIK_R] & 0x80;
 			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
+			prevUpKeyState = diks[DIK_UP] & 0x80;
 
 			//ホールド時にブロックが表示されているので消す
 			if (wasHold)

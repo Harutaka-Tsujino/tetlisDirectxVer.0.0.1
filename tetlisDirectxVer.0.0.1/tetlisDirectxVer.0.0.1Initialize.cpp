@@ -118,37 +118,37 @@ VOID CreateTextureFromFile(VOID)
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"tetlimino.png",
+		"fallBlock/redBlock.png",
 		&g_pTexture[g_tetminoITex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockBrightStone.jpg",
+		"fallBlock/orangeBlock.png",
 		&g_pTexture[g_tetminoJTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockDarkstone.jpg",
+		"fallBlock/yellowBlock.png",
 		&g_pTexture[g_tetminoLTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockDirt.jpg",
+		"fallBlock/greenBlock.png",
 		&g_pTexture[g_tetminoSTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockPsychedelia.png",
+		"fallBlock/waterBlueBlock.png",
 		&g_pTexture[g_tetminoZTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockStoneHT.png",
+		"fallBlock/BlueBlock.png",
 		&g_pTexture[g_tetminoTTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockMoss.png",
+		"fallBlock/violetBlock.png",
 		&g_pTexture[g_tetminoOTex]);
 
 	D3DXCreateTextureFromFile(
@@ -175,6 +175,11 @@ VOID CreateTextureFromFile(VOID)
 		g_pD3dDevice,
 		"treasureBox.png",
 		&g_pTexture[g_treasureBoxTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"hardDropEffect.png",
+		&g_pTexture[g_hardDropEffectTex]);
 	
 	return;
 }

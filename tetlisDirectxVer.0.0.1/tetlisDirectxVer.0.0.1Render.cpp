@@ -216,65 +216,95 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 		{
 			if (installatedBlock[0] == 1)
 			{
-				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount-1));
+				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount-1));
+				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 0 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount-1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
+
+				CusV3HardDropParticleEffect->color = randomColor;
+				(CusV3HardDropParticleEffect + 1)->color = randomColor;
+				(CusV3HardDropParticleEffect + 2)->color = randomColor;
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_hardDropEffectTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
 			}
+		}
 
+		for (INT effect = 12; effect < 24; effect++)
+		{
 			if (installatedBlock[1] == 1)
 			{
-				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->x = 380.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
 				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->x = 380.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->x = 380.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
+				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				CusV3HardDropParticleEffect->color = randomColor;
+				(CusV3HardDropParticleEffect + 1)->color = randomColor;
+				(CusV3HardDropParticleEffect + 2)->color = randomColor;
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_hardDropEffectTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
 			}
+		}
 
+		for (INT effect = 24; effect < 36; effect++)
+		{
 			if (installatedBlock[2] == 1)
 			{
-				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->x = 380.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
 				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->x = 380.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->x = 380.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
+				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				CusV3HardDropParticleEffect->color = randomColor;
+				(CusV3HardDropParticleEffect + 1)->color = randomColor;
+				(CusV3HardDropParticleEffect + 2)->color = randomColor;
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_hardDropEffectTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
 			}
+		}
 
+		for (INT effect = 36; effect < 48; effect++)
+		{
 			if (installatedBlock[3] == 1)
 			{
-				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 2 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->x = 380.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
 				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->x = 380.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) +7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
-				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 2 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->x = 380.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
+				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_treasureBoxTex]);
+				CusV3HardDropParticleEffect->color = randomColor;
+				(CusV3HardDropParticleEffect + 1)->color = randomColor;
+				(CusV3HardDropParticleEffect + 2)->color = randomColor;
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_hardDropEffectTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
 			}
 		}
@@ -283,7 +313,7 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 		hardDropEffectCount++;
 		accelY += 0.7f;
 
-		if (hardDropEffectCount == 30 + 1)
+		if (hardDropEffectCount > 25)
 		{
 			hardDropEffectCount = 0;
 			accelY = 0;
@@ -847,13 +877,13 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 					break;
 				case 6:
 					cusV4Tetmino[0].x = 250.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-					cusV4Tetmino[0].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+					cusV4Tetmino[0].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 					cusV4Tetmino[1].x = 250.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-					cusV4Tetmino[1].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+					cusV4Tetmino[1].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 					cusV4Tetmino[2].x = 250.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-					cusV4Tetmino[2].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+					cusV4Tetmino[2].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 					cusV4Tetmino[3].x = 250.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-					cusV4Tetmino[3].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+					cusV4Tetmino[3].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;
@@ -865,25 +895,25 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 			if (g_nextBoard[coordinateY][coordinateX] != -1)
 			{
 				cusV4Tetmino[0].x = 790.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[0].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[0].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[1].x = 790.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				cusV4Tetmino[1].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[2].x = 790.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				cusV4Tetmino[2].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[2].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				cusV4Tetmino[3].x = 790.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[3].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				
 				switch (g_nextBoard[coordinateY][coordinateX] % 100)
 				{
 				case 0:
 					cusV4Tetmino[0].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-					cusV4Tetmino[0].y = 130.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+					cusV4Tetmino[0].y = 85.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 					cusV4Tetmino[1].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-					cusV4Tetmino[1].y = 130.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+					cusV4Tetmino[1].y = 85.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 					cusV4Tetmino[2].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-					cusV4Tetmino[2].y = 130.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+					cusV4Tetmino[2].y = 85.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 					cusV4Tetmino[3].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-					cusV4Tetmino[3].y = 130.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+					cusV4Tetmino[3].y = 85.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
 					break;
@@ -904,13 +934,13 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 					break;
 				case 6:
 					cusV4Tetmino[0].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-					cusV4Tetmino[0].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+					cusV4Tetmino[0].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 					cusV4Tetmino[1].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-					cusV4Tetmino[1].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+					cusV4Tetmino[1].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 					cusV4Tetmino[2].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-					cusV4Tetmino[2].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+					cusV4Tetmino[2].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 					cusV4Tetmino[3].x = 805.f + coordinateX * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-					cusV4Tetmino[3].y = 100.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+					cusV4Tetmino[3].y = 70.f + coordinateY * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;
@@ -932,25 +962,25 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 			if (g_nextNextBoard[coordinateY][coordinateX] != -1)
 			{
 				cusV4TetminoNextNext[0].x = 800.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
-				cusV4TetminoNextNext[0].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
+				cusV4TetminoNextNext[0].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
 				cusV4TetminoNextNext[1].x = 800.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
-				cusV4TetminoNextNext[1].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
+				cusV4TetminoNextNext[1].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
 				cusV4TetminoNextNext[2].x = 800.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
-				cusV4TetminoNextNext[2].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
+				cusV4TetminoNextNext[2].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
 				cusV4TetminoNextNext[3].x = 800.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
-				cusV4TetminoNextNext[3].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
+				cusV4TetminoNextNext[3].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
 				
 				switch (g_nextNextBoard[coordinateY][coordinateX] % 10)
 				{
 				case 0:
-					cusV4TetminoNextNext[0].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[0].y = 326.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
-					cusV4TetminoNextNext[1].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[1].y = 326.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
-					cusV4TetminoNextNext[2].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[2].y = 326.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
-					cusV4TetminoNextNext[3].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[3].y = 326.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[0].x = 810.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
+					cusV4TetminoNextNext[0].y = 302.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[1].x = 810.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
+					cusV4TetminoNextNext[1].y = 302.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[2].x = 810.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
+					cusV4TetminoNextNext[2].y = 302.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[3].x = 810.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
+					cusV4TetminoNextNext[3].y = 302.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
 
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoITex]);
 					break;
@@ -971,13 +1001,13 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 					break;
 				case 6:
 					cusV4TetminoNextNext[0].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[0].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[0].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
 					cusV4TetminoNextNext[1].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[1].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[1].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) - tetminoNextNextState.yScale;
 					cusV4TetminoNextNext[2].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) + tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[2].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[2].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
 					cusV4TetminoNextNext[3].x = 813.f + coordinateX * (tetminoNextNextState.xScale * 2) - tetminoNextNextState.xScale;
-					cusV4TetminoNextNext[3].y = 300.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
+					cusV4TetminoNextNext[3].y = 285.f + coordinateY * (tetminoNextNextState.yScale * 2) + tetminoNextNextState.yScale;
 
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;

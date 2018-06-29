@@ -57,6 +57,7 @@ enum TEX
 	g_reduceBlockDurTex,
 	g_circuleEffectTex,
 	g_treasureBoxTex,
+	g_hardDropEffectTex,
 	g_texMax
 };
 
