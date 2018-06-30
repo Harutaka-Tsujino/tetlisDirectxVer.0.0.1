@@ -31,10 +31,11 @@ MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 INT g_tetminoNum;
 INT g_deletedLineCount = 0;
 INT g_hold = -1, g_next, g_nextNext;
+INT g_inventory[6] = { 0,0,0,0,0,0 };
 INT g_tetlisBoardSource[][TETLIS_WIDTH] =
 {
 	{ 9,110,110,110,-1,-1,110,121,110,110,-1,9 },
-	{ 9,110,110,132,-1,110,110,110,110,110,110,9 },
+	{ 9,110,110,132,-1,110,160,110,110,110,110,9 },
 	{ 9,110,-1,110,110,110,110,110,110,110,110,9 },
 
 	{ 9,110,110,110,110,132,132,132,-1,110,110,9 },

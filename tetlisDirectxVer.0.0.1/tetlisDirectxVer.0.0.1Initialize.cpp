@@ -108,78 +108,88 @@ VOID CreateTextureFromFile(VOID)
 {
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"background.png",
+		"texture/background.png",
 		&g_pTexture[g_backgroundTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"frame.png",
+		"texture/frame.png",
 		&g_pTexture[g_frameTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/redBlock.png",
+		"texture/fallBlock/redBlock.png",
 		&g_pTexture[g_tetminoITex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/orangeBlock.png",
+		"texture/fallBlock/orangeBlock.png",
 		&g_pTexture[g_tetminoJTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/yellowBlock.png",
+		"texture/fallBlock/yellowBlock.png",
 		&g_pTexture[g_tetminoLTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/greenBlock.png",
+		"texture/fallBlock/greenBlock.png",
 		&g_pTexture[g_tetminoSTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/waterBlueBlock.png",
+		"texture/fallBlock/waterBlueBlock.png",
 		&g_pTexture[g_tetminoZTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/BlueBlock.png",
+		"texture/fallBlock/BlueBlock.png",
 		&g_pTexture[g_tetminoTTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"fallBlock/violetBlock.png",
+		"texture/fallBlock/violetBlock.png",
 		&g_pTexture[g_tetminoOTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"blockTarget.png",
+		"texture/blockTarget.png",
 		&g_pTexture[g_tetminoTarTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"block_integrated_illust_HT.png",
+		"texture/block_integrated_illust_HT.png",
 		&g_pTexture[g_integratedBlockTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"deletedLine.png",
+		"texture/deletedLine.png",
 		&g_pTexture[g_reduceBlockDurTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"circuleEffect.png",
+		"texture/circuleEffect.png",
 		&g_pTexture[g_circuleEffectTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"treasureBox.png",
+		"texture/treasureBox.png",
 		&g_pTexture[g_treasureBoxTex]);
 
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
-		"hardDropEffect.png",
+		"texture/hardDropEffect.png",
 		&g_pTexture[g_hardDropEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/drillEffect.png",
+		&g_pTexture[g_drillEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/drillFlameEffect.png",
+		&g_pTexture[g_drillFlameEffectTex]);
 	
 	return;
 }

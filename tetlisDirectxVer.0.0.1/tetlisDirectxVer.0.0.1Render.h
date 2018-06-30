@@ -62,6 +62,9 @@ VOID RenderScoreStr(VOID);
 //どのくらい地面を掘り進んだかの文字列を描画する関数
 VOID RenderUndergroundStr(VOID);
 
+//ドリルアイテム使用時の描画をする関数
+VOID SetItemVerticesAndRender(VOID);
+
 //テトリスのブロックの４頂点を設定し、描画する関数
 VOID SetBlockVerticesAndRender(VOID);
 

@@ -12,11 +12,14 @@
 #include "tetlisDirectxVer.0.0.1Control.h"
 #include <dinput.h>
 
+BOOL g_useItem = false;
 BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
-INT g_deletedLine = false;
+INT g_deletedLine = 0;
 INT g_deletedLineNum = 0;
+INT g_drillEffectCount = -1;
+INT g_aitemPosYX[2] = { 0,0 };
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
@@ -36,9 +39,11 @@ VOID Control(VOID)
 		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputR = true, canInputSpace = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 
 		//生成されるのテトリミノ種類を決める
-		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, prevDeletedLineCount = 0, deletedLineCount = 0;
+		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, prevDeletedLineCount = 0, deletedLineCount = 0;
 		
 		static INT lineCount = 0, additionalDeletableLine = 0;
+
+		static BOOL canCanselItem[g_itemMax] = {1};
 
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 };
 
@@ -63,6 +68,7 @@ VOID Control(VOID)
 		{
 			if (isNewGame)
 			{
+		
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				//ニューゲーム(一番最初のフレーム)時にはg_nextとg_nextNextは初期化されていないので初期化し、isNewGameをfalseにする
 				InitNextAndNextNext(&isNewGame);
@@ -94,116 +100,204 @@ VOID Control(VOID)
 				CountToMakeFlagTrue(&canInputRA, &rACount);
 				CountToMakeFlagTrue(&canInputDA, &dACount);
 
-				//前フレーム時にスペースキーが押されていた場合この処理を通さない、とすることによって連続したフレーム毎にこの処理がされるのを防いでいる
-				if (!(prevSpaceKeyState))
+				if (g_inventory[g_drillItem] > 0)
 				{
-					if (diks[DIK_SPACE] & 0x80)
+					if (!(prevNum1KeyState))
 					{
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
+						if (diks[DIK_NUMPAD1] & 0x80)
+						{
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 
-						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						//canHoldがtrueならばg_holdに現在のテトリミノの値を代入し、すでに-1(空欄)以外が入っていた場合currentTetminoにg_holdの値を入れる、
-						//その後g_canCreateをtrueにしUpdateHoldNextNextNextBoardを呼び出す
-						HoldTetlimino(&canHold, &currentTetmino, &canCreate, &wasHold);
+							if (g_useItem == false)
+							{
+								g_useItem = true;
+								g_aitemPosYX[0] = 4 + g_deletedLineCount;
+								g_aitemPosYX[1] = 5;
+							}
+
+							else
+							{
+								if (canCanselItem[g_drillItem])
+								{
+									g_useItem = false;
+									g_drillEffectCount = -1;
+									g_aitemPosYX[0] = 0;
+									g_aitemPosYX[1] = 0;
+								}
+							}
+						}
 					}
 				}
 
-				//ホールドが行われていた場合新しくテトリミノを生成するので、この処理を通さない
-				if (!(wasHold))
+				if (g_useItem)
 				{
-					if (RIGHT[canInputRA])
+					/*if (RIGHT[canInputRA])
 					{
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
-
-						//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_movMinoNumOfArBufに引数を足した配列番号をg_tetlisBoardBufで参照し、空欄だった場合g_movMinoNumOfArBufに引数を足した値を代入する
-						ShiftTetliminoX(1, &canInputRA);
+						ShiftItemX(1, &canInputRA, 1, TETLIS_WIDTH - 3);
 					}
 
 					if (LEFT[canInputLA])
 					{
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
+						ShiftItemX(-1, &canInputLA, 2, TETLIS_WIDTH - 2);
+					}*/
 
-						ShiftTetliminoX(-1, &canInputLA);
+					if (diks[DIK_RETURN])
+					{
+						g_drillEffectCount = 0;
 					}
 
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					//前フレーム時にRが押されていたならば、この処理を通さない、とすることによって連続で同じ処理がされることを防いでいる
-					if (!(prevRKeyState))
+					if (g_drillEffectCount >= 0)
 					{
-						if (diks[DIK_R] & 0x80)
+
+						g_drillEffectCount++;
+
+						if (g_drillEffectCount == 420 )
+						{
+							//////////////////////////////////
+							//アイテムを用いたブロック破壊処理
+							DeleteBlockWithAitem(&g_useItem);
+
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardBufToTetlisBoard();
+							g_inventory[g_drillItem]--;
+							g_aitemPosYX[1] = 0;
+							canCanselItem[g_drillItem] = false;
+						}
+
+						if (g_drillEffectCount ==450 )
+						{
+							/////////////////////////////////////////////////////////////////////////////////////////////
+							//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
+							//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
+							ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
+
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							//////////////////////////////////////////////////
+							//いくつ初期状態からラインを消されたか確認する関数
+							CountDeletedLine();
+
+							g_useItem = false;
+
+							g_drillEffectCount = -1;
+						}
+					}
+				}
+
+				else
+				{
+					//前フレーム時にスペースキーが押されていた場合この処理を通さない、とすることによって連続したフレーム毎にこの処理がされるのを防いでいる
+					if (!(prevSpaceKeyState))
+					{
+						if (diks[DIK_SPACE] & 0x80)
 						{
 							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 							SynchroTetlisBoardBufToTetlisBoard();
 
-							///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-							//g_minoIRoatationCountが３を超えていた場合0代入する、I型のテトリミノの場合g_minoIRoatationCountの値によって軸をずらす、
-							//X2、Y2を中心とするためにX2、Y2でそれぞれ4ブロックを引き中心を0,0に移動させる回転させる処理を行う前に
-							//g_tetlisBoardBufを参照して回転ができる場合に処理を行う、回転できない場合I型のテトリミノをずらした分だけ元に戻す
-							RotateTetlimino(&minoIRoatationCount, currentTetmino);
+							/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+							//canHoldがtrueならばg_holdに現在のテトリミノの値を代入し、すでに-1(空欄)以外が入っていた場合currentTetminoにg_holdの値を入れる、
+							//その後g_canCreateをtrueにしUpdateHoldNextNextNextBoardを呼び出す
+							HoldTetlimino(&canHold, &currentTetmino, &canCreate, &wasHold);
 						}
 					}
 
-					if (DOWN[canInputDA])
+					//ホールドが行われていた場合新しくテトリミノを生成するので、この処理を通さない
+					if (!(wasHold))
 					{
+						if (RIGHT[canInputRA])
+						{
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+							//g_movMinoNumOfArBufに引数を足した配列番号をg_tetlisBoardBufで参照し、空欄だった場合g_movMinoNumOfArBufに引数を足した値を代入する
+							ShiftTetliminoX(1, &canInputRA);
+						}
+
+						if (LEFT[canInputLA])
+						{
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							ShiftTetliminoX(-1, &canInputLA);
+						}
+
 						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 						SynchroTetlisBoardBufToTetlisBoard();
 
+						//前フレーム時にRが押されていたならば、この処理を通さない、とすることによって連続で同じ処理がされることを防いでいる
+						if (!(prevRKeyState))
+						{
+							if (diks[DIK_R] & 0x80)
+							{
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								//g_minoIRoatationCountが３を超えていた場合0代入する、I型のテトリミノの場合g_minoIRoatationCountの値によって軸をずらす、
+								//X2、Y2を中心とするためにX2、Y2でそれぞれ4ブロックを引き中心を0,0に移動させる回転させる処理を行う前に
+								//g_tetlisBoardBufを参照して回転ができる場合に処理を行う、回転できない場合I型のテトリミノをずらした分だけ元に戻す
+								RotateTetlimino(&minoIRoatationCount, currentTetmino);
+							}
+						}
+
+						if (DOWN[canInputDA])
+						{
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							/////////////////////////////////////////////////////////////////////////////////////////////////
+							//g_movMinoNumOfArBufのY方向に１足した配列を用いてg_tetlisBoardBufを参照し、空欄の場合移動を行う
+							DownTetlimino(&canInputDA);
+						}
+
+						//ハードドロップ　テトリミノのブロックを一個づつ下方を確認し、そこが空欄ではない場合、そこから1つ上にワープさせる
+						if (!(prevUpKeyState))
+						{
+							if (diks[DIK_UP] & 0x80)
+							{
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								///////////////////////////////////////////////////////////////////////////////////
+								//ループカウンタを用いg_tetlisBoardBufを参照し、空欄ではなかった場合g_movMinoNumOfArBufを
+								//ループカウンタ-1の場所にテトリミノを移動させる
+								HardDropTetlimino();
+							}
+						}
+
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						//テトリミノの下方を確認し、空欄だった場合カウントをとり、FLAME_PER_DOWNに達した場合一つ下に移動させる
+						/////////////////////////////////////////////////////////////////////////////////////////////////////
+						//g_movMinoNumOfArBuf+1した配列番号を用いてg_tetlisBoardBufを参照し、空欄だった場合カウントを1増やし、
+						//一定値ならばg_movMinoNumOfArBufに１を足し、カウントを初期状態にする
+						CountToDawnTetlimino(&downCount);
+
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						/*テトリミノ下方を確認し、そこが空欄ではない場合カウントをとり、FLAME_PER_STOPに達した場合
+						可動テトリミノのナンバーに100を足し(簡単に可動か非可動を判別するため)、新しい可動テトリミノを生成する*/
 						/////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_movMinoNumOfArBufのY方向に１足した配列を用いてg_tetlisBoardBufを参照し、空欄の場合移動を行う
-						DownTetlimino(&canInputDA);
+						//g_movMinoNumOfArBuf+1をした配列番号を用いg_tetlisBoardBufを参照し、空欄(-1)以外が入っていた場合
+						//カウントを１増やし、一定値ならばcurrentTetmino + 10をg_tetlisBoardに代入し、
+						//テトリミノを生成できるか否か、ホールドができるか否かのフラグをtrue、
+						//ホールドが行われたかのフラグをfalseにし、currentTetminoにg_next、g_nextにg_nextNextを代入して、
+						//g_nextNextにテトリミノ番号の範囲の乱数を代入する
+						CountToStopTetlimino(&stopCount, &currentTetmino, &canCreate, &canHold, &wasHold);
 					}
-
-					//ハードドロップ　テトリミノのブロックを一個づつ下方を確認し、そこが空欄ではない場合、そこから1つ上にワープさせる
-					if (!(prevUpKeyState))
-					{
-						if (diks[DIK_UP] & 0x80)
-						{
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-							SynchroTetlisBoardBufToTetlisBoard();
-
-							///////////////////////////////////////////////////////////////////////////////////
-							//ループカウンタを用いg_tetlisBoardBufを参照し、空欄ではなかった場合g_movMinoNumOfArBufを
-							//ループカウンタ-1の場所にテトリミノを移動させる
-							HardDropTetlimino();
-						}
-					}
-
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					//テトリミノの下方を確認し、空欄だった場合カウントをとり、FLAME_PER_DOWNに達した場合一つ下に移動させる
-					/////////////////////////////////////////////////////////////////////////////////////////////////////
-					//g_movMinoNumOfArBuf+1した配列番号を用いてg_tetlisBoardBufを参照し、空欄だった場合カウントを1増やし、
-					//一定値ならばg_movMinoNumOfArBufに１を足し、カウントを初期状態にする
-					CountToDawnTetlimino(&downCount);
-
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					/*テトリミノ下方を確認し、そこが空欄ではない場合カウントをとり、FLAME_PER_STOPに達した場合
-					可動テトリミノのナンバーに100を足し(簡単に可動か非可動を判別するため)、新しい可動テトリミノを生成する*/
-					/////////////////////////////////////////////////////////////////////////////////////////////////
-					//g_movMinoNumOfArBuf+1をした配列番号を用いg_tetlisBoardBufを参照し、空欄(-1)以外が入っていた場合
-					//カウントを１増やし、一定値ならばcurrentTetmino + 10をg_tetlisBoardに代入し、
-					//テトリミノを生成できるか否か、ホールドができるか否かのフラグをtrue、
-					//ホールドが行われたかのフラグをfalseにし、currentTetminoにg_next、g_nextにg_nextNextを代入して、
-					//g_nextNextにテトリミノ番号の範囲の乱数を代入する
-					CountToStopTetlimino(&stopCount, &currentTetmino, &canCreate, &canHold, &wasHold);
 				}
 			}
 
@@ -211,78 +305,110 @@ VOID Control(VOID)
 			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 			SynchroTetlisBoardBufToTetlisBoard();
 
-			if (deletedLineCount == 0)
+			if (!(g_useItem))
 			{
-				//そろっている列があるか確認しカウントをとる
-				//////////////////////////////////////////////////////////////////////////////
-				//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合空欄にする
-				DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
+				if (deletedLineCount == 0)
+				{
+					//そろっている列があるか確認しカウントをとる
+					//////////////////////////////////////////////////////////////////////////////
+					//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合空欄にする
+					DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
 
-				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-				SynchroTetlisBoardBufToTetlisBoard();
+					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+					SynchroTetlisBoardBufToTetlisBoard();
 
-				/////////////////////////////////////////////////////////////////////////////////
-				//lineCountの値によってscoreBufの増やす値を変え、文字列にしg_scoreArrayに代入する
-				GetScoreByLineCount(lineCount, &scoreBuf);
+					/////////////////////////////////////////////////////////////////////////////////
+					//lineCountの値によってscoreBufの増やす値を変え、文字列にしg_scoreArrayに代入する
+					GetScoreByLineCount(lineCount, &scoreBuf);
 
-				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-				SynchroTetlisBoardBufToTetlisBoard();
-			}
+					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+					SynchroTetlisBoardBufToTetlisBoard();
+				}
 
-			///////////////////////////////////////////////////////
-			//フラグがtrueならば、カウントをとりフラグをfalseにする
-			CountToMakeFlagFalse(&deletedLineCount);
+				///////////////////////////////////////////////////////
+				//フラグがtrueならば、カウントをとりフラグをfalseにする
+				CountToMakeFlagFalse(&deletedLineCount);
 
-			if (deletedLineCount == 60)
-			{
-				//そろった列を空欄にして下にずらしている
-				/////////////////////////////////////////////////////////////////////////////////////////////
-				//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
-				//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-				ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
+				if (deletedLineCount == 60)
+				{
+					//そろった列を空欄にして下にずらしている
+					/////////////////////////////////////////////////////////////////////////////////////////////
+					//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
+					//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
+					ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
 
-				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-				SynchroTetlisBoardBufToTetlisBoard();
+					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+					SynchroTetlisBoardBufToTetlisBoard();
 
-				//////////////////////////////////////////////////
-				//いくつ初期状態からラインを消されたか確認する関数
-				CountDeletedLine();
-			}
+					//////////////////////////////////////////////////
+					//いくつ初期状態からラインを消されたか確認する関数
+					CountDeletedLine();
+				}
 
-			if (deletedLineCount == 0)
-			{
-				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-				SynchroTetlisBoardBufToTetlisBoard();
+				if (deletedLineCount == 0)
+				{
+					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+					SynchroTetlisBoardBufToTetlisBoard();
 
-				////////////////////////////////////////
-				//ハードドロップと同じ原理を利用している
-				SetTetliminoTarget();
+					////////////////////////////////////////
+					//ハードドロップと同じ原理を利用している
+					SetTetliminoTarget();
 
-				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-				SynchroTetlisBoardBufToTetlisBoard();
+					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+					SynchroTetlisBoardBufToTetlisBoard();
 
-				////////////////////////////////////////////////////////////////////////////////////////
-				//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
-				CheckGameover(&isGameover);
+					////////////////////////////////////////////////////////////////////////////////////////
+					//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
+					CheckGameover(&isGameover);
+				}
 			}
 
 			//キー入力状態を保存
 			prevRKeyState = diks[DIK_R] & 0x80;
 			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
 			prevUpKeyState = diks[DIK_UP] & 0x80;
+			prevNum1KeyState = diks[DIK_NUMPAD1] & 0x80;
 
 			//ホールド時にブロックが表示されているので消す
-			if (wasHold)
+			if (wasHold || g_useItem)
 			{
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 			}
 		}
 	}
+
+	return;
+}
+
+///////////////////////////////////
+//アイテムのX方向のポジションを変更
+VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax)
+{
+	if (rangeMin < g_aitemPosYX[1] && g_aitemPosYX[1] < rangeMax)
+	{
+		g_aitemPosYX[1] += shift;
+		*canInputRA = false;
+	}
+
+	return;
+}
+
+VOID DeleteBlockWithAitem(BOOL *g_useItem)
+{
+	for (INT column = 4 + g_deletedLineCount; column < 4 + g_deletedLineCount + 20; column++)
+	{
+		for (INT row = 1; row < TETLIS_WIDTH-1; row++)
+		{
+			g_tetlisBoard[column][row] = -1;
+		}
+	}
+
+	SynchroTetlisBoardBufToTetlisBoard();
 
 	return;
 }
@@ -496,7 +622,7 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 	*currentTetmino = rand() % 7;
 	*minoIRoatationCount = 0;
 	*prevDeletedLineCount = 0;
-	g_deletedLine = false;
+	g_deletedLine = 0;
 	*deletedLineCount = 0;
 	*lineCount = 0;
 	*additionalDeletableLine = 0;
@@ -978,10 +1104,79 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 		{
 			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
-
-				if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+				if (g_tetlisBoardBuf[column][row] % 100 != 60)
 				{
-					if (g_tetlisBoardBuf[column][row] % 100 == 30)
+					if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+					{
+						if (g_tetlisBoardBuf[column][row] % 100 == 30)
+						{
+							if (isFirstDeletedLine)
+							{
+								firstDeletedColumn = column;
+								isFirstDeletedLine = false;
+							}
+
+							g_tetlisBoard[column][row] = -1;
+							g_reduceBlockDurPosition[column][row] = 1;
+						}
+
+						else
+						{
+							switch (*lineCount)
+							{
+							case 1:
+								switch (g_tetlisBoard[column][row] % 100)
+								{
+								case 21:
+									g_tetlisBoard[column][row] -= 1;
+									g_durableBlockBeared[column][row] = 1;
+									g_reduceBlockDurPosition[column][row] = 1;
+									break;
+								case 32:
+									g_tetlisBoard[column][row] -= 1;
+									g_durableBlockBeared[column][row] = 1;
+									g_reduceBlockDurPosition[column][row] = 1;
+									break;
+								case 31:
+									g_tetlisBoard[column][row] -= 1;
+									g_durableBlockBeared[column][row] = 1;
+									g_reduceBlockDurPosition[column][row] = 1;
+									break;
+								}
+
+								break;
+							case 2:
+								switch (g_tetlisBoard[column][row] % 100)
+								{
+								case 21:
+									g_tetlisBoard[column][row] = -1;
+									g_reduceBlockDurPosition[column][row] = 1;
+									break;
+								case 32:
+									g_tetlisBoard[column][row] -= 2;
+									g_durableBlockBeared[column][row] = 1;
+									g_reduceBlockDurPosition[column][row] = 1;
+									break;
+								case 31:
+									g_tetlisBoard[column][row] = -1;
+									g_reduceBlockDurPosition[column][row] = 1;
+									break;
+								}
+
+								break;
+							case 3:
+								g_tetlisBoard[column][row] = -1;
+								g_reduceBlockDurPosition[column][row] = 1;
+								break;
+							case 4:
+								g_tetlisBoard[column][row] = -1;
+								g_reduceBlockDurPosition[column][row] = 1;
+								break;
+							}
+						}
+					}
+
+					else
 					{
 						if (isFirstDeletedLine)
 						{
@@ -989,6 +1184,52 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 							isFirstDeletedLine = false;
 						}
 
+						g_tetlisBoard[column][row] = -1;
+						g_reduceBlockDurPosition[column][row] = 1;
+					}
+				}
+
+				else
+				{
+					g_inventory[g_drillItem]++;
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+				}
+			}
+
+			g_deletedLine = true;
+		}
+	}
+
+	switch (*lineCount)
+	{
+	case 1:
+		*additionalDeletableLine = 0;
+		break;
+	case 2:
+		*additionalDeletableLine = 2;
+		break;
+	case 3:
+		*additionalDeletableLine = 4;
+		break;
+	case 4:
+		*additionalDeletableLine = 7;
+		break;
+	}
+
+	INT loopLimiter = ((firstDeletedColumn + 1 + *additionalDeletableLine)>TETLIS_HEIGHT - 1) ?
+		TETLIS_HEIGHT - 1 : firstDeletedColumn + 1 + *additionalDeletableLine;
+
+	for (INT column = firstDeletedColumn + 1; column < loopLimiter ; column++)
+	{
+		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+		{
+			if (g_tetlisBoardBuf[column][row] % 100 != 60)
+			{
+				if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+				{
+					if (g_tetlisBoardBuf[column][row] % 100 == 30)
+					{
 						g_tetlisBoard[column][row] = -1;
 						g_reduceBlockDurPosition[column][row] = 1;
 					}
@@ -1051,110 +1292,14 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 				else
 				{
-					if (isFirstDeletedLine)
-					{
-						firstDeletedColumn = column;
-						isFirstDeletedLine = false;
-					}
-
 					g_tetlisBoard[column][row] = -1;
 					g_reduceBlockDurPosition[column][row] = 1;
-				}
-			}
-
-			g_deletedLine = true;
-		}
-	}
-
-	switch (*lineCount)
-	{
-	case 1:
-		*additionalDeletableLine = 0;
-		break;
-	case 2:
-		*additionalDeletableLine = 2;
-		break;
-	case 3:
-		*additionalDeletableLine = 4;
-		break;
-	case 4:
-		*additionalDeletableLine = 7;
-		break;
-	}
-
-	INT loopLimiter = ((firstDeletedColumn + 1 + *additionalDeletableLine)>TETLIS_HEIGHT - 1) ?
-		TETLIS_HEIGHT - 1 : firstDeletedColumn + 1 + *additionalDeletableLine;
-
-	for (INT column = firstDeletedColumn + 1; column < loopLimiter ; column++)
-	{
-		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
-		{
-			if (g_tetlisBoardBuf[column][row] % 100 >= 21)
-			{
-				if (g_tetlisBoardBuf[column][row] % 100 == 30)
-				{
-					g_tetlisBoard[column][row] = -1;
-					g_reduceBlockDurPosition[column][row] = 1;
-				}
-
-				else
-				{
-					switch (*lineCount)
-					{
-					case 1:
-						switch (g_tetlisBoard[column][row] % 100)
-						{
-						case 21:
-							g_tetlisBoard[column][row] -= 1;
-							g_durableBlockBeared[column][row] = 1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						case 32:
-							g_tetlisBoard[column][row] -= 1;
-							g_durableBlockBeared[column][row] = 1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						case 31:
-							g_tetlisBoard[column][row] -= 1;
-							g_durableBlockBeared[column][row] = 1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						}
-
-						break;
-					case 2:
-						switch (g_tetlisBoard[column][row] % 100)
-						{
-						case 21:
-							g_tetlisBoard[column][row] = -1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						case 32:
-							g_tetlisBoard[column][row] -= 2;
-							g_durableBlockBeared[column][row] = 1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						case 31:
-							g_tetlisBoard[column][row]  = -1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						}
-
-						break;
-					case 3:
-						g_tetlisBoard[column][row] = -1;
-						g_reduceBlockDurPosition[column][row] = 1;
-						break;
-					case 4:
-						g_tetlisBoard[column][row] = -1;
-						g_reduceBlockDurPosition[column][row] = 1;
-						break;
-					}
 				}
 			}
 
 			else
 			{
+				g_inventory[g_drillItem]++;
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
 			}

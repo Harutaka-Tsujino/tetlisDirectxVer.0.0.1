@@ -12,14 +12,23 @@
 
 #include <windows.h>
 
+extern BOOL g_useItem;
 extern BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 extern INT g_deletedLine;
 extern INT g_deletedLineNum;
+extern INT g_drillEffectCount;
+extern INT g_aitemPosYX[2];
 
 //テトリスなどの操作に関する関数
 VOID Control(VOID);
+
+//アイテムの左右移動をする関数
+VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax);
+
+//アイテムによるブロック破壊の処理をする関数
+VOID DeleteBlockWithAitem(BOOL *g_useItem);
 
 //テトリス配列に選ばれたパターンをコピーする関数
 VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID);

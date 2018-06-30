@@ -21,13 +21,13 @@
     <ClCompile Include="tetlisDirectxVer.0.0.1Initialize.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="tetlisDirectxVer.0.0.1Control.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="tetlisDirectxVer.0.0.1Render.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="tetlisDirectxVer.0.0.1Common.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="tetlisDirectxVer.0.0.1Control.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,10 +41,10 @@
     <ClInclude Include="tetlisDirectxVer.0.0.1Initialize.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="tetlisDirectxVer.0.0.1Control.h">
+    <ClInclude Include="tetlisDirectxVer.0.0.1Common.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="tetlisDirectxVer.0.0.1Common.h">
+    <ClInclude Include="tetlisDirectxVer.0.0.1Control.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
