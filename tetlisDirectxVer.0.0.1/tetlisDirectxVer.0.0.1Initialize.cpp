@@ -190,6 +190,11 @@ VOID CreateTextureFromFile(VOID)
 		g_pD3dDevice,
 		"texture/drillFlameEffect.png",
 		&g_pTexture[g_drillFlameEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/laser_kari.png",
+		&g_pTexture[g_laserCannonTex]);
 	
 	return;
 }

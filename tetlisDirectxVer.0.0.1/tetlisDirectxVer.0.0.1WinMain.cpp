@@ -27,15 +27,15 @@ Tetmino g_tetmino[7] =
 
 MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
 MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
+ItemData g_itemData = { 0,0,0,0,0,0,0,0 };
 
 INT g_tetminoNum;
 INT g_deletedLineCount = 0;
 INT g_hold = -1, g_next, g_nextNext;
-INT g_inventory[6] = { 0,0,0,0,0,0 };
 INT g_tetlisBoardSource[][TETLIS_WIDTH] =
 {
 	{ 9,110,110,110,-1,-1,110,121,110,110,-1,9 },
-	{ 9,110,110,132,-1,110,160,110,110,110,110,9 },
+	{ 9,110,110,132,-1,110,160,140,110,110,110,9 },
 	{ 9,110,-1,110,110,110,110,110,110,110,110,9 },
 
 	{ 9,110,110,110,110,132,132,132,-1,110,110,9 },
@@ -130,7 +130,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 	//メッセージループ
 	while (msg.message != WM_QUIT)
 	{
-
 		//メッセージを覗く
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 		{

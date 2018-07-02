@@ -53,6 +53,9 @@ VOID CountToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectC
 //額縁を描画する関数
 VOID RnderFrame(VOID);
 
+//アイテムの描画に関する関数
+VOID SetItemVerticiesAndRender(VOID);
+
 //ゲームオーバー時の文字列を描画する関数
 VOID RenderGameoverStr(VOID);
 

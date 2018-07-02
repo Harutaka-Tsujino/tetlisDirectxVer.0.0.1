@@ -12,14 +12,12 @@
 
 #include <windows.h>
 
-extern BOOL g_useItem;
 extern BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 extern INT g_deletedLine;
 extern INT g_deletedLineNum;
 extern INT g_drillEffectCount;
-extern INT g_aitemPosYX[2];
 
 //テトリスなどの操作に関する関数
 VOID Control(VOID);
@@ -27,8 +25,11 @@ VOID Control(VOID);
 //アイテムの左右移動をする関数
 VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax);
 
+////アイテムの上下移動をする関数
+VOID ShiftItemY(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax);
+
 //アイテムによるブロック破壊の処理をする関数
-VOID DeleteBlockWithAitem(BOOL *g_useItem);
+VOID DeleteBlockWithItem(BOOL *g_useItem);
 
 //テトリス配列に選ばれたパターンをコピーする関数
 VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID);
@@ -59,7 +60,7 @@ VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino);
 
 //テトリスに関するデータを初期状態に戻す関数
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
-	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine);
+	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine);
 
 //テトリミノを生成に関する関数
 VOID CreateTetlimino(INT currentTetmino, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputRA, 
@@ -99,7 +100,7 @@ VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, B
 VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine);
 
 //消されたテトリスのライン部分にずらす関数
-VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine);
+VOID ShiftTetlisLine(INT *lineCount, INT *additionalDeletableLine);
 
 //耐久値ブロックが関わったブロックずらしをする関数
 VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row);

@@ -55,11 +55,10 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 
 	if (!g_deletedLine && !(0 < toDeleteTargetBlockCount&&toDeleteTargetBlockCount < 30))
 	{
-		//////////////////////////////////////////
-		//テトリミノターゲットの４頂点を設定、描画
-		
-		if (!(g_useItem))
+		if (!(g_itemData.useItem))
 		{
+			//////////////////////////////////////////
+			//テトリミノターゲットの４頂点を設定、描画
 			SetTetliminoTargetTextureAndRender();
 		}
 	}
@@ -67,6 +66,7 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	else
 	{
 		toDeleteTargetBlockCount++;
+
 		if (toDeleteTargetBlockCount == 45)
 		{
 			toDeleteTargetBlockCount = 0;
@@ -88,6 +88,10 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	////////////////////////////////////
 	//ドリルアイテムに関係する描画をする
 	SetItemVerticesAndRender();
+
+	////////////////////////////////////
+	//アイテムの使用時に関する描画をする
+	SetItemVerticiesAndRender();
 
 	////////////////////////////////
 	//ゲームオーバー時の文字列の描画
@@ -149,6 +153,37 @@ VOID RenderBackground(VOID)
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_backgroundTex]);
 	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Background, sizeof(CustomVertex));
+
+	return;
+}
+
+VOID SetItemVerticiesAndRender(VOID)
+{
+	if (g_itemData.useItem)
+	{
+		switch (g_itemData.currentItemNum)
+		{
+		case g_drillItem:
+
+			break;
+		case g_laserCannonItem:
+			ImageState laserCannonState = { 395.f,0.f,15.f,15.f };
+
+			laserCannonState.y = 70.f + 30 * (g_itemData.itemPosYX[0] - g_deletedLineCount - 4) + laserCannonState.yScale;
+
+			CustomVertex cusV4LaserCannon[4] =
+			{
+				{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
+				{ laserCannonState.x + laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,1.f,0.f },
+				{ laserCannonState.x + laserCannonState.xScale,laserCannonState.y + laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,1.f,1.f },
+				{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y + laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.f }
+			};
+
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_laserCannonTex]);
+			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LaserCannon, sizeof(CustomVertex));
+			break;
+		}
+	}
 
 	return;
 }
@@ -340,6 +375,7 @@ VOID SetItemVerticesAndRender(VOID)
 {	
 	static ImageState drillItemState = { 0.f,0.f,90.f / 2,90.f / 2 };
 	static INT additonalPosY = 0;
+
 	if (g_drillEffectCount > 410)
 	{
 		additonalPosY += 200;
@@ -349,6 +385,7 @@ VOID SetItemVerticesAndRender(VOID)
 	{
 		additonalPosY = 0;
 	}
+
 	CustomVertex cusV4drillItem[4] =
 	{
 		{ drillItemState.x - drillItemState.xScale, drillItemState.y - drillItemState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
@@ -357,7 +394,7 @@ VOID SetItemVerticesAndRender(VOID)
 		{ drillItemState.x - drillItemState.xScale, drillItemState.y + drillItemState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
 	};
 
-	if (!(g_aitemPosYX[1] == 0))
+	if (!(g_itemData.itemPosYX[1] == 0))
 	{
 		FLOAT additionalScale = 0;
 
@@ -366,15 +403,20 @@ VOID SetItemVerticesAndRender(VOID)
 			additionalScale = g_drillEffectCount - 180.f;
 		}
 
+		if (additionalScale >360-180.f )
+		{
+			additionalScale = 360 - 180.f;
+		}
+
 		if (g_drillEffectCount < 180)
 		{
-			cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15 * 2) - drillItemState.xScale;
+			cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) - drillItemState.xScale;
 			cusV4drillItem[0].y = 40.f;
-			cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15 * 2) + drillItemState.xScale;
+			cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) + drillItemState.xScale;
 			cusV4drillItem[1].y = 40.f;
-			cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15 * 2) + drillItemState.xScale;
+			cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) + drillItemState.xScale;
 			cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2;
-			cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15 * 2) - drillItemState.xScale;
+			cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) - drillItemState.xScale;
 			cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2;
 
 			cusV4drillItem[0].tu = 200 / 512.f;
@@ -390,13 +432,13 @@ VOID SetItemVerticesAndRender(VOID)
 			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 		}
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale;
 		cusV4drillItem[0].y = 40.f - additionalScale+ additonalPosY;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale;
 		cusV4drillItem[1].y = 40.f - additionalScale + additonalPosY;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 + additionalScale + additonalPosY;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 + additionalScale + additonalPosY;
 
 		switch (g_drillEffectCount / 60)
@@ -465,13 +507,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.0f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.0f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.0f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.0f;
 
 		cusV4drillItem[0].tu = 0 / 512.f;
@@ -486,13 +528,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.5f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.5f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
 
 		cusV4drillItem[0].tu = 0 / 512.f;
@@ -507,13 +549,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.7f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.7f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.7f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.7f;
 
 		cusV4drillItem[0].tu = 50 / 512.f;
@@ -528,13 +570,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.1f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.1f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.3f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.3f;
 
 		cusV4drillItem[0].tu = 50 / 512.f;
@@ -549,13 +591,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.4f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.4f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
 
 		cusV4drillItem[0].tu = 100 / 512.f;
@@ -570,13 +612,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 1.7f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 1.7f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 1.7f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 1.7f;
 
 		cusV4drillItem[0].tu = 100 / 512.f;
@@ -591,13 +633,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.0f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.0f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
 
 		cusV4drillItem[0].tu = 150 / 512.f;
@@ -612,13 +654,13 @@ VOID SetItemVerticesAndRender(VOID)
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 
-		cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[0].y = 40.f - additionalScale / 2.9f;
-		cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[1].y = 40.f - additionalScale / 2.9f;
-		cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15*2) + drillItemState.xScale;
+		cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15*2) + drillItemState.xScale;
 		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
-		cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15*2) - drillItemState.xScale;
+		cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15*2) - drillItemState.xScale;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
 
 		cusV4drillItem[0].tu = 150 / 512.f;
@@ -635,13 +677,13 @@ VOID SetItemVerticesAndRender(VOID)
 
 		if (59 < g_drillEffectCount&&g_drillEffectCount < 180)
 		{
-			cusV4drillItem[0].x = 395.f + g_aitemPosYX[1] * (15 * 2) - 10.f * ((g_drillEffectCount - 60) / 24);
+			cusV4drillItem[0].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) - 10.f * ((g_drillEffectCount - 60) / 24);
 			cusV4drillItem[0].y = 85.f - 10.f * ((g_drillEffectCount - 60) / 24);
-			cusV4drillItem[1].x = 395.f + g_aitemPosYX[1] * (15 * 2) + 10.f * ((g_drillEffectCount - 60) / 24);
+			cusV4drillItem[1].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) + 10.f * ((g_drillEffectCount - 60) / 24);
 			cusV4drillItem[1].y = 85.f - 10.f * ((g_drillEffectCount - 60) / 24);
-			cusV4drillItem[2].x = 395.f + g_aitemPosYX[1] * (15 * 2) + 10.f * ((g_drillEffectCount - 60) / 24);
+			cusV4drillItem[2].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) + 10.f * ((g_drillEffectCount - 60) / 24);
 			cusV4drillItem[2].y = 85.f + 10.f * ((g_drillEffectCount - 60) / 24);
-			cusV4drillItem[3].x = 395.f + g_aitemPosYX[1] * (15 * 2) - 10.f * ((g_drillEffectCount - 60) / 24);
+			cusV4drillItem[3].x = 395.f + g_itemData.itemPosYX[1] * (15 * 2) - 10.f * ((g_drillEffectCount - 60) / 24);
 			cusV4drillItem[3].y = 85.f + 10.f * ((g_drillEffectCount - 60) / 24);
 
 			cusV4drillItem[0].tu = (275 - 5 * ((g_drillEffectCount - 60) / 24)) / 512.f;
@@ -659,13 +701,13 @@ VOID SetItemVerticesAndRender(VOID)
 
 		INT flameScaleY = 10, flameScaleX=30;
 
-		cusV4drillItem[0].x = 385.f + g_aitemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale- flameScaleX;
+		cusV4drillItem[0].x = 385.f + g_itemData.itemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale- flameScaleX;
 		cusV4drillItem[0].y = 40.f - additionalScale- flameScaleY;
-		cusV4drillItem[1].x = 385.f + g_aitemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale+ flameScaleX;
+		cusV4drillItem[1].x = 385.f + g_itemData.itemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale+ flameScaleX;
 		cusV4drillItem[1].y = 40.f - additionalScale- flameScaleY;
-		cusV4drillItem[2].x = 385.f + g_aitemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale+ flameScaleX;
-		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 + additionalScale+ flameScaleY + additonalPosY;
-		cusV4drillItem[3].x = 385.f + g_aitemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale- flameScaleX;
+		cusV4drillItem[2].x = 385.f + g_itemData.itemPosYX[1] * (15 * 2) + drillItemState.xScale + additionalScale+ flameScaleX;
+		cusV4drillItem[2].y = 40.f + drillItemState.yScale* 2 + additionalScale+ flameScaleY + additonalPosY;
+		cusV4drillItem[3].x = 385.f + g_itemData.itemPosYX[1] * (15 * 2) - drillItemState.xScale - additionalScale- flameScaleX;
 		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 + additionalScale+ flameScaleY + additonalPosY;
 
 		if (179 < g_drillEffectCount)
@@ -850,7 +892,8 @@ VOID SetBlockVerticesAndRender(VOID)
 	}
 
 	static BOOL canRessetSwellingUp = false;
-	if(g_drillEffectCount>419)
+
+	if(g_drillEffectCount>440)
 	{
 		swellingUp += 15;
 

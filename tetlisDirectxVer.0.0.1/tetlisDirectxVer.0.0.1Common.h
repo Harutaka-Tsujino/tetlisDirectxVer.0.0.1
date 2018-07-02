@@ -60,6 +60,7 @@ enum TEX
 	g_hardDropEffectTex,
 	g_drillEffectTex,
 	g_drillFlameEffectTex,
+	g_laserCannonTex,
 	g_texMax
 };
 
@@ -74,6 +75,7 @@ enum FONT
 enum ITEM
 {
 	g_drillItem,
+	g_laserCannonItem,
 	g_itemMax
 };
 
@@ -94,10 +96,20 @@ typedef struct
 extern MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
 extern MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
 
+typedef struct
+{
+	BOOL haveItem[g_itemMax];
+	BOOL useItem;
+	BOOL decideItemPos;
+	INT currentItemNum;
+	INT itemPosYX[2];
+	INT itemCount[g_itemMax];
+}ItemData;
+
+extern ItemData g_itemData;
 extern INT g_tetminoNum;
 extern INT g_deletedLineCount;
 extern INT g_hold, g_next, g_nextNext;
-extern INT g_inventory[6];
 extern INT g_tetlisBoardSource[][TETLIS_WIDTH];
 extern INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];

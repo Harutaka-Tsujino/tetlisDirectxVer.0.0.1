@@ -12,14 +12,12 @@
 #include "tetlisDirectxVer.0.0.1Control.h"
 #include <dinput.h>
 
-BOOL g_useItem = false;
 BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 INT g_deletedLine = 0;
 INT g_deletedLineNum = 0;
 INT g_drillEffectCount = -1;
-INT g_aitemPosYX[2] = { 0,0 };
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
@@ -32,20 +30,19 @@ VOID Control(VOID)
 	{
 		//キー入力情報のバッファー
 		BYTE diks[256];
+		static BYTE prevDiks[256];
 
 		//入力された情報を読み取る
 		g_pDKeyDevice->GetDeviceState(sizeof(diks), &diks);
 
-		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputR = true, canInputSpace = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
+		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputUA = true, canInputR = true, canInputSpace = true,canInputQ = true,canInputE = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 
 		//生成されるのテトリミノ種類を決める
-		static INT rACount = 0, lACount = 0, dACount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, prevDeletedLineCount = 0, deletedLineCount = 0;
+		static INT rACount = 0, lACount = 0,uACount = 0, dACount = 0,qCount = 0,eCount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, deletedLineCount = 0;
 		
 		static INT lineCount = 0, additionalDeletableLine = 0;
-
-		static BOOL canCanselItem[g_itemMax] = {1};
-
-		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 };
+		
+		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, UP[2] = { 0,diks[DIK_UP] & 0x80 },DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 }, Q[2] = { 0,diks[DIK_Q] & 0x80 }, E[2] = { 0,diks[DIK_E] & 0x80 };
 
 		//テトリス配列にテトリス配列バッファーの要素全てをコピーしている
 		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -56,7 +53,7 @@ VOID Control(VOID)
 			///////////////////////////////////////////////////////////////////////////
 			//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
 			ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
-				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &prevDeletedLineCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
 		}
 
 		if (isGameover)
@@ -64,17 +61,18 @@ VOID Control(VOID)
 			//ゲームオーバー時に文字列を表示させる
 			g_showGameoverStr = true;
 		}
+
 		else
 		{
 			if (isNewGame)
 			{
-		
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				//ニューゲーム(一番最初のフレーム)時にはg_nextとg_nextNextは初期化されていないので初期化し、isNewGameをfalseにする
 				InitNextAndNextNext(&isNewGame);
 				InitTetlisBoard();
 				ChooseAndCpyTetlisBoardSourceToBoard();
 				memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				memset(prevDiks, 0, sizeof(BYTE) * 256);
 				isNewGame = false;
 			}
 
@@ -99,38 +97,131 @@ VOID Control(VOID)
 				CountToMakeFlagTrue(&canInputLA, &lACount);
 				CountToMakeFlagTrue(&canInputRA, &rACount);
 				CountToMakeFlagTrue(&canInputDA, &dACount);
+				CountToMakeFlagTrue(&canInputUA, &uACount);
+				CountToMakeFlagTrue(&canInputQ, &qCount);
+				CountToMakeFlagTrue(&canInputE, &eCount);
 
-				if (g_inventory[g_drillItem] > 0)
+				if (diks[DIK_V] & 0x80)
 				{
-					if (!(prevNum1KeyState))
+					if (Q[canInputQ])
 					{
-						if (diks[DIK_NUMPAD1] & 0x80)
+						if (0 < g_itemData.currentItemNum)
 						{
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							g_itemData.currentItemNum -= 1;
+						}
 
-							if (g_useItem == false)
+						qCount = false;
+					}
+
+					if (E[canInputE])
+					{
+						if (g_itemData.currentItemNum < g_itemMax - 1)
+						{
+							g_itemData.currentItemNum += 1;
+						}
+
+						eCount = false;
+					}
+				}
+
+				if (!(prevNum1KeyState))
+				{
+					if (diks[DIK_NUMPAD1] & 0x80)
+					{
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+
+						if (g_itemData.useItem == false)
+						{
+							g_itemData.useItem = true;
+
+							switch (g_itemData.currentItemNum)
 							{
-								g_useItem = true;
-								g_aitemPosYX[0] = 4 + g_deletedLineCount;
-								g_aitemPosYX[1] = 5;
+							case g_drillItem:
+
+								g_itemData.itemPosYX[0] = 4 + g_deletedLineCount;
+								g_itemData.itemPosYX[1] = 5;
+
+								break;
+							case g_laserCannonItem:
+
+								g_itemData.itemPosYX[0] = 4 + g_deletedLineCount + 1;
+								g_itemData.itemPosYX[1] = 1;
+
+								break;
+							case 2:
+							case 3:
+								break;
 							}
 
-							else
-							{
-								if (canCanselItem[g_drillItem])
-								{
-									g_useItem = false;
-									g_drillEffectCount = -1;
-									g_aitemPosYX[0] = 0;
-									g_aitemPosYX[1] = 0;
-								}
-							}
+							g_itemData.itemPosYX[0] = 4 + g_deletedLineCount;
+							g_itemData.itemPosYX[1] = 5;
+						}
+
+						else
+						{
+							g_itemData.useItem = false;
+							g_drillEffectCount = -1;//////////////////////////////////////////////////
+							g_itemData.itemPosYX[0] = 0;
+							g_itemData.itemPosYX[1] = 0;
 						}
 					}
 				}
 
-				if (g_useItem)
+				if (g_itemData.useItem)
 				{
+					switch (g_itemData.currentItemNum)
+					{
+					case g_drillItem:
+						
+					case g_laserCannonItem:
+						if(DOWN[canInputDA])
+						{ 
+							ShiftItemY(1, &canInputDA,3+g_deletedLineCount,g_deletedLineCount + 23);
+						}
+
+						if (UP[canInputUA])
+						{
+							ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount,g_deletedLineCount + 24);
+						}
+						
+						if (g_itemData.decideItemPos)
+						{
+							for (INT column = g_itemData.itemPosYX[0] - 1; column <= g_itemData.itemPosYX[0] + 1; column++)
+							{
+								for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+								{
+									g_tetlisBoard[column][row] = -1;
+								}
+							}
+
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							CountDeletedLine();
+
+							g_itemData.useItem = false;
+							g_itemData.decideItemPos = false;
+							g_itemData.itemPosYX[0] = 0;
+							g_itemData.itemPosYX[1] = 0;
+						}
+
+						break;
+					case 2:
+					case 3:
+						break;
+					}
+
+					if (!(prevDiks[DIK_RETURN]))
+					{
+						if (diks[DIK_RETURN] & 0x80)
+						{
+							g_itemData.decideItemPos = true;
+						}
+					}
+
 					/*if (RIGHT[canInputRA])
 					{
 						ShiftItemX(1, &canInputRA, 1, TETLIS_WIDTH - 3);
@@ -141,48 +232,47 @@ VOID Control(VOID)
 						ShiftItemX(-1, &canInputLA, 2, TETLIS_WIDTH - 2);
 					}*/
 
-					if (diks[DIK_RETURN])
-					{
-						g_drillEffectCount = 0;
-					}
+					//if (diks[DIK_RETURN]&0x80)
+					//{
+					//	g_drillEffectCount = 0;
+					//}
 
-					if (g_drillEffectCount >= 0)
-					{
+					//if (g_drillEffectCount >= 0)
+					//{
+					//	g_drillEffectCount++;
 
-						g_drillEffectCount++;
+					//	if (g_drillEffectCount == 420 )
+					//	{
+					//		//////////////////////////////////
+					//		//アイテムを用いたブロック破壊処理
+					//		DeleteBlockWithItem(&g_useItem);
 
-						if (g_drillEffectCount == 420 )
-						{
-							//////////////////////////////////
-							//アイテムを用いたブロック破壊処理
-							DeleteBlockWithAitem(&g_useItem);
+					//		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					//		SynchroTetlisBoardBufToTetlisBoard();
+					//		g_inventory[g_drillItem]--;
+					//		g_itemPosYX[1] = 0;
+					//		canCanselItem[g_drillItem] = false;
+					//	}
 
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-							SynchroTetlisBoardBufToTetlisBoard();
-							g_inventory[g_drillItem]--;
-							g_aitemPosYX[1] = 0;
-							canCanselItem[g_drillItem] = false;
-						}
+					//	if (g_drillEffectCount ==450 )
+					//	{
+					//		/////////////////////////////////////////////////////////////////////////////////////////////
+					//		//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
+					//		//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
+					//		ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
 
-						if (g_drillEffectCount ==450 )
-						{
-							/////////////////////////////////////////////////////////////////////////////////////////////
-							//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
-							//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-							ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
+					//		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					//		SynchroTetlisBoardBufToTetlisBoard();
 
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-							SynchroTetlisBoardBufToTetlisBoard();
+					//		//////////////////////////////////////////////////
+					//		//いくつ初期状態からラインを消されたか確認する関数
+					//		CountDeletedLine();
 
-							//////////////////////////////////////////////////
-							//いくつ初期状態からラインを消されたか確認する関数
-							CountDeletedLine();
+					//		g_useItem = false;
 
-							g_useItem = false;
-
-							g_drillEffectCount = -1;
-						}
-					}
+					//		g_drillEffectCount = -1;
+					//	}
+					//}
 				}
 
 				else
@@ -305,10 +395,60 @@ VOID Control(VOID)
 			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 			SynchroTetlisBoardBufToTetlisBoard();
 
-			if (!(g_useItem))
+			if (!(g_itemData.useItem))
 			{
 				if (deletedLineCount == 0)
 				{
+					INT diggingCount = 0;
+
+					for (INT column = 19; column < TETLIS_HEIGHT - 1; column++)
+					{
+						INT nothingInRowCount = 0;
+
+						for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+						{
+							if (g_tetlisBoardBuf[column][row] == -1)
+							{
+								nothingInRowCount++;
+							}
+
+							if (nothingInRowCount == 10)
+							{
+								diggingCount++;
+							}
+						}
+					}
+
+					if (diggingCount > 60)
+					{
+						INT swapTetlisBoardBuf[60][TETLIS_WIDTH];
+
+						for (INT column = 0; column < 60; column++)
+						{
+							for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+							{
+								swapTetlisBoardBuf[column][row] = g_tetlisBoard[column + 19 + 60][row];
+							}
+						}
+
+						ChooseAndCpyTetlisBoardSourceToBoard();
+
+						for (INT column = 0; column < 60; column++)
+						{
+							for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+							{
+								g_tetlisBoard[column + 19][row] = swapTetlisBoardBuf[column][row];
+							}
+						}
+
+
+
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						CountDeletedLine();
+
+					}
+
 					//そろっている列があるか確認しカウントをとる
 					//////////////////////////////////////////////////////////////////////////////
 					//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合空欄にする
@@ -337,7 +477,7 @@ VOID Control(VOID)
 					/////////////////////////////////////////////////////////////////////////////////////////////
 					//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
 					//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-					ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
+					ShiftTetlisLine(&lineCount, &additionalDeletableLine);
 
 					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -373,9 +513,10 @@ VOID Control(VOID)
 			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
 			prevUpKeyState = diks[DIK_UP] & 0x80;
 			prevNum1KeyState = diks[DIK_NUMPAD1] & 0x80;
+			memcpy(prevDiks, diks, sizeof(BYTE) * 256);
 
 			//ホールド時にブロックが表示されているので消す
-			if (wasHold || g_useItem)
+			if (wasHold || g_itemData.useItem)
 			{
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 			}
@@ -389,16 +530,29 @@ VOID Control(VOID)
 //アイテムのX方向のポジションを変更
 VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax)
 {
-	if (rangeMin < g_aitemPosYX[1] && g_aitemPosYX[1] < rangeMax)
+	if (rangeMin < g_itemData.itemPosYX[1] && g_itemData.itemPosYX[1] < rangeMax)
 	{
-		g_aitemPosYX[1] += shift;
+		g_itemData.itemPosYX[1] += shift;
 		*canInputRA = false;
 	}
 
 	return;
 }
 
-VOID DeleteBlockWithAitem(BOOL *g_useItem)
+///////////////////////////////////
+//アイテムのY方向のポジションを変更
+VOID ShiftItemY(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax)
+{
+	if (rangeMin < g_itemData.itemPosYX[0] && g_itemData.itemPosYX[0] < rangeMax)
+	{
+		g_itemData.itemPosYX[0] += shift;
+		*canInputRA = false;
+	}
+
+	return;
+}
+
+VOID DeleteBlockWithItem(BOOL *g_useItem)
 {
 	for (INT column = 4 + g_deletedLineCount; column < 4 + g_deletedLineCount + 20; column++)
 	{
@@ -597,8 +751,9 @@ VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino)
 }
 
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
-	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *prevDeletedLineCount, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine)
+	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine)
 {
+	memset(g_itemData.haveItem, 0, sizeof(INT)*g_itemMax);
 	g_showGameoverStr = false;
 	*isGameover = false;
 	*canCreate = true;
@@ -621,7 +776,6 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 	g_nextNext = rand() % 7;
 	*currentTetmino = rand() % 7;
 	*minoIRoatationCount = 0;
-	*prevDeletedLineCount = 0;
 	g_deletedLine = 0;
 	*deletedLineCount = 0;
 	*lineCount = 0;
@@ -1104,96 +1258,96 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 		{
 			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
-				if (g_tetlisBoardBuf[column][row] % 100 != 60)
+				switch (g_tetlisBoardBuf[column][row])
 				{
-					if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+				case 110:
+					if (isFirstDeletedLine)
 					{
-						if (g_tetlisBoardBuf[column][row] % 100 == 30)
-						{
-							if (isFirstDeletedLine)
-							{
-								firstDeletedColumn = column;
-								isFirstDeletedLine = false;
-							}
-
-							g_tetlisBoard[column][row] = -1;
-							g_reduceBlockDurPosition[column][row] = 1;
-						}
-
-						else
-						{
-							switch (*lineCount)
-							{
-							case 1:
-								switch (g_tetlisBoard[column][row] % 100)
-								{
-								case 21:
-									g_tetlisBoard[column][row] -= 1;
-									g_durableBlockBeared[column][row] = 1;
-									g_reduceBlockDurPosition[column][row] = 1;
-									break;
-								case 32:
-									g_tetlisBoard[column][row] -= 1;
-									g_durableBlockBeared[column][row] = 1;
-									g_reduceBlockDurPosition[column][row] = 1;
-									break;
-								case 31:
-									g_tetlisBoard[column][row] -= 1;
-									g_durableBlockBeared[column][row] = 1;
-									g_reduceBlockDurPosition[column][row] = 1;
-									break;
-								}
-
-								break;
-							case 2:
-								switch (g_tetlisBoard[column][row] % 100)
-								{
-								case 21:
-									g_tetlisBoard[column][row] = -1;
-									g_reduceBlockDurPosition[column][row] = 1;
-									break;
-								case 32:
-									g_tetlisBoard[column][row] -= 2;
-									g_durableBlockBeared[column][row] = 1;
-									g_reduceBlockDurPosition[column][row] = 1;
-									break;
-								case 31:
-									g_tetlisBoard[column][row] = -1;
-									g_reduceBlockDurPosition[column][row] = 1;
-									break;
-								}
-
-								break;
-							case 3:
-								g_tetlisBoard[column][row] = -1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							case 4:
-								g_tetlisBoard[column][row] = -1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							}
-						}
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
 					}
 
-					else
-					{
-						if (isFirstDeletedLine)
-						{
-							firstDeletedColumn = column;
-							isFirstDeletedLine = false;
-						}
-
-						g_tetlisBoard[column][row] = -1;
-						g_reduceBlockDurPosition[column][row] = 1;
-					}
-				}
-
-				else
-				{
-					g_inventory[g_drillItem]++;
 					g_tetlisBoard[column][row] = -1;
 					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 120:
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 121:
+					g_tetlisBoard[column][row] -= 1;
+					g_durableBlockBeared[column][row] = 1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 130:
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 131:
+					g_tetlisBoard[column][row] -= 1;
+					g_durableBlockBeared[column][row] = 1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 132:
+					g_tetlisBoard[column][row] -= 1;
+					g_durableBlockBeared[column][row] = 1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 140:
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+					g_itemData.haveItem[g_laserCannonItem] = true;
+
+					break;
+				case 160:
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+					g_itemData.haveItem[g_drillItem] = true;
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				default:
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
 				}
 			}
 
@@ -1224,86 +1378,90 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 	{
 		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 		{
-			if (g_tetlisBoardBuf[column][row] % 100 != 60)
+			switch (*lineCount)
 			{
-				if (g_tetlisBoardBuf[column][row] % 100 >= 21)
+			case 2:
+				switch (g_tetlisBoardBuf[column][row])
 				{
-					if (g_tetlisBoardBuf[column][row] % 100 == 30)
-					{
-						g_tetlisBoard[column][row] = -1;
-						g_reduceBlockDurPosition[column][row] = 1;
-					}
-
-					else
-					{
-						switch (*lineCount)
-						{
-						case 1:
-							switch (g_tetlisBoard[column][row] % 100)
-							{
-							case 21:
-								g_tetlisBoard[column][row] -= 1;
-								g_durableBlockBeared[column][row] = 1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							case 32:
-								g_tetlisBoard[column][row] -= 1;
-								g_durableBlockBeared[column][row] = 1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							case 31:
-								g_tetlisBoard[column][row] -= 1;
-								g_durableBlockBeared[column][row] = 1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							}
-
-							break;
-						case 2:
-							switch (g_tetlisBoard[column][row] % 100)
-							{
-							case 21:
-								g_tetlisBoard[column][row] = -1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							case 32:
-								g_tetlisBoard[column][row] -= 2;
-								g_durableBlockBeared[column][row] = 1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							case 31:
-								g_tetlisBoard[column][row] = -1;
-								g_reduceBlockDurPosition[column][row] = 1;
-								break;
-							}
-
-							break;
-						case 3:
-							g_tetlisBoard[column][row] = -1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						case 4:
-							g_tetlisBoard[column][row] = -1;
-							g_reduceBlockDurPosition[column][row] = 1;
-							break;
-						}
-					}
-				}
-
-				else
-				{
+				case 121:
 					g_tetlisBoard[column][row] = -1;
 					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 131:
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 132:
+					g_tetlisBoard[column][row] -= 2;
+					g_durableBlockBeared[column][row] = 1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				}
+			case 3:
+			case 4:
+				switch (g_tetlisBoardBuf[column][row])
+				{
+				case 121:
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 131:
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+				case 132:
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
 				}
 			}
 
-			else
+			switch (g_tetlisBoardBuf[column][row])
 			{
-				g_inventory[g_drillItem]++;
+			case 110:
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
+
+				break;
+			case 120:
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+
+				break;
+			case 130:
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+
+				break;
+			case 140:
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+
+				g_itemData.haveItem[g_laserCannonItem] = true;
+				break;
+			case 160:
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+				g_itemData.haveItem[g_drillItem] = true;
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+
+				break;
+			default:
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+
+				break;
 			}
 		}
+
+		g_deletedLine = true;
 	}
 
 	SynchroTetlisBoardBufToTetlisBoard();
@@ -1311,9 +1469,9 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 	return;
 }
 
-VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalDeletableLine)
+VOID ShiftTetlisLine(INT *lineCount, INT *additionalDeletableLine)
 {
-	for (*prevDeletedLineCount = g_deletedLineCount; (*prevDeletedLineCount) < g_deletedLineCount + (*lineCount) + (*additionalDeletableLine); *prevDeletedLineCount += 1)
+	for (INT shiftLoop = 0; shiftLoop < 11; shiftLoop++)
 	{
 		for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 		{
@@ -1343,8 +1501,6 @@ VOID ShiftTetlisLine(INT *lineCount, INT *prevDeletedLineCount, INT *additionalD
 			}
 		}
 	}
-
-	prevDeletedLineCount -= (*lineCount) + (*additionalDeletableLine);
 
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
@@ -1392,6 +1548,8 @@ VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row)
 	return;
 }
 
+//////////////////////////////////////////////////
+//いくつ初期状態からラインを消されたか確認する関数
 VOID CountDeletedLine(VOID)
 {
 	g_deletedLineCount = 0;
