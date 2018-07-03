@@ -186,6 +186,7 @@ VOID Control(VOID)
 
 								SynchroTetlisBoardBufToTetlisBoard();
 								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								g_itemData.swellingUpCount[g_ultraDrillItem] = 5;
 							}
 
 							if (g_itemData.count[g_ultraDrillItem] == 480)

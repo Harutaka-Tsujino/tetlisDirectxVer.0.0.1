@@ -562,21 +562,21 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				INT flameScaleY = 10, flameScaleX = 30;
 
-				cusV4drillItem[0].x = 400.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale - flameScaleX;
+				cusV4drillItem[0].x = 408.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale - flameScaleX;
 				cusV4drillItem[0].y = 40.f - additionalScale - flameScaleY;
-				cusV4drillItem[1].x = 400.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale + flameScaleX;
+				cusV4drillItem[1].x = 408.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale + flameScaleX;
 				cusV4drillItem[1].y = 40.f - additionalScale - flameScaleY;
-				cusV4drillItem[2].x = 400.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale + flameScaleX;
+				cusV4drillItem[2].x = 408.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale + flameScaleX;
 				cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 + additionalScale + flameScaleY + additonalPosY;
-				cusV4drillItem[3].x = 400.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale - flameScaleX;
+				cusV4drillItem[3].x = 408.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale - flameScaleX;
 				cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 + additionalScale + flameScaleY + additonalPosY;
 
 				if (179 < g_itemData.count[g_ultraDrillItem])
 				{
-					cusV4drillItem[0].color = 0x88FFFFFF;
-					cusV4drillItem[1].color = 0x88FFFFFF;
-					cusV4drillItem[2].color = 0x88FFFFFF;
-					cusV4drillItem[3].color = 0x88FFFFFF;
+					cusV4drillItem[0].color = 0xBBFFFFFF;
+					cusV4drillItem[1].color = 0xBBFFFFFF;
+					cusV4drillItem[2].color = 0xBBFFFFFF;
+					cusV4drillItem[3].color = 0xBBFFFFFF;
 
 					if (g_itemData.count[g_ultraDrillItem] < 196)
 					{
@@ -1477,6 +1477,16 @@ VOID SetBlockVerticesAndRender(VOID)
 		}
 	}
 
+	if (g_itemData.count[g_ultraDrillItem]>450)
+	{
+		swellingUp += 15;
+
+		if (swellingUp>30 * g_itemData.swellingUpCount[g_ultraDrillItem])
+		{
+			swellingUp = 30 * g_itemData.swellingUpCount[g_ultraDrillItem];
+		}
+	}
+
 	if (canRessetSwellingUp)
 	{
 		swellingUp = 0; 
@@ -1492,6 +1502,7 @@ VOID SetBlockVerticesAndRender(VOID)
 	if (g_itemData.count[g_ultraDrillItem] == 480)
 	{
 		canRessetSwellingUp = true;
+		g_itemData.swellingUpCount[g_ultraDrillItem] = 0;
 	}
 
 	for (int column = 4; column < TETLIS_HEIGHT; column++)
