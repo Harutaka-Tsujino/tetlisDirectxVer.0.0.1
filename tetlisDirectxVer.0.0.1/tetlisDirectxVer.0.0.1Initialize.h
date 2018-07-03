@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialize
 //
 // DATE 2018.06.13
@@ -22,28 +22,28 @@ extern LPDIRECTINPUTDEVICE8 g_pDKeyDevice;
 extern LPD3DXFONT g_pFont[g_fontMax];
 extern D3DPRESENT_PARAMETERS g_D3dPresentParameters;
 
-//�_�C���N�g3D�Ɋւ��鏉�����̊֐�
+//ダイレクト3Dに関する初期化の関数
 HRESULT InitDirect3D(HWND hWnd);
 
-//�����I�ȃo�b�t�@�̐ݒ������֐�
+//総合的なバッファの設定をする関数
 VOID SetBuckBufferOverall(VOID);
 
-//�����I�ȕ`��̐ݒ������֐�
+//総合的な描画の設定をする関数
 VOID SetRenderStateOverall(VOID);
 
-//�����I�ȃe�N�X�`���K�w�̐ݒ������֐�
+//総合的なテクスチャ階層の設定をする関数
 VOID SetTextureStageStateOverall(VOID);
 
-//�e�N�X�`�������֐�
+//テクスチャを作る関数
 VOID CreateTextureFromFile(VOID);
 
-//�_�C���N�g�C���v�b�g�Ɋւ��鏉�����̊֐�
+//ダイレクトインプットに関する初期化の関数
 HRESULT InitDinput(HWND hWnd);
 
-//�_�C���N�g�t�H���g�Ɋւ��鏉�����̊֐�
+//ダイレクトフォントに関する初期化の関数
 HRESULT InitDfont(HWND hWnd);
 
-//�t�H���g�����֐�
+//フォントを作る関数
 VOID CreateFont(VOID);
 
 #endif

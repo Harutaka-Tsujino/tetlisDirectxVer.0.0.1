@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ï»¿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WinMain
 //
 // DATE 2018.06.13
@@ -27,7 +27,7 @@ Tetmino g_tetmino[7] =
 
 MovMinoNumoOfArBuf g_movMinoNumOfArBuf;
 MovMinoNumoOfArBuf g_targetMinoNumOfArBuf;
-ItemData g_itemData = { 0,0,0,0,0,0,0,0 };
+ItemData g_itemData = { 0,0,0,0,0,0,0,0,0,0,0 };
 
 INT g_tetminoNum;
 INT g_deletedLineCount = 0;
@@ -64,11 +64,11 @@ CHAR g_scoreArray[8];
 CHAR g_undergroundArray[5];
 
 ////////////////////////////////////
-//ƒEƒBƒ“ƒhƒE‚Ì¶¬AƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒg
+//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç”Ÿæˆã€ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆ
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdShow)
 {
 	srand((unsigned int)time(NULL));
-	//ƒEƒBƒ“ƒhƒE‚Ì¶¬////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç”Ÿæˆ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HWND hWnd = NULL;
 	MSG	msg;
 	
@@ -93,57 +93,57 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 	hWnd = CreateWindow(szAppName, szAppName, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, DISPLAY_WIDTH, DISPLAY_HEIGHT, NULL, NULL, hInst, NULL);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	//ƒEƒBƒ“ƒhƒE‚ğŒ©‚¦‚é‚æ‚¤‚É‚·‚é
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¦‹ãˆã‚‹ã‚ˆã†ã«ã™ã‚‹
 	ShowWindow(hWnd, SW_SHOW);
 
-	//ƒEƒBƒ“ƒhƒE‚ğXV‚·‚é‚æ‚¤‚É‚·‚é
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ›´æ–°ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹
 	UpdateWindow(hWnd);
 
-	//ƒ_ƒCƒŒƒNƒg3D‚Ì‰Šú‰»
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆ3Dã®åˆæœŸåŒ–
 	if (FAILED(InitDirect3D(hWnd)))
 	{
 		return 0;
 	}
 
-	//ƒ_ƒCƒŒƒNƒgƒCƒ“ƒvƒbƒg‚Ì‰Šú‰»
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¤ãƒ³ãƒ—ãƒƒãƒˆã®åˆæœŸåŒ–
 	if (FAILED(InitDinput(hWnd)))
 	{
 		return 0;
 	}
 
-	//ƒ_ƒCƒŒƒNƒgƒtƒHƒ“ƒg‚Ì‰Šú‰»
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆãƒ•ã‚©ãƒ³ãƒˆã®åˆæœŸåŒ–
 	if (FAILED(InitDfont(hWnd)))
 	{
 		return 0;
 	}
 
-	//ƒƒbƒZ[ƒW‚Ì’†g‚ÌÁ‹
+	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ä¸­èº«ã®æ¶ˆå»
 	ZeroMemory(&msg, sizeof(msg));
 	
-	//ŠÔ‚Ì—LŒø”š‚Ìİ’è
+	//æ™‚é–“ã®æœ‰åŠ¹æ•°å­—ã®è¨­å®š
 	timeBeginPeriod(1);
 
-	//ƒVƒXƒeƒ€ŠÔ‚Ìæ“¾
+	//ã‚·ã‚¹ãƒ†ãƒ æ™‚é–“ã®å–å¾—
 	DWORD sync_prev = timeGetTime();
 	DWORD sync_current;
 
-	//ƒƒbƒZ[ƒWƒ‹[ƒv
+	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—
 	while (msg.message != WM_QUIT)
 	{
-		//ƒƒbƒZ[ƒW‚ğ”`‚­
+		//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¦—ã
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 		{
-			//ƒƒbƒZ[ƒW‚Ì–|–ó
+			//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ç¿»è¨³
 			TranslateMessage(&msg);
 
-			//ƒƒbƒZ[ƒW‚Ì‘—M
+			//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®é€ä¿¡
 			DispatchMessage(&msg);
 		}
 		else
 		{
 			sync_current = timeGetTime();
 
-			//1•bŠÔ‚É60‰ñ‚±‚Ì’†‚É“ü‚é
+			//1ç§’é–“ã«60å›ã“ã®ä¸­ã«å…¥ã‚‹
 			if (sync_current - sync_prev >= 1000 / 60) 
 			{
 				Control();
@@ -155,14 +155,14 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 
 	timeEndPeriod(1);
 
-	//ƒƒ‚ƒŠŠJ•ú
+	//ãƒ¡ãƒ¢ãƒªé–‹æ”¾
 	FreeDx();
 
 	return(INT)msg.wParam;
 }
 
 //////////////////////////////
-//ƒEƒBƒ“ƒƒbƒZ[ƒW‚Ìˆ—‚ğs‚¤
+//ã‚¦ã‚£ãƒ³ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‡¦ç†ã‚’è¡Œã†
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)//////////////////////////////////////////////////////////////////////////////////
 {
 	switch (iMsg)

@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Common
 //
 // DATE 2018.06.13
@@ -61,6 +61,9 @@ enum TEX
 	g_drillEffectTex,
 	g_drillFlameEffectTex,
 	g_laserCannonTex,
+	g_inventoryTex,
+	g_itemIconListTex,
+	g_effect_laserTex,
 	g_texMax
 };
 
@@ -74,7 +77,7 @@ enum FONT
 
 enum ITEM
 {
-	g_drillItem,
+	g_ultraDrillItem,
 	g_laserCannonItem,
 	g_itemMax
 };
@@ -102,8 +105,9 @@ typedef struct
 	BOOL useItem;
 	BOOL decideItemPos;
 	INT currentItemNum;
-	INT itemPosYX[2];
-	INT itemCount[g_itemMax];
+	INT posYX[2];
+	INT count[g_itemMax];
+	INT swellingUpCount[g_itemMax];
 }ItemData;
 
 extern ItemData g_itemData;

@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ï»¿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialize
 //
 // DATE 2018.06.13
@@ -19,55 +19,55 @@ LPD3DXFONT g_pFont[g_fontMax];
 D3DPRESENT_PARAMETERS g_D3dPresentParameters;
 
 //////////////////////////////////
-//ƒ_ƒCƒŒƒNƒg3D‚Ì‰Šú‰»‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆ3Dã®åˆæœŸåŒ–ã«é–¢ã™ã‚‹é–¢æ•°
 HRESULT InitDirect3D(HWND hWnd)
 {
-	//ƒ_ƒCƒŒƒNƒg3D‚Ìì¬
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆ3Dã®ä½œæˆ
 	if (NULL == (g_pDirect3D = Direct3DCreate9(D3D_SDK_VERSION)))
 	{
-		MessageBox(0, "Direct3D‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½", "", MB_OK);
+		MessageBox(0, "Direct3Dã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ", "", MB_OK);
 		return E_FAIL;
 	}
 
-	//g_D3dPresentParameters‚Ì’†g‚ÌÁ‹
+	//g_D3dPresentParametersã®ä¸­èº«ã®æ¶ˆå»
 	ZeroMemory(&g_D3dPresentParameters, sizeof(g_D3dPresentParameters));
 
 	//////////////////////////////////////
-	//ƒoƒbƒtƒ@[Œ`®A–‡”AØ‚è‘Ö‚¦‚Ìİ’è
+	//ãƒãƒƒãƒ•ã‚¡ãƒ¼å½¢å¼ã€æšæ•°ã€åˆ‡ã‚Šæ›¿ãˆã®è¨­å®š
 	SetBuckBufferOverall();
 
-	//ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚Å“®‚¢‚Ä‚¢‚é‚±‚Æ‚Ì’ñ¦
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã§å‹•ã„ã¦ã„ã‚‹ã“ã¨ã®æç¤º
 	g_D3dPresentParameters.Windowed = TRUE;
 
-	//ƒ_ƒCƒŒƒNƒg3DƒfƒoƒCƒX‚Ìì¬
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆ3Dãƒ‡ãƒã‚¤ã‚¹ã®ä½œæˆ
 	if (FAILED(g_pDirect3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
 		D3DCREATE_MIXED_VERTEXPROCESSING,
 		&g_D3dPresentParameters, &g_pD3dDevice)))
 	{
-		//•`‰æƒ‚[ƒh‚Ìİ’è
-		MessageBox(0, "HALƒ‚[ƒh‚ÅDIRECT3DƒfƒoƒCƒX‚ğì¬‚Å‚«‚Ü‚¹‚ñ\nREFƒ‚[ƒh‚ÅÄs‚µ‚Ü‚·", NULL, MB_OK);
+		//æç”»ãƒ¢ãƒ¼ãƒ‰ã®è¨­å®š
+		MessageBox(0, "HALãƒ¢ãƒ¼ãƒ‰ã§DIRECT3Dãƒ‡ãƒã‚¤ã‚¹ã‚’ä½œæˆã§ãã¾ã›ã‚“\nREFãƒ¢ãƒ¼ãƒ‰ã§å†è©¦è¡Œã—ã¾ã™", NULL, MB_OK);
 		if (FAILED(g_pDirect3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
 			D3DCREATE_MIXED_VERTEXPROCESSING,
 			&g_D3dPresentParameters, &g_pD3dDevice)))
 		{
-			MessageBox(0, "DIRECT3DƒfƒoƒCƒX‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½", NULL, MB_OK);
+			MessageBox(0, "DIRECT3Dãƒ‡ãƒã‚¤ã‚¹ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ", NULL, MB_OK);
 			return E_FAIL;
 		}
 	}
 
 	////////////////
-	//•`‰æ‚ÌÚ×İ’è
+	//æç”»ã®è©³ç´°è¨­å®š
 	SetRenderStateOverall();
 
 	//////////////////////////
-	//ƒeƒNƒXƒ`ƒƒŠK‘w‚ÌÚ×İ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£éšå±¤ã®è©³ç´°è¨­å®š
 	SetTextureStageStateOverall();
 
-	//’¸“_î•ñ‚Ì“o˜^
+	//é ‚ç‚¹æƒ…å ±ã®ç™»éŒ²
 	g_pD3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
 	//////////////////
-	//ƒeƒNƒXƒ`ƒƒ‚Ì¶¬
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç”Ÿæˆ
 	CreateTextureFromFile();
 	
 	return S_OK;
@@ -75,11 +75,11 @@ HRESULT InitDirect3D(HWND hWnd)
 
 VOID SetBuckBufferOverall(VOID)
 {
-	//ƒoƒbƒtƒ@[‚ÌŒ`®İ’è
+	//ãƒãƒƒãƒ•ã‚¡ãƒ¼ã®å½¢å¼è¨­å®š
 	g_D3dPresentParameters.BackBufferFormat = D3DFMT_UNKNOWN;
-	//ƒoƒbƒtƒ@[‚Ì–‡”İ’è
+	//ãƒãƒƒãƒ•ã‚¡ãƒ¼ã®æšæ•°è¨­å®š
 	g_D3dPresentParameters.BackBufferCount = 1;
-	//ƒoƒbƒtƒ@[‚ÌØ‚è‘Ö‚¦•û–@‚Ìİ’è
+	//ãƒãƒƒãƒ•ã‚¡ãƒ¼ã®åˆ‡ã‚Šæ›¿ãˆæ–¹æ³•ã®è¨­å®š
 	g_D3dPresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
 	return;
@@ -195,37 +195,52 @@ VOID CreateTextureFromFile(VOID)
 		g_pD3dDevice,
 		"texture/laser_kari.png",
 		&g_pTexture[g_laserCannonTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/inventory.png",
+		&g_pTexture[g_inventoryTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/itemIconList.png",
+		&g_pTexture[g_itemIconListTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/effect_laser.png",
+		&g_pTexture[g_effect_laserTex]);
 	
 	return;
 }
 
 //////////////////////////////////////////
-//ƒ_ƒCƒŒƒNƒgƒCƒ“ƒvƒbƒg‚Ì‰Šú‰»‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¤ãƒ³ãƒ—ãƒƒãƒˆã®åˆæœŸåŒ–ã«é–¢ã™ã‚‹é–¢æ•°
 HRESULT InitDinput(HWND hWnd)
 {
 	HRESULT hr;
 
-	//ƒ_ƒCƒŒƒNƒgƒCƒ“ƒvƒbƒg‚Ì¶¬
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¤ãƒ³ãƒ—ãƒƒãƒˆã®ç”Ÿæˆ
 	if (FAILED(hr = DirectInput8Create(GetModuleHandle(NULL),
 		DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&g_pDinput, NULL)))
 	{
 		return hr;
 	}
 
-	//ƒ_ƒCƒŒƒNƒgƒCƒ“ƒvƒbƒgƒfƒoƒCƒX‚Ì¶¬
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆ
 	if (FAILED(hr = g_pDinput->CreateDevice(GUID_SysKeyboard,
 		&g_pDKeyDevice, NULL)))
 	{
 		return hr;
 	}
 
-	//“ü—ÍŒ`®‚ğƒL[ƒ{[ƒh‚Éİ’è
+	//å…¥åŠ›å½¢å¼ã‚’ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã«è¨­å®š
 	if (FAILED(hr = g_pDKeyDevice->SetDataFormat(&c_dfDIKeyboard)))
 	{
 		return hr;
 	}
 
-	//ƒ_ƒCƒŒƒNƒgƒCƒ“ƒvƒbƒgƒfƒoƒCƒX‚ÌŒ ŒÀæ“¾‚Ì—Dæ“xİ’è
+	//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ‡ãƒã‚¤ã‚¹ã®æ¨©é™å–å¾—ã®å„ªå…ˆåº¦è¨­å®š
 	if (FAILED(hr = g_pDKeyDevice->SetCooperativeLevel(
 		hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
 	{
@@ -238,7 +253,7 @@ HRESULT InitDinput(HWND hWnd)
 HRESULT InitDfont(HWND hWnd)
 {
 	////////////////
-	//ƒtƒHƒ“ƒg‚Ì¶¬
+	//ãƒ•ã‚©ãƒ³ãƒˆã®ç”Ÿæˆ
 	CreateFont();
 
 	return S_OK;

@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ï»¿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Control
 //
 // DATE 2018.06.13
@@ -19,99 +19,99 @@ extern INT g_deletedLine;
 extern INT g_deletedLineNum;
 extern INT g_drillEffectCount;
 
-//ƒeƒgƒŠƒX‚È‚Ç‚Ì‘€ì‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹ãªã©ã®æ“ä½œã«é–¢ã™ã‚‹é–¢æ•°
 VOID Control(VOID);
 
-//ƒAƒCƒeƒ€‚Ì¶‰EˆÚ“®‚ğ‚·‚éŠÖ”
+//ã‚¢ã‚¤ãƒ†ãƒ ã®å·¦å³ç§»å‹•ã‚’ã™ã‚‹é–¢æ•°
 VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax);
 
-////ƒAƒCƒeƒ€‚Ìã‰ºˆÚ“®‚ğ‚·‚éŠÖ”
+////ã‚¢ã‚¤ãƒ†ãƒ ã®ä¸Šä¸‹ç§»å‹•ã‚’ã™ã‚‹é–¢æ•°
 VOID ShiftItemY(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax);
 
-//ƒAƒCƒeƒ€‚É‚æ‚éƒuƒƒbƒN”j‰ó‚Ìˆ—‚ğ‚·‚éŠÖ”
+//ã‚¢ã‚¤ãƒ†ãƒ ã«ã‚ˆã‚‹ãƒ–ãƒ­ãƒƒã‚¯ç ´å£Šã®å‡¦ç†ã‚’ã™ã‚‹é–¢æ•°
 VOID DeleteBlockWithItem(BOOL *g_useItem);
 
-//ƒeƒgƒŠƒX”z—ñ‚É‘I‚Î‚ê‚½ƒpƒ^[ƒ“‚ğƒRƒs[‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹é…åˆ—ã«é¸ã°ã‚ŒãŸãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹é–¢æ•°
 VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID);
 
-//ƒeƒgƒŠƒXƒ{[ƒh‚ğ‰Šú‰»‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹ãƒœãƒ¼ãƒ‰ã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
 VOID InitTetlisBoard(VOID);
 
-//ƒeƒgƒŠƒXƒ{[ƒhƒoƒbƒtƒ@[‚ğ‰Šú‰»‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹ãƒœãƒ¼ãƒ‰ãƒãƒƒãƒ•ã‚¡ãƒ¼ã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
 VOID InitTetlisBoardBuf(VOID);
 
-//ƒz[ƒ‹ƒhAƒlƒNƒXƒgAƒlƒNƒXƒgƒlƒNƒXƒg‚ğ‰Šú‰»‚·‚éŠÖ”
+//ãƒ›ãƒ¼ãƒ«ãƒ‰ã€ãƒã‚¯ã‚¹ãƒˆã€ãƒã‚¯ã‚¹ãƒˆãƒã‚¯ã‚¹ãƒˆã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
 VOID InitNextAndNextNext(BOOL *isNewGame);
 
-//g_durableBlockBeared‚ğ‰Šú‰»‚·‚éŠÖ”
+//g_durableBlockBearedã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
 VOID InitDurableBlockBeared(VOID);
 
-//g_reduceBlockDurPosition‚ğ‰Šú‰»‚·‚éŠÖ”
+//g_reduceBlockDurPositionã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
 VOID InitReduceBlockPosition(VOID);
 
-//ƒz[ƒ‹ƒhAƒlƒNƒXƒgAƒlƒNƒXƒgƒlƒNƒXƒgƒ{[ƒh‚Ì’†g‚ğXV‚·‚éŠÖ”
+//ãƒ›ãƒ¼ãƒ«ãƒ‰ã€ãƒã‚¯ã‚¹ãƒˆã€ãƒã‚¯ã‚¹ãƒˆãƒã‚¯ã‚¹ãƒˆãƒœãƒ¼ãƒ‰ã®ä¸­èº«ã‚’æ›´æ–°ã™ã‚‹é–¢æ•°
 VOID UpdateHoldNextNextNextBoard(VOID);
 
-//ƒeƒgƒŠƒX”z—ñƒoƒbƒtƒ@[‚É‰Â“®ƒeƒgƒŠƒ~ƒm‚ğœ‚¢‚½ƒeƒgƒŠƒX”z—ñ‚Ì—v‘f‚ğ“¯Šú‚³‚¹‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹é…åˆ—ãƒãƒƒãƒ•ã‚¡ãƒ¼ã«å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒã‚’é™¤ã„ãŸãƒ†ãƒˆãƒªã‚¹é…åˆ—ã®è¦ç´ ã‚’åŒæœŸã•ã›ã‚‹é–¢æ•°
 VOID SynchroTetlisBoardBufToTetlisBoard(VOID);
 
-//ƒeƒgƒŠƒX”z—ñ‚É‰Â“®ƒeƒgƒŠƒ~ƒm‚ğ“¯Šú‚³‚¹‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹é…åˆ—ã«å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒã‚’åŒæœŸã•ã›ã‚‹é–¢æ•°
 VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino);
 
-//ƒeƒgƒŠƒX‚ÉŠÖ‚·‚éƒf[ƒ^‚ğ‰Šúó‘Ô‚É–ß‚·ŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹ã«é–¢ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’åˆæœŸçŠ¶æ…‹ã«æˆ»ã™é–¢æ•°
 VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *canInputRA, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputR, BOOL *canInputSpace,
 	BOOL *canHold, BOOL *wasHold, INT *rACount, INT *lACount, INT *dACount, INT *stopCount, INT *downCount, INT *scoreBuf, INT *currentTetmino, INT *minoIRoatationCount, INT *deletedLineCount, INT *lineCount, INT *additionalDeletableLine);
 
-//ƒeƒgƒŠƒ~ƒm‚ğ¶¬‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã‚’ç”Ÿæˆã«é–¢ã™ã‚‹é–¢æ•°
 VOID CreateTetlimino(INT currentTetmino, BOOL *canInputLA, BOOL *canInputDA, BOOL *canInputRA, 
 	BOOL *canInputR, BOOL *canInputSpace, BOOL *wasHold, INT *stopCount, INT *downCount, INT *minoIRoatationCount, BOOL *canCreate);
 
-//ƒL[“ü—Í‚ğƒJƒEƒ“ƒg‚ğ‚Æ‚è‰Â”\‚É‚·‚éŠÖ”
+//ã‚­ãƒ¼å…¥åŠ›ã‚’ã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚Šå¯èƒ½ã«ã™ã‚‹é–¢æ•°
 VOID CountToMakeFlagTrue(BOOL *canInputLA, INT *lACount);
 
-//ƒtƒ‰ƒO‚ğƒJƒEƒ“ƒg‚ğ‚Æ‚èƒIƒt‚É‚·‚éŠÖ”
+//ãƒ•ãƒ©ã‚°ã‚’ã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚Šã‚ªãƒ•ã«ã™ã‚‹é–¢æ•°
 VOID CountToMakeFlagFalse(INT *lACount);
 
-//ƒeƒgƒŠƒ~ƒm‚ğƒz[ƒ‹ƒh‚·‚é‚±‚Æ‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã‚’ãƒ›ãƒ¼ãƒ«ãƒ‰ã™ã‚‹ã“ã¨ã«é–¢ã™ã‚‹é–¢æ•°
 VOID HoldTetlimino(BOOL *canHold, INT *currentTetmino, BOOL *canCreate, BOOL *wasHold);
 
-//ƒeƒgƒŠƒ~ƒm‚ÌX²•ûŒü‚ÌˆÚ“®‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã®Xè»¸æ–¹å‘ã®ç§»å‹•ã«é–¢ã™ã‚‹é–¢æ•°
 VOID ShiftTetliminoX(INT shiftX, BOOL *canInputRA);
 
-//ƒeƒgƒŠƒ~ƒm‚Ì‰ñ“]‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã®å›è»¢ã«é–¢ã™ã‚‹é–¢æ•°
 VOID RotateTetlimino(INT *minoIRoatationCount, INT currentTetmino);
 
-//ƒeƒgƒŠƒ~ƒm‚ÌY²•ûŒü‚ÌˆÚ“®‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã®Yè»¸æ–¹å‘ã®ç§»å‹•ã«é–¢ã™ã‚‹é–¢æ•°
 VOID DownTetlimino(BOOL *canInputDA);
 
-//ƒeƒgƒŠƒ~ƒm‚Ìƒn[ƒhƒhƒƒbƒv‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã®ãƒãƒ¼ãƒ‰ãƒ‰ãƒ­ãƒƒãƒ—ã«é–¢ã™ã‚‹é–¢æ•°
 VOID HardDropTetlimino(VOID);
 
-//ƒeƒgƒŠƒ~ƒm‚Ìƒ^[ƒQƒbƒg‚ÌÀ•W‚ğ‡‚í‚¹‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®åº§æ¨™ã‚’åˆã‚ã›ã‚‹é–¢æ•°
 VOID SetTetliminoTarget(VOID);
 
-//ƒeƒgƒŠƒ~ƒm‚Ì©“®—‰º‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒã®è‡ªå‹•è½ä¸‹ã«é–¢ã™ã‚‹é–¢æ•°
 VOID CountToDawnTetlimino(INT *downCount);
 
-//ƒeƒgƒŠƒ~ƒm’â~‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªãƒŸãƒåœæ­¢ã«é–¢ã™ã‚‹é–¢æ•°
 VOID CountToStopTetlimino(INT *stopCount, INT *currentTetmino,BOOL *canCreate, BOOL *canHold, BOOL *wasHold);
 
-//‚»‚ë‚Á‚½ƒeƒgƒŠƒX‚Ìƒ‰ƒCƒ“‚ğÁ‚µƒJƒEƒ“ƒg‚ğ‚Æ‚éŠÖ”
+//ãã‚ã£ãŸãƒ†ãƒˆãƒªã‚¹ã®ãƒ©ã‚¤ãƒ³ã‚’æ¶ˆã—ã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚‹é–¢æ•°
 VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine);
 
-//Á‚³‚ê‚½ƒeƒgƒŠƒX‚Ìƒ‰ƒCƒ“•”•ª‚É‚¸‚ç‚·ŠÖ”
+//æ¶ˆã•ã‚ŒãŸãƒ†ãƒˆãƒªã‚¹ã®ãƒ©ã‚¤ãƒ³éƒ¨åˆ†ã«ãšã‚‰ã™é–¢æ•°
 VOID ShiftTetlisLine(INT *lineCount, INT *additionalDeletableLine);
 
-//‘Ï‹v’lƒuƒƒbƒN‚ªŠÖ‚í‚Á‚½ƒuƒƒbƒN‚¸‚ç‚µ‚ğ‚·‚éŠÖ”
+//è€ä¹…å€¤ãƒ–ãƒ­ãƒƒã‚¯ãŒé–¢ã‚ã£ãŸãƒ–ãƒ­ãƒƒã‚¯ãšã‚‰ã—ã‚’ã™ã‚‹é–¢æ•°
 VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row);
 
-//Á‚³‚ê‚½ƒeƒgƒŠƒX‚Ìƒ‰ƒCƒ“‚ğ”‚¦‚éŠÖ”
+//æ¶ˆã•ã‚ŒãŸãƒ†ãƒˆãƒªã‚¹ã®ãƒ©ã‚¤ãƒ³ã‚’æ•°ãˆã‚‹é–¢æ•°
 VOID CountDeletedLine(VOID);
 
-//ƒeƒgƒŠƒX‚ÌƒXƒRƒA‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹ã®ã‚¹ã‚³ã‚¢ã«é–¢ã™ã‚‹é–¢æ•°
 VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf);
 
-//ƒQ[ƒ€ƒI[ƒo[‚©A”Û‚©‚ğ’²‚×‚éŠÖ”
+//ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã‹ã€å¦ã‹ã‚’èª¿ã¹ã‚‹é–¢æ•°
 VOID CheckGameover(BOOL *isGameover);
 
 #endif

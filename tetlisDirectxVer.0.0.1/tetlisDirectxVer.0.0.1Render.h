@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Render
 //
 // DATE 2018.06.13
@@ -29,58 +29,58 @@ typedef struct
 	FLOAT	tu, tv;
 }CustomVertex;
 
-//�`��Ɋւ���֐�
+//描画に関する関数
 VOID Render(VOID);
 
-//�����I�Ȏ��_�̐ݒ������֐�
+//総合的な視点の設定をする関数
 VOID SetViewPointOverall(VOID);
 
-//�����I�Ȏ���p�̐ݒ������֐�
+//総合的な視野角の設定をする関数
 VOID SetFocusOfViewOverall(VOID);
 
-//�w�i��`�悷��֐�
+//背景を描画する関数
 VOID RenderBackground(VOID);
 
-//�n�[�h�h���b�v���s��ꂽ���̃G�t�F�N�g��`�悷��֐�
+//ハードドロップが行われた時のエフェクトを描画する関数
 VOID SetHardDropEffectTextureAndRender(VOID);
 
-//���C���������ꂽ���̃G�t�F�N�g��`�悷��֐�
+//ラインが消された時のエフェクトを描画する関数
 VOID SetDeletedLineEffectTextureAndRender(VOID);
 
-//�J�E���g�ɂ��G�t�F�N�g�̃A�j���[�V�����p�̐ݒ���s���֐�
+//カウントによりエフェクトのアニメーション用の設定を行う関数
 VOID CountToAnimation(INT *additionalDeletedEffectScale, INT *deletedLineEffectCaunt, CustomVertex *cusV4DeletedLineEffect);
 
-//�z����`�悷��֐�
+//額縁を描画する関数
 VOID RnderFrame(VOID);
 
-//�A�C�e���̕`��Ɋւ���֐�
+//アイテムの描画に関する関数
 VOID SetItemVerticiesAndRender(VOID);
 
-//�Q�[���I�[�o�[���̕������`�悷��֐�
+//ゲームオーバー時の文字列を描画する関数
 VOID RenderGameoverStr(VOID);
 
-//�X�R�A�̕������`�悷��֐�
+//スコアの文字列を描画する関数
 VOID RenderScoreStr(VOID);
 
-//�ǂ̂��炢�n�ʂ��@��i�񂾂��̕������`�悷��֐�
+//どのくらい地面を掘り進んだかの文字列を描画する関数
 VOID RenderUndergroundStr(VOID);
 
-//�h�����A�C�e���g�p���̕`�������֐�
-VOID SetItemVerticesAndRender(VOID);
+////ドリルアイテム使用時の描画をする関数
+//VOID SetItemVerticesAndRender(VOID);
 
-//�e�g���X�̃u���b�N�̂S���_��ݒ肵�A�`�悷��֐�
+//テトリスのブロックの４頂点を設定し、描画する関数
 VOID SetBlockVerticesAndRender(VOID);
 
-//�J�X�^���o�[�e�b�N�X��tu,tv���f�t�H���g�ɖ߂��֐�
+//カスタムバーテックスのtu,tvをデフォルトに戻す関数
 VOID ResetCustomVertexTuTv(VOID);
 
-//�z�[���h�A�l�N�X�g�A�l�N�X�g�l�N�X�g�̂S���_��ݒ肵�A�`�悷��֐�
+//ホールド、ネクスト、ネクストネクストの４頂点を設定し、描画する関数
 VOID SetHoldNextNextNextVerticesAndRender(VOID);
 
-//�e�g���~�m�̃^�[�Q�b�g�̂S���_��ݒ肵�A�`�悷��֐�
+//テトリミノのターゲットの４頂点を設定し、描画する関数
 VOID SetTetliminoTargetTextureAndRender(VOID);
 
-//�^�[�Q�b�g�u���b�N�̃A���t�@�l��_�ł����邽�߂ɕϊ�����֐�
+//ターゲットブロックのアルファ値を点滅させるために変換する関数
 VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino);
 
 #endif

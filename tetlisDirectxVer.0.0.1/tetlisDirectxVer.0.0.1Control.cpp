@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ï»¿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Control
 // 
 // DATE 2018.06.13
@@ -20,45 +20,45 @@ INT g_deletedLineNum = 0;
 INT g_drillEffectCount = -1;
 
 ////////////////////////////////
-//ƒeƒgƒŠƒX‚È‚Ç‚Ì‘€ì‚ÉŠÖ‚·‚éŠÖ”
+//ãƒ†ãƒˆãƒªã‚¹ãªã©ã®æ“ä½œã«é–¢ã™ã‚‹é–¢æ•°
 VOID Control(VOID)
 {
-	//ƒL[ƒfƒoƒCƒX‚É“ü‚Á‚Ä‚¢‚éî•ñ‚ğ“Ç‚İæ‚é€”õ
+	//ã‚­ãƒ¼ãƒ‡ãƒã‚¤ã‚¹ã«å…¥ã£ã¦ã„ã‚‹æƒ…å ±ã‚’èª­ã¿å–ã‚‹æº–å‚™
 	HRESULT hr = g_pDKeyDevice->Acquire();
 
 	if ((hr == DI_OK) || (hr == S_FALSE))
 	{
-		//ƒL[“ü—Íî•ñ‚Ìƒoƒbƒtƒ@[
+		//ã‚­ãƒ¼å…¥åŠ›æƒ…å ±ã®ãƒãƒƒãƒ•ã‚¡ãƒ¼
 		BYTE diks[256];
 		static BYTE prevDiks[256];
 
-		//“ü—Í‚³‚ê‚½î•ñ‚ğ“Ç‚İæ‚é
+		//å…¥åŠ›ã•ã‚ŒãŸæƒ…å ±ã‚’èª­ã¿å–ã‚‹
 		g_pDKeyDevice->GetDeviceState(sizeof(diks), &diks);
 
 		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputUA = true, canInputR = true, canInputSpace = true,canInputQ = true,canInputE = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 
-		//¶¬‚³‚ê‚é‚ÌƒeƒgƒŠƒ~ƒmí—Ş‚ğŒˆ‚ß‚é
+		//ç”Ÿæˆã•ã‚Œã‚‹ã®ãƒ†ãƒˆãƒªãƒŸãƒç¨®é¡ã‚’æ±ºã‚ã‚‹
 		static INT rACount = 0, lACount = 0,uACount = 0, dACount = 0,qCount = 0,eCount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, deletedLineCount = 0;
 		
 		static INT lineCount = 0, additionalDeletableLine = 0;
 		
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, UP[2] = { 0,diks[DIK_UP] & 0x80 },DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 }, Q[2] = { 0,diks[DIK_Q] & 0x80 }, E[2] = { 0,diks[DIK_E] & 0x80 };
 
-		//ƒeƒgƒŠƒX”z—ñ‚ÉƒeƒgƒŠƒX”z—ñƒoƒbƒtƒ@[‚Ì—v‘f‘S‚Ä‚ğƒRƒs[‚µ‚Ä‚¢‚é
+		//ãƒ†ãƒˆãƒªã‚¹é…åˆ—ã«ãƒ†ãƒˆãƒªã‚¹é…åˆ—ãƒãƒƒãƒ•ã‚¡ãƒ¼ã®è¦ç´ å…¨ã¦ã‚’ã‚³ãƒ”ãƒ¼ã—ã¦ã„ã‚‹
 		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 
-		//ƒŠƒZƒbƒgƒ{ƒ^ƒ“A‰Šúó‘Ô‚É–ß‚·
+		//ãƒªã‚»ãƒƒãƒˆãƒœã‚¿ãƒ³ã€åˆæœŸçŠ¶æ…‹ã«æˆ»ã™
 		if (diks[DIK_BACK] & 0x80)
 		{
 			///////////////////////////////////////////////////////////////////////////
-			//ƒtƒ‰ƒOAƒJƒEƒ“ƒgA”z—ñ‚ğ‰Šúó‘Ô‚É–ß‚µUpdateHoldNextNextNextBoard‚ğ—p‚¢‚é
+			//ãƒ•ãƒ©ã‚°ã€ã‚«ã‚¦ãƒ³ãƒˆã€é…åˆ—ã‚’åˆæœŸçŠ¶æ…‹ã«æˆ»ã—UpdateHoldNextNextNextBoardã‚’ç”¨ã„ã‚‹
 			ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
 				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
 		}
 
 		if (isGameover)
 		{
-			//ƒQ[ƒ€ƒI[ƒo[‚É•¶š—ñ‚ğ•\¦‚³‚¹‚é
+			//ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼æ™‚ã«æ–‡å­—åˆ—ã‚’è¡¨ç¤ºã•ã›ã‚‹
 			g_showGameoverStr = true;
 		}
 
@@ -67,7 +67,7 @@ VOID Control(VOID)
 			if (isNewGame)
 			{
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				//ƒjƒ…[ƒQ[ƒ€(ˆê”ÔÅ‰‚ÌƒtƒŒ[ƒ€)‚É‚Íg_next‚Æg_nextNext‚Í‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Å‰Šú‰»‚µAisNewGame‚ğfalse‚É‚·‚é
+				//ãƒ‹ãƒ¥ãƒ¼ã‚²ãƒ¼ãƒ (ä¸€ç•ªæœ€åˆã®ãƒ•ãƒ¬ãƒ¼ãƒ )æ™‚ã«ã¯g_nextã¨g_nextNextã¯åˆæœŸåŒ–ã•ã‚Œã¦ã„ãªã„ã®ã§åˆæœŸåŒ–ã—ã€isNewGameã‚’falseã«ã™ã‚‹
 				InitNextAndNextNext(&isNewGame);
 				InitTetlisBoard();
 				ChooseAndCpyTetlisBoardSourceToBoard();
@@ -83,8 +83,8 @@ VOID Control(VOID)
 					if (g_tetmino[g_tetminoNum].number == currentTetmino)
 					{
 						//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_canCreate‚ğŠm”F‚µtrue‚È‚ç‚Îg_movMinoNumOfArBuf‚ÉcurrentTetmino‚Æ“¯‚¶í—Ş‚ÌƒeƒgƒŠƒ~ƒm‰ŠúÀ•W‚ğ‘ã“ü‚µAƒL[“ü—Í‚Ìƒtƒ‰ƒOA
-						//IŒ^‚ÌƒeƒgƒŠƒ~ƒm‚ª‰½‰ñ“]‚µ‚½‚©‚ğŠm”F‚·‚éƒJƒEƒ“ƒgAƒz[ƒ‹ƒh‚ªs‚í‚ê‚½‚©”Û‚©‚Ìƒtƒ‰ƒO‚ğ‰Šúó‘Ô‚É–ß‚µAg_canCreate‚ğfalse‚É‚·‚é
+						//g_canCreateã‚’ç¢ºèªã—trueãªã‚‰ã°g_movMinoNumOfArBufã«currentTetminoã¨åŒã˜ç¨®é¡ã®ãƒ†ãƒˆãƒªãƒŸãƒåˆæœŸåº§æ¨™ã‚’ä»£å…¥ã—ã€ã‚­ãƒ¼å…¥åŠ›ã®ãƒ•ãƒ©ã‚°ã€
+						//Iå‹ã®ãƒ†ãƒˆãƒªãƒŸãƒãŒä½•å›è»¢ã—ãŸã‹ã‚’ç¢ºèªã™ã‚‹ã‚«ã‚¦ãƒ³ãƒˆã€ãƒ›ãƒ¼ãƒ«ãƒ‰ãŒè¡Œã‚ã‚ŒãŸã‹å¦ã‹ã®ãƒ•ãƒ©ã‚°ã‚’åˆæœŸçŠ¶æ…‹ã«æˆ»ã—ã€g_canCreateã‚’falseã«ã™ã‚‹
 						CreateTetlimino(currentTetmino, &canInputLA, &canInputDA, &canInputRA,
 							&canInputR, &canInputSpace, &wasHold, &stopCount, &downCount, &minoIRoatationCount, &canCreate);
 
@@ -93,7 +93,7 @@ VOID Control(VOID)
 				}
 
 				//////////////////////////////////////////////////////////////////////////////////////////////
-				//ƒtƒ‰ƒO‚ªfalse‚È‚ç‚ÎƒJƒEƒ“ƒg‚ğ1‘‚â‚µAˆê’è’l‚È‚ç‚Îƒtƒ‰ƒO‚Ítrue‚É•Ï‚¦ƒJƒEƒ“ƒg‚ğ‰Šúó‘Ô‚É‚·‚é
+				//ãƒ•ãƒ©ã‚°ãŒfalseãªã‚‰ã°ã‚«ã‚¦ãƒ³ãƒˆã‚’1å¢—ã‚„ã—ã€ä¸€å®šå€¤ãªã‚‰ã°ãƒ•ãƒ©ã‚°ã¯trueã«å¤‰ãˆã‚«ã‚¦ãƒ³ãƒˆã‚’åˆæœŸçŠ¶æ…‹ã«ã™ã‚‹
 				CountToMakeFlagTrue(&canInputLA, &lACount);
 				CountToMakeFlagTrue(&canInputRA, &rACount);
 				CountToMakeFlagTrue(&canInputDA, &dACount);
@@ -136,16 +136,16 @@ VOID Control(VOID)
 
 							switch (g_itemData.currentItemNum)
 							{
-							case g_drillItem:
+							case g_ultraDrillItem:
 
-								g_itemData.itemPosYX[0] = 4 + g_deletedLineCount;
-								g_itemData.itemPosYX[1] = 5;
+								g_itemData.posYX[0] = 4 + g_deletedLineCount;
+								g_itemData.posYX[1] = 5;
 
 								break;
 							case g_laserCannonItem:
 
-								g_itemData.itemPosYX[0] = 4 + g_deletedLineCount + 1;
-								g_itemData.itemPosYX[1] = 1;
+								g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
+								g_itemData.posYX[1] = 1;
 
 								break;
 							case 2:
@@ -153,16 +153,16 @@ VOID Control(VOID)
 								break;
 							}
 
-							g_itemData.itemPosYX[0] = 4 + g_deletedLineCount;
-							g_itemData.itemPosYX[1] = 5;
+							g_itemData.posYX[0] = 4 + g_deletedLineCount;
+							g_itemData.posYX[1] = 5;
 						}
 
 						else
 						{
 							g_itemData.useItem = false;
 							g_drillEffectCount = -1;//////////////////////////////////////////////////
-							g_itemData.itemPosYX[0] = 0;
-							g_itemData.itemPosYX[1] = 0;
+							g_itemData.posYX[0] = 0;
+							g_itemData.posYX[1] = 0;
 						}
 					}
 				}
@@ -171,47 +171,114 @@ VOID Control(VOID)
 				{
 					switch (g_itemData.currentItemNum)
 					{
-					case g_drillItem:
-						
-					case g_laserCannonItem:
-						if(DOWN[canInputDA])
-						{ 
-							ShiftItemY(1, &canInputDA,3+g_deletedLineCount,g_deletedLineCount + 23);
+					case g_ultraDrillItem:
+						if (g_itemData.decideItemPos)
+						{
+							if (g_itemData.count[g_ultraDrillItem] == 420)
+							{
+								for (INT column = 4 + g_deletedLineCount; column < 4 + g_deletedLineCount + 20; column++)
+								{
+									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+									{
+										g_tetlisBoard[column][row] = -1;
+									}
+								}
+
+								SynchroTetlisBoardBufToTetlisBoard();
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							}
+
+							if (g_itemData.count[g_ultraDrillItem] == 480)
+							{
+								
+								ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								CountDeletedLine();
+
+								g_itemData.useItem = false;
+								g_itemData.decideItemPos = false;
+							}
+
+							g_itemData.count[g_ultraDrillItem]++;
 						}
 
-						if (UP[canInputUA])
-						{
-							ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount,g_deletedLineCount + 24);
-						}
+						break;
+					case g_laserCannonItem:
 						
 						if (g_itemData.decideItemPos)
 						{
-							for (INT column = g_itemData.itemPosYX[0] - 1; column <= g_itemData.itemPosYX[0] + 1; column++)
+							if (g_itemData.count[g_laserCannonItem] == 30)
 							{
-								for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+								for (INT column = g_itemData.posYX[0] - 1; column <= g_itemData.posYX[0] + 1; column++)
 								{
-									g_tetlisBoard[column][row] = -1;
+									INT numOfDirt = 0;
+
+									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+									{
+										if (g_tetlisBoardBuf[column][row] == 110)
+										{
+											numOfDirt++;
+										}
+
+										g_tetlisBoard[column][row] = -1;
+
+										SynchroTetlisBoardBufToTetlisBoard();
+									}
+
+									if (numOfDirt > 3)
+									{
+										g_itemData.swellingUpCount[g_laserCannonItem]++;
+									}
 								}
 							}
 
-							SynchroTetlisBoardBufToTetlisBoard();
+							if (g_itemData.count[g_laserCannonItem] == 111)
+							{
+								ShiftTetlisLine(&lineCount, &additionalDeletableLine);
 
-							ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+								SynchroTetlisBoardBufToTetlisBoard();
 
-							SynchroTetlisBoardBufToTetlisBoard();
+								CountDeletedLine();
 
-							CountDeletedLine();
+								g_itemData.useItem = false;
+								g_itemData.decideItemPos = false;
+								g_itemData.posYX[0] = 0;
+								g_itemData.posYX[1] = 0;
+							}
 
-							g_itemData.useItem = false;
-							g_itemData.decideItemPos = false;
-							g_itemData.itemPosYX[0] = 0;
-							g_itemData.itemPosYX[1] = 0;
+							g_itemData.count[g_laserCannonItem]++;
+						}
+
+						else
+						{
+							if (DOWN[canInputDA])
+							{
+								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
+							}
+
+							if (UP[canInputUA])
+							{
+								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
+							}
 						}
 
 						break;
 					case 2:
 					case 3:
 						break;
+					}
+
+					if (g_itemData.count[g_laserCannonItem] == 112)
+					{
+						g_itemData.count[g_laserCannonItem] = 0;
+					}
+
+					if (g_itemData.count[g_ultraDrillItem] == 481)
+					{
+						g_itemData.count[g_ultraDrillItem] = 0;
 					}
 
 					if (!(prevDiks[DIK_RETURN]))
@@ -221,6 +288,7 @@ VOID Control(VOID)
 							g_itemData.decideItemPos = true;
 						}
 					}
+
 
 					/*if (RIGHT[canInputRA])
 					{
@@ -244,28 +312,28 @@ VOID Control(VOID)
 					//	if (g_drillEffectCount == 420 )
 					//	{
 					//		//////////////////////////////////
-					//		//ƒAƒCƒeƒ€‚ğ—p‚¢‚½ƒuƒƒbƒN”j‰óˆ—
+					//		//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ç”¨ã„ãŸãƒ–ãƒ­ãƒƒã‚¯ç ´å£Šå‡¦ç†
 					//		DeleteBlockWithItem(&g_useItem);
 
 					//		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 					//		SynchroTetlisBoardBufToTetlisBoard();
-					//		g_inventory[g_drillItem]--;
+					//		g_inventory[g_ultraDrillItem]--;
 					//		g_itemPosYX[1] = 0;
-					//		canCanselItem[g_drillItem] = false;
+					//		canCanselItem[g_ultraDrillItem] = false;
 					//	}
 
 					//	if (g_drillEffectCount ==450 )
 					//	{
 					//		/////////////////////////////////////////////////////////////////////////////////////////////
-					//		//g_tetlisBoardBuf‚ğQÆ‚µA‹ó—“(-1)ˆÈŠO‚Ìê‡ƒ‹[ƒvƒJƒEƒ“ƒ^+1‚µ‚½”z—ñ”Ô†‚ğ—p‚¢AÄ“xQÆ‚µA
-					//		//ˆê—ñ‘S‚Ä‹ó—“‚Ìê‡ƒ‹[ƒvƒJƒEƒ“ƒ^+1‚Ì”z—ñ”Ô†‚ÉƒRƒs[‚µAƒRƒs[Œ³‚ğ‹ó—“‚É‘‚«Š·‚¦‚é
+					//		//g_tetlisBoardBufã‚’å‚ç…§ã—ã€ç©ºæ¬„(-1)ä»¥å¤–ã®å ´åˆãƒ«ãƒ¼ãƒ—ã‚«ã‚¦ãƒ³ã‚¿+1ã—ãŸé…åˆ—ç•ªå·ã‚’ç”¨ã„ã€å†åº¦å‚ç…§ã—ã€
+					//		//ä¸€åˆ—å…¨ã¦ç©ºæ¬„ã®å ´åˆãƒ«ãƒ¼ãƒ—ã‚«ã‚¦ãƒ³ã‚¿+1ã®é…åˆ—ç•ªå·ã«ã‚³ãƒ”ãƒ¼ã—ã€ã‚³ãƒ”ãƒ¼å…ƒã‚’ç©ºæ¬„ã«æ›¸ãæ›ãˆã‚‹
 					//		ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
 
 					//		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 					//		SynchroTetlisBoardBufToTetlisBoard();
 
 					//		//////////////////////////////////////////////////
-					//		//‚¢‚­‚Â‰Šúó‘Ô‚©‚çƒ‰ƒCƒ“‚ğÁ‚³‚ê‚½‚©Šm”F‚·‚éŠÖ”
+					//		//ã„ãã¤åˆæœŸçŠ¶æ…‹ã‹ã‚‰ãƒ©ã‚¤ãƒ³ã‚’æ¶ˆã•ã‚ŒãŸã‹ç¢ºèªã™ã‚‹é–¢æ•°
 					//		CountDeletedLine();
 
 					//		g_useItem = false;
@@ -277,7 +345,7 @@ VOID Control(VOID)
 
 				else
 				{
-					//‘OƒtƒŒ[ƒ€‚ÉƒXƒy[ƒXƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½ê‡‚±‚Ìˆ—‚ğ’Ê‚³‚È‚¢A‚Æ‚·‚é‚±‚Æ‚É‚æ‚Á‚Ä˜A‘±‚µ‚½ƒtƒŒ[ƒ€–ˆ‚É‚±‚Ìˆ—‚ª‚³‚ê‚é‚Ì‚ğ–h‚¢‚Å‚¢‚é
+					//å‰ãƒ•ãƒ¬ãƒ¼ãƒ æ™‚ã«ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ãŸå ´åˆã“ã®å‡¦ç†ã‚’é€šã•ãªã„ã€ã¨ã™ã‚‹ã“ã¨ã«ã‚ˆã£ã¦é€£ç¶šã—ãŸãƒ•ãƒ¬ãƒ¼ãƒ æ¯ã«ã“ã®å‡¦ç†ãŒã•ã‚Œã‚‹ã®ã‚’é˜²ã„ã§ã„ã‚‹
 					if (!(prevSpaceKeyState))
 					{
 						if (diks[DIK_SPACE] & 0x80)
@@ -287,13 +355,13 @@ VOID Control(VOID)
 							SynchroTetlisBoardBufToTetlisBoard();
 
 							/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-							//canHold‚ªtrue‚È‚ç‚Îg_hold‚ÉŒ»İ‚ÌƒeƒgƒŠƒ~ƒm‚Ì’l‚ğ‘ã“ü‚µA‚·‚Å‚É-1(‹ó—“)ˆÈŠO‚ª“ü‚Á‚Ä‚¢‚½ê‡currentTetmino‚Ég_hold‚Ì’l‚ğ“ü‚ê‚éA
-							//‚»‚ÌŒãg_canCreate‚ğtrue‚É‚µUpdateHoldNextNextNextBoard‚ğŒÄ‚Ño‚·
+							//canHoldãŒtrueãªã‚‰ã°g_holdã«ç¾åœ¨ã®ãƒ†ãƒˆãƒªãƒŸãƒã®å€¤ã‚’ä»£å…¥ã—ã€ã™ã§ã«-1(ç©ºæ¬„)ä»¥å¤–ãŒå…¥ã£ã¦ã„ãŸå ´åˆcurrentTetminoã«g_holdã®å€¤ã‚’å…¥ã‚Œã‚‹ã€
+							//ãã®å¾Œg_canCreateã‚’trueã«ã—UpdateHoldNextNextNextBoardã‚’å‘¼ã³å‡ºã™
 							HoldTetlimino(&canHold, &currentTetmino, &canCreate, &wasHold);
 						}
 					}
 
-					//ƒz[ƒ‹ƒh‚ªs‚í‚ê‚Ä‚¢‚½ê‡V‚µ‚­ƒeƒgƒŠƒ~ƒm‚ğ¶¬‚·‚é‚Ì‚ÅA‚±‚Ìˆ—‚ğ’Ê‚³‚È‚¢
+					//ãƒ›ãƒ¼ãƒ«ãƒ‰ãŒè¡Œã‚ã‚Œã¦ã„ãŸå ´åˆæ–°ã—ããƒ†ãƒˆãƒªãƒŸãƒã‚’ç”Ÿæˆã™ã‚‹ã®ã§ã€ã“ã®å‡¦ç†ã‚’é€šã•ãªã„
 					if (!(wasHold))
 					{
 						if (RIGHT[canInputRA])
@@ -303,7 +371,7 @@ VOID Control(VOID)
 							SynchroTetlisBoardBufToTetlisBoard();
 
 							//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-							//g_movMinoNumOfArBuf‚Éˆø”‚ğ‘«‚µ‚½”z—ñ”Ô†‚ğg_tetlisBoardBuf‚ÅQÆ‚µA‹ó—“‚¾‚Á‚½ê‡g_movMinoNumOfArBuf‚Éˆø”‚ğ‘«‚µ‚½’l‚ğ‘ã“ü‚·‚é
+							//g_movMinoNumOfArBufã«å¼•æ•°ã‚’è¶³ã—ãŸé…åˆ—ç•ªå·ã‚’g_tetlisBoardBufã§å‚ç…§ã—ã€ç©ºæ¬„ã ã£ãŸå ´åˆg_movMinoNumOfArBufã«å¼•æ•°ã‚’è¶³ã—ãŸå€¤ã‚’ä»£å…¥ã™ã‚‹
 							ShiftTetliminoX(1, &canInputRA);
 						}
 
@@ -320,7 +388,7 @@ VOID Control(VOID)
 						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 						SynchroTetlisBoardBufToTetlisBoard();
 
-						//‘OƒtƒŒ[ƒ€‚ÉR‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½‚È‚ç‚ÎA‚±‚Ìˆ—‚ğ’Ê‚³‚È‚¢A‚Æ‚·‚é‚±‚Æ‚É‚æ‚Á‚Ä˜A‘±‚Å“¯‚¶ˆ—‚ª‚³‚ê‚é‚±‚Æ‚ğ–h‚¢‚Å‚¢‚é
+						//å‰ãƒ•ãƒ¬ãƒ¼ãƒ æ™‚ã«RãŒæŠ¼ã•ã‚Œã¦ã„ãŸãªã‚‰ã°ã€ã“ã®å‡¦ç†ã‚’é€šã•ãªã„ã€ã¨ã™ã‚‹ã“ã¨ã«ã‚ˆã£ã¦é€£ç¶šã§åŒã˜å‡¦ç†ãŒã•ã‚Œã‚‹ã“ã¨ã‚’é˜²ã„ã§ã„ã‚‹
 						if (!(prevRKeyState))
 						{
 							if (diks[DIK_R] & 0x80)
@@ -330,9 +398,9 @@ VOID Control(VOID)
 								SynchroTetlisBoardBufToTetlisBoard();
 
 								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-								//g_minoIRoatationCount‚ª‚R‚ğ’´‚¦‚Ä‚¢‚½ê‡0‘ã“ü‚·‚éAIŒ^‚ÌƒeƒgƒŠƒ~ƒm‚Ìê‡g_minoIRoatationCount‚Ì’l‚É‚æ‚Á‚Ä²‚ğ‚¸‚ç‚·A
-								//X2AY2‚ğ’†S‚Æ‚·‚é‚½‚ß‚ÉX2AY2‚Å‚»‚ê‚¼‚ê4ƒuƒƒbƒN‚ğˆø‚«’†S‚ğ0,0‚ÉˆÚ“®‚³‚¹‚é‰ñ“]‚³‚¹‚éˆ—‚ğs‚¤‘O‚É
-								//g_tetlisBoardBuf‚ğQÆ‚µ‚Ä‰ñ“]‚ª‚Å‚«‚éê‡‚Éˆ—‚ğs‚¤A‰ñ“]‚Å‚«‚È‚¢ê‡IŒ^‚ÌƒeƒgƒŠƒ~ƒm‚ğ‚¸‚ç‚µ‚½•ª‚¾‚¯Œ³‚É–ß‚·
+								//g_minoIRoatationCountãŒï¼“ã‚’è¶…ãˆã¦ã„ãŸå ´åˆ0ä»£å…¥ã™ã‚‹ã€Iå‹ã®ãƒ†ãƒˆãƒªãƒŸãƒã®å ´åˆg_minoIRoatationCountã®å€¤ã«ã‚ˆã£ã¦è»¸ã‚’ãšã‚‰ã™ã€
+								//X2ã€Y2ã‚’ä¸­å¿ƒã¨ã™ã‚‹ãŸã‚ã«X2ã€Y2ã§ãã‚Œãã‚Œ4ãƒ–ãƒ­ãƒƒã‚¯ã‚’å¼•ãä¸­å¿ƒã‚’0,0ã«ç§»å‹•ã•ã›ã‚‹å›è»¢ã•ã›ã‚‹å‡¦ç†ã‚’è¡Œã†å‰ã«
+								//g_tetlisBoardBufã‚’å‚ç…§ã—ã¦å›è»¢ãŒã§ãã‚‹å ´åˆã«å‡¦ç†ã‚’è¡Œã†ã€å›è»¢ã§ããªã„å ´åˆIå‹ã®ãƒ†ãƒˆãƒªãƒŸãƒã‚’ãšã‚‰ã—ãŸåˆ†ã ã‘å…ƒã«æˆ»ã™
 								RotateTetlimino(&minoIRoatationCount, currentTetmino);
 							}
 						}
@@ -344,11 +412,11 @@ VOID Control(VOID)
 							SynchroTetlisBoardBufToTetlisBoard();
 
 							/////////////////////////////////////////////////////////////////////////////////////////////////
-							//g_movMinoNumOfArBuf‚ÌY•ûŒü‚É‚P‘«‚µ‚½”z—ñ‚ğ—p‚¢‚Äg_tetlisBoardBuf‚ğQÆ‚µA‹ó—“‚Ìê‡ˆÚ“®‚ğs‚¤
+							//g_movMinoNumOfArBufã®Yæ–¹å‘ã«ï¼‘è¶³ã—ãŸé…åˆ—ã‚’ç”¨ã„ã¦g_tetlisBoardBufã‚’å‚ç…§ã—ã€ç©ºæ¬„ã®å ´åˆç§»å‹•ã‚’è¡Œã†
 							DownTetlimino(&canInputDA);
 						}
 
-						//ƒn[ƒhƒhƒƒbƒv@ƒeƒgƒŠƒ~ƒm‚ÌƒuƒƒbƒN‚ğˆêŒÂ‚Ã‚Â‰º•û‚ğŠm”F‚µA‚»‚±‚ª‹ó—“‚Å‚Í‚È‚¢ê‡A‚»‚±‚©‚ç1‚Âã‚Éƒ[ƒv‚³‚¹‚é
+						//ãƒãƒ¼ãƒ‰ãƒ‰ãƒ­ãƒƒãƒ—ã€€ãƒ†ãƒˆãƒªãƒŸãƒã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’ä¸€å€‹ã¥ã¤ä¸‹æ–¹ã‚’ç¢ºèªã—ã€ãã“ãŒç©ºæ¬„ã§ã¯ãªã„å ´åˆã€ãã“ã‹ã‚‰1ã¤ä¸Šã«ãƒ¯ãƒ¼ãƒ—ã•ã›ã‚‹
 						if (!(prevUpKeyState))
 						{
 							if (diks[DIK_UP] & 0x80)
@@ -358,8 +426,8 @@ VOID Control(VOID)
 								SynchroTetlisBoardBufToTetlisBoard();
 
 								///////////////////////////////////////////////////////////////////////////////////
-								//ƒ‹[ƒvƒJƒEƒ“ƒ^‚ğ—p‚¢g_tetlisBoardBuf‚ğQÆ‚µA‹ó—“‚Å‚Í‚È‚©‚Á‚½ê‡g_movMinoNumOfArBuf‚ğ
-								//ƒ‹[ƒvƒJƒEƒ“ƒ^-1‚ÌêŠ‚ÉƒeƒgƒŠƒ~ƒm‚ğˆÚ“®‚³‚¹‚é
+								//ãƒ«ãƒ¼ãƒ—ã‚«ã‚¦ãƒ³ã‚¿ã‚’ç”¨ã„g_tetlisBoardBufã‚’å‚ç…§ã—ã€ç©ºæ¬„ã§ã¯ãªã‹ã£ãŸå ´åˆg_movMinoNumOfArBufã‚’
+								//ãƒ«ãƒ¼ãƒ—ã‚«ã‚¦ãƒ³ã‚¿-1ã®å ´æ‰€ã«ãƒ†ãƒˆãƒªãƒŸãƒã‚’ç§»å‹•ã•ã›ã‚‹
 								HardDropTetlimino();
 							}
 						}
@@ -368,24 +436,24 @@ VOID Control(VOID)
 						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 						SynchroTetlisBoardBufToTetlisBoard();
 
-						//ƒeƒgƒŠƒ~ƒm‚Ì‰º•û‚ğŠm”F‚µA‹ó—“‚¾‚Á‚½ê‡ƒJƒEƒ“ƒg‚ğ‚Æ‚èAFLAME_PER_DOWN‚É’B‚µ‚½ê‡ˆê‚Â‰º‚ÉˆÚ“®‚³‚¹‚é
+						//ãƒ†ãƒˆãƒªãƒŸãƒã®ä¸‹æ–¹ã‚’ç¢ºèªã—ã€ç©ºæ¬„ã ã£ãŸå ´åˆã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚Šã€FLAME_PER_DOWNã«é”ã—ãŸå ´åˆä¸€ã¤ä¸‹ã«ç§»å‹•ã•ã›ã‚‹
 						/////////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_movMinoNumOfArBuf+1‚µ‚½”z—ñ”Ô†‚ğ—p‚¢‚Äg_tetlisBoardBuf‚ğQÆ‚µA‹ó—“‚¾‚Á‚½ê‡ƒJƒEƒ“ƒg‚ğ1‘‚â‚µA
-						//ˆê’è’l‚È‚ç‚Îg_movMinoNumOfArBuf‚É‚P‚ğ‘«‚µAƒJƒEƒ“ƒg‚ğ‰Šúó‘Ô‚É‚·‚é
+						//g_movMinoNumOfArBuf+1ã—ãŸé…åˆ—ç•ªå·ã‚’ç”¨ã„ã¦g_tetlisBoardBufã‚’å‚ç…§ã—ã€ç©ºæ¬„ã ã£ãŸå ´åˆã‚«ã‚¦ãƒ³ãƒˆã‚’1å¢—ã‚„ã—ã€
+						//ä¸€å®šå€¤ãªã‚‰ã°g_movMinoNumOfArBufã«ï¼‘ã‚’è¶³ã—ã€ã‚«ã‚¦ãƒ³ãƒˆã‚’åˆæœŸçŠ¶æ…‹ã«ã™ã‚‹
 						CountToDawnTetlimino(&downCount);
 
 						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 						SynchroTetlisBoardBufToTetlisBoard();
 
-						/*ƒeƒgƒŠƒ~ƒm‰º•û‚ğŠm”F‚µA‚»‚±‚ª‹ó—“‚Å‚Í‚È‚¢ê‡ƒJƒEƒ“ƒg‚ğ‚Æ‚èAFLAME_PER_STOP‚É’B‚µ‚½ê‡
-						‰Â“®ƒeƒgƒŠƒ~ƒm‚Ìƒiƒ“ƒo[‚É100‚ğ‘«‚µ(ŠÈ’P‚É‰Â“®‚©”ñ‰Â“®‚ğ”»•Ê‚·‚é‚½‚ß)AV‚µ‚¢‰Â“®ƒeƒgƒŠƒ~ƒm‚ğ¶¬‚·‚é*/
+						/*ãƒ†ãƒˆãƒªãƒŸãƒä¸‹æ–¹ã‚’ç¢ºèªã—ã€ãã“ãŒç©ºæ¬„ã§ã¯ãªã„å ´åˆã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚Šã€FLAME_PER_STOPã«é”ã—ãŸå ´åˆ
+						å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒã®ãƒŠãƒ³ãƒãƒ¼ã«100ã‚’è¶³ã—(ç°¡å˜ã«å¯å‹•ã‹éå¯å‹•ã‚’åˆ¤åˆ¥ã™ã‚‹ãŸã‚)ã€æ–°ã—ã„å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒã‚’ç”Ÿæˆã™ã‚‹*/
 						/////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_movMinoNumOfArBuf+1‚ğ‚µ‚½”z—ñ”Ô†‚ğ—p‚¢g_tetlisBoardBuf‚ğQÆ‚µA‹ó—“(-1)ˆÈŠO‚ª“ü‚Á‚Ä‚¢‚½ê‡
-						//ƒJƒEƒ“ƒg‚ğ‚P‘‚â‚µAˆê’è’l‚È‚ç‚ÎcurrentTetmino + 10‚ğg_tetlisBoard‚É‘ã“ü‚µA
-						//ƒeƒgƒŠƒ~ƒm‚ğ¶¬‚Å‚«‚é‚©”Û‚©Aƒz[ƒ‹ƒh‚ª‚Å‚«‚é‚©”Û‚©‚Ìƒtƒ‰ƒO‚ğtrueA
-						//ƒz[ƒ‹ƒh‚ªs‚í‚ê‚½‚©‚Ìƒtƒ‰ƒO‚ğfalse‚É‚µAcurrentTetmino‚Ég_nextAg_next‚Ég_nextNext‚ğ‘ã“ü‚µ‚ÄA
-						//g_nextNext‚ÉƒeƒgƒŠƒ~ƒm”Ô†‚Ì”ÍˆÍ‚Ì—”‚ğ‘ã“ü‚·‚é
+						//g_movMinoNumOfArBuf+1ã‚’ã—ãŸé…åˆ—ç•ªå·ã‚’ç”¨ã„g_tetlisBoardBufã‚’å‚ç…§ã—ã€ç©ºæ¬„(-1)ä»¥å¤–ãŒå…¥ã£ã¦ã„ãŸå ´åˆ
+						//ã‚«ã‚¦ãƒ³ãƒˆã‚’ï¼‘å¢—ã‚„ã—ã€ä¸€å®šå€¤ãªã‚‰ã°currentTetmino + 10ã‚’g_tetlisBoardã«ä»£å…¥ã—ã€
+						//ãƒ†ãƒˆãƒªãƒŸãƒã‚’ç”Ÿæˆã§ãã‚‹ã‹å¦ã‹ã€ãƒ›ãƒ¼ãƒ«ãƒ‰ãŒã§ãã‚‹ã‹å¦ã‹ã®ãƒ•ãƒ©ã‚°ã‚’trueã€
+						//ãƒ›ãƒ¼ãƒ«ãƒ‰ãŒè¡Œã‚ã‚ŒãŸã‹ã®ãƒ•ãƒ©ã‚°ã‚’falseã«ã—ã€currentTetminoã«g_nextã€g_nextã«g_nextNextã‚’ä»£å…¥ã—ã¦ã€
+						//g_nextNextã«ãƒ†ãƒˆãƒªãƒŸãƒç•ªå·ã®ç¯„å›²ã®ä¹±æ•°ã‚’ä»£å…¥ã™ã‚‹
 						CountToStopTetlimino(&stopCount, &currentTetmino, &canCreate, &canHold, &wasHold);
 					}
 				}
@@ -449,9 +517,9 @@ VOID Control(VOID)
 
 					}
 
-					//‚»‚ë‚Á‚Ä‚¢‚é—ñ‚ª‚ ‚é‚©Šm”F‚µƒJƒEƒ“ƒg‚ğ‚Æ‚é
+					//ãã‚ã£ã¦ã„ã‚‹åˆ—ãŒã‚ã‚‹ã‹ç¢ºèªã—ã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚‹
 					//////////////////////////////////////////////////////////////////////////////
-					//g_tetlisBoardBuf’†g‚ğŠm”F‚µˆê—ñ‚ª‹ó—“(-1)ˆÈŠO‚Ìê‡‹ó—“‚É‚·‚é
+					//g_tetlisBoardBufä¸­èº«ã‚’ç¢ºèªã—ä¸€åˆ—ãŒç©ºæ¬„(-1)ä»¥å¤–ã®å ´åˆç©ºæ¬„ã«ã™ã‚‹
 					DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
 
 					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -459,7 +527,7 @@ VOID Control(VOID)
 					SynchroTetlisBoardBufToTetlisBoard();
 
 					/////////////////////////////////////////////////////////////////////////////////
-					//lineCount‚Ì’l‚É‚æ‚Á‚ÄscoreBuf‚Ì‘‚â‚·’l‚ğ•Ï‚¦A•¶š—ñ‚É‚µg_scoreArray‚É‘ã“ü‚·‚é
+					//lineCountã®å€¤ã«ã‚ˆã£ã¦scoreBufã®å¢—ã‚„ã™å€¤ã‚’å¤‰ãˆã€æ–‡å­—åˆ—ã«ã—g_scoreArrayã«ä»£å…¥ã™ã‚‹
 					GetScoreByLineCount(lineCount, &scoreBuf);
 
 					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -468,15 +536,15 @@ VOID Control(VOID)
 				}
 
 				///////////////////////////////////////////////////////
-				//ƒtƒ‰ƒO‚ªtrue‚È‚ç‚ÎAƒJƒEƒ“ƒg‚ğ‚Æ‚èƒtƒ‰ƒO‚ğfalse‚É‚·‚é
+				//ãƒ•ãƒ©ã‚°ãŒtrueãªã‚‰ã°ã€ã‚«ã‚¦ãƒ³ãƒˆã‚’ã¨ã‚Šãƒ•ãƒ©ã‚°ã‚’falseã«ã™ã‚‹
 				CountToMakeFlagFalse(&deletedLineCount);
 
 				if (deletedLineCount == 60)
 				{
-					//‚»‚ë‚Á‚½—ñ‚ğ‹ó—“‚É‚µ‚Ä‰º‚É‚¸‚ç‚µ‚Ä‚¢‚é
+					//ãã‚ã£ãŸåˆ—ã‚’ç©ºæ¬„ã«ã—ã¦ä¸‹ã«ãšã‚‰ã—ã¦ã„ã‚‹
 					/////////////////////////////////////////////////////////////////////////////////////////////
-					//g_tetlisBoardBuf‚ğQÆ‚µA‹ó—“(-1)ˆÈŠO‚Ìê‡ƒ‹[ƒvƒJƒEƒ“ƒ^+1‚µ‚½”z—ñ”Ô†‚ğ—p‚¢AÄ“xQÆ‚µA
-					//ˆê—ñ‘S‚Ä‹ó—“‚Ìê‡ƒ‹[ƒvƒJƒEƒ“ƒ^+1‚Ì”z—ñ”Ô†‚ÉƒRƒs[‚µAƒRƒs[Œ³‚ğ‹ó—“‚É‘‚«Š·‚¦‚é
+					//g_tetlisBoardBufã‚’å‚ç…§ã—ã€ç©ºæ¬„(-1)ä»¥å¤–ã®å ´åˆãƒ«ãƒ¼ãƒ—ã‚«ã‚¦ãƒ³ã‚¿+1ã—ãŸé…åˆ—ç•ªå·ã‚’ç”¨ã„ã€å†åº¦å‚ç…§ã—ã€
+					//ä¸€åˆ—å…¨ã¦ç©ºæ¬„ã®å ´åˆãƒ«ãƒ¼ãƒ—ã‚«ã‚¦ãƒ³ã‚¿+1ã®é…åˆ—ç•ªå·ã«ã‚³ãƒ”ãƒ¼ã—ã€ã‚³ãƒ”ãƒ¼å…ƒã‚’ç©ºæ¬„ã«æ›¸ãæ›ãˆã‚‹
 					ShiftTetlisLine(&lineCount, &additionalDeletableLine);
 
 					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -484,7 +552,7 @@ VOID Control(VOID)
 					SynchroTetlisBoardBufToTetlisBoard();
 
 					//////////////////////////////////////////////////
-					//‚¢‚­‚Â‰Šúó‘Ô‚©‚çƒ‰ƒCƒ“‚ğÁ‚³‚ê‚½‚©Šm”F‚·‚éŠÖ”
+					//ã„ãã¤åˆæœŸçŠ¶æ…‹ã‹ã‚‰ãƒ©ã‚¤ãƒ³ã‚’æ¶ˆã•ã‚ŒãŸã‹ç¢ºèªã™ã‚‹é–¢æ•°
 					CountDeletedLine();
 				}
 
@@ -495,7 +563,7 @@ VOID Control(VOID)
 					SynchroTetlisBoardBufToTetlisBoard();
 
 					////////////////////////////////////////
-					//ƒn[ƒhƒhƒƒbƒv‚Æ“¯‚¶Œ´—‚ğ—˜—p‚µ‚Ä‚¢‚é
+					//ãƒãƒ¼ãƒ‰ãƒ‰ãƒ­ãƒƒãƒ—ã¨åŒã˜åŸç†ã‚’åˆ©ç”¨ã—ã¦ã„ã‚‹
 					SetTetliminoTarget();
 
 					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -503,19 +571,19 @@ VOID Control(VOID)
 					SynchroTetlisBoardBufToTetlisBoard();
 
 					////////////////////////////////////////////////////////////////////////////////////////
-					//ƒvƒŒƒC‚ÌŒ©‚¦‚é”ÍˆÍ“à‚Åˆê”Ôã‚Ì•”•ª‚É”ñ‰Â“®ƒeƒgƒŠƒ~ƒm‚ª‚ ‚éê‡isGameover‚ğtrue‚É‚·‚é
+					//ãƒ—ãƒ¬ã‚¤æ™‚ã®è¦‹ãˆã‚‹ç¯„å›²å†…ã§ä¸€ç•ªä¸Šã®éƒ¨åˆ†ã«éå¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒãŒã‚ã‚‹å ´åˆisGameoverã‚’trueã«ã™ã‚‹
 					CheckGameover(&isGameover);
 				}
 			}
 
-			//ƒL[“ü—Íó‘Ô‚ğ•Û‘¶
+			//ã‚­ãƒ¼å…¥åŠ›çŠ¶æ…‹ã‚’ä¿å­˜
 			prevRKeyState = diks[DIK_R] & 0x80;
 			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
 			prevUpKeyState = diks[DIK_UP] & 0x80;
 			prevNum1KeyState = diks[DIK_NUMPAD1] & 0x80;
 			memcpy(prevDiks, diks, sizeof(BYTE) * 256);
 
-			//ƒz[ƒ‹ƒh‚ÉƒuƒƒbƒN‚ª•\¦‚³‚ê‚Ä‚¢‚é‚Ì‚ÅÁ‚·
+			//ãƒ›ãƒ¼ãƒ«ãƒ‰æ™‚ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ã®ã§æ¶ˆã™
 			if (wasHold || g_itemData.useItem)
 			{
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
@@ -527,12 +595,12 @@ VOID Control(VOID)
 }
 
 ///////////////////////////////////
-//ƒAƒCƒeƒ€‚ÌX•ûŒü‚Ìƒ|ƒWƒVƒ‡ƒ“‚ğ•ÏX
+//ã‚¢ã‚¤ãƒ†ãƒ ã®Xæ–¹å‘ã®ãƒã‚¸ã‚·ãƒ§ãƒ³ã‚’å¤‰æ›´
 VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax)
 {
-	if (rangeMin < g_itemData.itemPosYX[1] && g_itemData.itemPosYX[1] < rangeMax)
+	if (rangeMin < g_itemData.posYX[1] && g_itemData.posYX[1] < rangeMax)
 	{
-		g_itemData.itemPosYX[1] += shift;
+		g_itemData.posYX[1] += shift;
 		*canInputRA = false;
 	}
 
@@ -540,12 +608,12 @@ VOID ShiftItemX(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax)
 }
 
 ///////////////////////////////////
-//ƒAƒCƒeƒ€‚ÌY•ûŒü‚Ìƒ|ƒWƒVƒ‡ƒ“‚ğ•ÏX
+//ã‚¢ã‚¤ãƒ†ãƒ ã®Yæ–¹å‘ã®ãƒã‚¸ã‚·ãƒ§ãƒ³ã‚’å¤‰æ›´
 VOID ShiftItemY(INT shift, BOOL *canInputRA, INT rangeMin, INT rangeMax)
 {
-	if (rangeMin < g_itemData.itemPosYX[0] && g_itemData.itemPosYX[0] < rangeMax)
+	if (rangeMin < g_itemData.posYX[0] && g_itemData.posYX[0] < rangeMax)
 	{
-		g_itemData.itemPosYX[0] += shift;
+		g_itemData.posYX[0] += shift;
 		*canInputRA = false;
 	}
 
@@ -568,7 +636,7 @@ VOID DeleteBlockWithItem(BOOL *g_useItem)
 }
 
 ////////////////////////////////////////////
-//ƒeƒgƒŠƒX”z—ñ‚É‘I‚Î‚ê‚½ƒpƒ^[ƒ“‚ğƒRƒs[‚·‚é
+//ãƒ†ãƒˆãƒªã‚¹é…åˆ—ã«é¸ã°ã‚ŒãŸãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID)
 {
 	for (INT line = 19; line < 137; line += 3)
@@ -586,7 +654,7 @@ VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//|1‚Í‹ó—“‚ğ•\‚µAæ‚É‘S‚Ä‚Ì”z—ñ‚Ì’†g‚ğ‹ó—“‚É‚·‚é‚±‚Æ‚É‚æ‚èA•Ç(9)‚ğã‚©‚ç“h‚è‚Â‚Ô‚·‚¾‚¯‚Å•\‚ªŠ®¬‚·‚é
+//ï¼1ã¯ç©ºæ¬„ã‚’è¡¨ã—ã€å…ˆã«å…¨ã¦ã®é…åˆ—ã®ä¸­èº«ã‚’ç©ºæ¬„ã«ã™ã‚‹ã“ã¨ã«ã‚ˆã‚Šã€å£(9)ã‚’ä¸Šã‹ã‚‰å¡—ã‚Šã¤ã¶ã™ã ã‘ã§è¡¨ãŒå®Œæˆã™ã‚‹
 VOID InitTetlisBoard(VOID)
 {
 	for (INT column = 0; column < TETLIS_HEIGHT; column++)
@@ -610,7 +678,7 @@ VOID InitTetlisBoard(VOID)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//‰Â“®ƒeƒgƒŠƒ~ƒm(“®‚¢‚Ä‚é‚â‚Â)‚ğƒeƒgƒŠƒXƒ{[ƒhƒoƒbƒtƒ@[‚É“ü‚ê‚È‚¢‚æ‚¤‚É‚·‚é‚±‚Æ‚É‚æ‚èA‰ñ“]AˆÚ“®‚È‚Ç‚ÌÛA‰Â“®ƒeƒgƒŠƒ~ƒm‚ğl—¶‚¹‚¸‚Æ‚à—Ç‚¢
+//å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒ(å‹•ã„ã¦ã‚‹ã‚„ã¤)ã‚’ãƒ†ãƒˆãƒªã‚¹ãƒœãƒ¼ãƒ‰ãƒãƒƒãƒ•ã‚¡ãƒ¼ã«å…¥ã‚Œãªã„ã‚ˆã†ã«ã™ã‚‹ã“ã¨ã«ã‚ˆã‚Šã€å›è»¢ã€ç§»å‹•ãªã©ã®éš›ã€å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒã‚’è€ƒæ…®ã›ãšã¨ã‚‚è‰¯ã„
 VOID InitTetlisBoardBuf(VOID)
 {
 	
@@ -636,7 +704,7 @@ VOID InitTetlisBoardBuf(VOID)
 }
 
 //////////////////////////////////
-//g_durableBlockBeared‚ğ‰Šú‰»‚·‚é
+//g_durableBlockBearedã‚’åˆæœŸåŒ–ã™ã‚‹
 VOID InitDurableBlockBeared(VOID)
 {
 	for (INT column = 0; column < TETLIS_HEIGHT; column++)
@@ -651,7 +719,7 @@ VOID InitDurableBlockBeared(VOID)
 }
 
 ///////////////////////////////////
-//g_reduceBlockDurPosition‚ğ‰Šú‰»‚·‚é
+//g_reduceBlockDurPositionã‚’åˆæœŸåŒ–ã™ã‚‹
 VOID InitReduceBlockPosition(VOID)
 {
 	for (INT column = 0; column < TETLIS_HEIGHT; column++)
@@ -666,8 +734,8 @@ VOID InitReduceBlockPosition(VOID)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//ƒeƒgƒŠƒ~ƒm‚Ì‰ŠúÀ•W(¶¬‚³‚ê‚é‚Æ‚«‚ÌÀ•W)‚ğ—p‚¢‚é‚½‚ßAxÀ•W‚ğ-4‚¸‚ç‚·‚±‚Æ‚ÅƒlƒNƒXƒg“™‚Ì•\‚Æ‚Ì®‡«‚ğ‚Æ‚èA
-//ƒz[ƒ‹ƒh‚É“ü‚Á‚Ä‚¢‚é’l‚É‚æ‚Á‚ÄA“ü‚ê‚éƒeƒgƒŠƒ~ƒm‚ğ•Ï‚¦‚é
+//ãƒ†ãƒˆãƒªãƒŸãƒã®åˆæœŸåº§æ¨™(ç”Ÿæˆã•ã‚Œã‚‹ã¨ãã®åº§æ¨™)ã‚’ç”¨ã„ã‚‹ãŸã‚ã€xåº§æ¨™ã‚’-4ãšã‚‰ã™ã“ã¨ã§ãƒã‚¯ã‚¹ãƒˆç­‰ã®è¡¨ã¨ã®æ•´åˆæ€§ã‚’ã¨ã‚Šã€
+//ãƒ›ãƒ¼ãƒ«ãƒ‰ã«å…¥ã£ã¦ã„ã‚‹å€¤ã«ã‚ˆã£ã¦ã€å…¥ã‚Œã‚‹ãƒ†ãƒˆãƒªãƒŸãƒã‚’å¤‰ãˆã‚‹
 VOID UpdateHoldNextNextNextBoard(VOID)
 {
 	for (INT column = 0; column < 4; column++)
@@ -717,7 +785,7 @@ VOID UpdateHoldNextNextNextBoard(VOID)
 }
 
 //////////////////////////////////////////////////////
-//‰Â“®ƒeƒgƒŠƒ~ƒmˆÈŠO‚ğg_tetlisBoardBuf‚É“¯Šú‚³‚¹‚Ä‚¢‚é 
+//å¯å‹•ãƒ†ãƒˆãƒªãƒŸãƒä»¥å¤–ã‚’g_tetlisBoardBufã«åŒæœŸã•ã›ã¦ã„ã‚‹ 
 VOID SynchroTetlisBoardBufToTetlisBoard(VOID)
 {
 	for (INT column = 0; column < TETLIS_HEIGHT; column++)
@@ -739,7 +807,7 @@ VOID SynchroTetlisBoardBufToTetlisBoard(VOID)
 }
 
 ////////////////////////////////////////////////////
-//g_tetlisBoard‚Ég_movMinoNumOfArBuf‚ğ“¯Šú‚³‚¹‚Ä‚¢‚é
+//g_tetlisBoardã«g_movMinoNumOfArBufã‚’åŒæœŸã•ã›ã¦ã„ã‚‹
 VOID SynchroTetlisBoardToMovMinoNumOfArBuf(INT currentTetmino)
 {
 	for (INT block = 0; block < 4; block++)
@@ -1226,6 +1294,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 	INT firstDeletedColumn = 0;
 	BOOL isFirstDeletedLine = true;
+
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
 		if (g_tetlisBoardBuf[column][1] % 100 != -1 &&
@@ -1332,7 +1401,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 					g_tetlisBoard[column][row] = -1;
 					g_reduceBlockDurPosition[column][row] = 1;
-					g_itemData.haveItem[g_drillItem] = true;
+					g_itemData.haveItem[g_ultraDrillItem] = true;
 					g_tetlisBoard[column][row] = -1;
 					g_reduceBlockDurPosition[column][row] = 1;
 
@@ -1448,7 +1517,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 			case 160:
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
-				g_itemData.haveItem[g_drillItem] = true;
+				g_itemData.haveItem[g_ultraDrillItem] = true;
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
 
@@ -1507,7 +1576,7 @@ VOID ShiftTetlisLine(INT *lineCount, INT *additionalDeletableLine)
 		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 		{
 			////////////////////////////
-			//ƒn[ƒhƒhƒƒbƒv‚Ìˆ—‚ğ—˜—p
+			//ãƒãƒ¼ãƒ‰ãƒ‰ãƒ­ãƒƒãƒ—ã®å‡¦ç†ã‚’åˆ©ç”¨
 			ShiftTetlisBlockInvolvedInDurableBlock(column, row);
 		}
 	}
@@ -1549,7 +1618,7 @@ VOID ShiftTetlisBlockInvolvedInDurableBlock(INT column, INT row)
 }
 
 //////////////////////////////////////////////////
-//‚¢‚­‚Â‰Šúó‘Ô‚©‚çƒ‰ƒCƒ“‚ğÁ‚³‚ê‚½‚©Šm”F‚·‚éŠÖ”
+//ã„ãã¤åˆæœŸçŠ¶æ…‹ã‹ã‚‰ãƒ©ã‚¤ãƒ³ã‚’æ¶ˆã•ã‚ŒãŸã‹ç¢ºèªã™ã‚‹é–¢æ•°
 VOID CountDeletedLine(VOID)
 {
 	g_deletedLineCount = 0;
