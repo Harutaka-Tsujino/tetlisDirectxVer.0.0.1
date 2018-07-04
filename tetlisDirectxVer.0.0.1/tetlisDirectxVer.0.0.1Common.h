@@ -64,6 +64,7 @@ enum TEX
 	g_inventoryTex,
 	g_itemIconListTex,
 	g_effect_laserTex,
+	g_drillBurnEffectTex,
 	g_texMax
 };
 
