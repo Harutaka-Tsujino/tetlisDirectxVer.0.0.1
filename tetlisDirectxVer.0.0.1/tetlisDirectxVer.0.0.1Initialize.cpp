@@ -215,6 +215,11 @@ VOID CreateTextureFromFile(VOID)
 		g_pD3dDevice,
 		"texture/drillBurnEffect.png",
 		&g_pTexture[g_drillBurnEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/bullet.png",
+		&g_pTexture[g_bulletTex]);
 	
 	return;
 }

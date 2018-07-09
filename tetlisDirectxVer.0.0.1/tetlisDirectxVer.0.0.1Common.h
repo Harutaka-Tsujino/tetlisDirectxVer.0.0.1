@@ -65,6 +65,7 @@ enum TEX
 	g_itemIconListTex,
 	g_effect_laserTex,
 	g_drillBurnEffectTex,
+	g_bulletTex,
 	g_texMax
 };
 
@@ -80,6 +81,7 @@ enum ITEM
 {
 	g_ultraDrillItem,
 	g_laserCannonItem,
+	g_bulletItem,
 	g_itemMax
 };
 

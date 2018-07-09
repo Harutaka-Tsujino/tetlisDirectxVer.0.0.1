@@ -16,8 +16,7 @@ extern BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 extern INT g_deletedLine;
-extern INT g_deletedLineNum;
-extern INT g_drillEffectCount;
+extern INT g_deletedLineOverall;
 
 //テトリスなどの操作に関する関数
 VOID Control(VOID);

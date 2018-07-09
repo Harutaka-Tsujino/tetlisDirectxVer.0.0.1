@@ -107,9 +107,9 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 			//入力された情報を読み取る
 			g_pDKeyDevice->GetDeviceState(sizeof(diks), &diks);
 
-			ImageState inventoryTop = { 200.f,560.f,64.f,64.f };
-			ImageState inventoryBottom = { 200.f,560.f,64.f,64.f };
-			ImageState itemIconList = { 200.f,560.f,50.f,50.f };
+			ImageState inventoryTop = { 200.f,560.f,128.f/2,128.f/2 };
+			ImageState inventoryBottom = { 200.f,560.f,128.f/2,128.f/2 };
+			ImageState itemIconList = { 200.f,560.f,100.f/2,100.f/2 };
 
 			CustomVertex cusV4ItemIconList[4] =
 			{
@@ -127,15 +127,16 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 				inventoryTop.y -= 50.f;
 				inventoryBottom.y += 50.f;
 
-				cusV4ItemIconList[0].tu = 0;
-				cusV4ItemIconList[1].tu = 50 * g_itemMax / 512.f;
-				cusV4ItemIconList[2].tu = 50 * g_itemMax / 512.f;
-				cusV4ItemIconList[3].tu = 0;
+				cusV4ItemIconList[0].tu = 0.f;
+				cusV4ItemIconList[1].tu = 1.f;
+				cusV4ItemIconList[2].tu = 1.f;
+				cusV4ItemIconList[3].tu = 0.f;
 
-				cusV4ItemIconList[0].x = -itemIconList.xScale*2*g_itemData.currentItemNum+ itemIconList.xScale*g_itemMax / 2 + cusV4ItemIconList[0].x - itemIconList.xScale * (g_itemMax / 2);
-				cusV4ItemIconList[1].x = -itemIconList.xScale*2*g_itemData.currentItemNum + itemIconList.xScale*g_itemMax / 2 + cusV4ItemIconList[1].x + itemIconList.xScale * (g_itemMax / 2);
-				cusV4ItemIconList[2].x = -itemIconList.xScale*2*g_itemData.currentItemNum + itemIconList.xScale*g_itemMax / 2+ cusV4ItemIconList[2].x + itemIconList.xScale * (g_itemMax / 2);
-				cusV4ItemIconList[3].x = -itemIconList.xScale*2*g_itemData.currentItemNum + itemIconList.xScale*g_itemMax / 2 + cusV4ItemIconList[3].x - itemIconList.xScale * (g_itemMax / 2);
+				const FLOAT posX = 162;
+				cusV4ItemIconList[0].x =posX+ itemIconList.x -512 + 100 * (g_itemMax-g_itemData.currentItemNum);
+				cusV4ItemIconList[1].x =posX+ itemIconList.x+512+ 100 * (g_itemMax-g_itemData.currentItemNum);
+				cusV4ItemIconList[2].x =posX+ itemIconList.x+512+ 100 * (g_itemMax-g_itemData.currentItemNum);
+				cusV4ItemIconList[3].x =posX+ itemIconList.x-512+ 100 * (g_itemMax-g_itemData.currentItemNum);
 													
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
@@ -279,7 +280,7 @@ VOID SetItemVerticiesAndRender(VOID)
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
 			}
 
-			if (g_itemData.count[g_ultraDrillItem]>0)
+			if (g_itemData.count[g_ultraDrillItem] > 0)
 			{
 				FLOAT additionalScale = 0;
 
@@ -620,7 +621,7 @@ VOID SetItemVerticiesAndRender(VOID)
 
 
 
-				if (179 < g_itemData.count[g_ultraDrillItem]&& g_itemData.count[g_ultraDrillItem]<430)
+				if (179 < g_itemData.count[g_ultraDrillItem] && g_itemData.count[g_ultraDrillItem] < 430)
 				{
 					cusV4drillItem[0].color = 0xBBFFFFFF;
 					cusV4drillItem[1].color = 0xBBFFFFFF;
@@ -635,7 +636,7 @@ VOID SetItemVerticiesAndRender(VOID)
 						cusV4drillItem[1].tv = 0 / 64.f;
 						cusV4drillItem[2].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4) % 4 + 1) / 1280.f;
 						cusV4drillItem[2].tv = 63 / 64.f;
-						cusV4drillItem[3].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4)% 4) / 1280.f;
+						cusV4drillItem[3].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4) % 4) / 1280.f;
 						cusV4drillItem[3].tv = 63 / 64.f;
 					}
 
@@ -703,7 +704,7 @@ VOID SetItemVerticiesAndRender(VOID)
 				accelY = 0;
 			}
 
-			if ((83 < g_itemData.count[g_ultraDrillItem]&&g_itemData.count[g_ultraDrillItem] < 180))
+			if ((83 < g_itemData.count[g_ultraDrillItem] && g_itemData.count[g_ultraDrillItem] < 180))
 			{
 				CustomVertex CusV3HardDropParticleEffect[3] =
 				{
@@ -740,9 +741,9 @@ VOID SetItemVerticiesAndRender(VOID)
 				accelY += 0.7f;
 			}
 		}
-			break;
+		break;
 		case g_laserCannonItem:
-
+		{
 			ImageState laserCannonState = { 395.f,0.f,15.f,15.f };
 			laserCannonState.y = 70.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) + laserCannonState.yScale;
 
@@ -765,21 +766,21 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				if ((1 < g_itemData.count[g_laserCannonItem]) && (g_itemData.count[g_laserCannonItem] < 32))
 				{
-					laserCannonEffectState.yScale = 15.f+2.8f*g_itemData.count[g_laserCannonItem];
+					laserCannonEffectState.yScale = 15.f + 2.8f*g_itemData.count[g_laserCannonItem];
 				}
 
-				if ((31 < g_itemData.count[g_laserCannonItem]) && (g_itemData.count[g_laserCannonItem] <46 ))
+				if ((31 < g_itemData.count[g_laserCannonItem]) && (g_itemData.count[g_laserCannonItem] < 46))
 				{
-					laserCannonEffectState.yScale = 45.f-3* (g_itemData.count[g_laserCannonItem]-30);
+					laserCannonEffectState.yScale = 45.f - 3 * (g_itemData.count[g_laserCannonItem] - 30);
 				}
 
-				if (laserCannonEffectState.xScale<150.f)
+				if (laserCannonEffectState.xScale < 150.f)
 				{
 					laserCannonEffectState.xScale = 5.f * g_itemData.count[g_laserCannonItem];
-					laserCannonEffectState.x = 410.f+5.f * g_itemData.count[g_laserCannonItem];
+					laserCannonEffectState.x = 410.f + 5.f * g_itemData.count[g_laserCannonItem];
 				}
 
-				if(laserCannonEffectState.xScale>=150.f)
+				if (laserCannonEffectState.xScale >= 150.f)
 				{
 					laserCannonEffectState.x = 410.f + 150.f;
 					laserCannonEffectState.xScale = 150.f;
@@ -792,11 +793,116 @@ VOID SetItemVerticiesAndRender(VOID)
 					{ laserCannonEffectState.x + laserCannonEffectState.xScale,laserCannonEffectState.y + laserCannonEffectState.yScale,1.f,1.f,0xFFFFFFFF,1.f,1.f },
 					{ laserCannonEffectState.x - laserCannonEffectState.xScale,laserCannonEffectState.y + laserCannonEffectState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.f }
 				};
-				
+
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_effect_laserTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LaserCannonEffect, sizeof(CustomVertex));
 			}
 			break;
+		}
+		case g_bulletItem:
+		{
+			static float accelY = 0;
+
+			if (g_itemData.count[g_bulletItem] == 0)
+			{
+				ImageState scopeState = { 395.f,0.f,256.f / 2,256.f / 2 };
+
+				scopeState.x = 395.f + 30 * (g_itemData.posYX[1]);
+				scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
+
+				accelY = 0;
+
+				CustomVertex cusV4Scope[4] =
+				{
+					{ scopeState.x - scopeState.xScale,scopeState.y - scopeState.yScale,1.f,1.f,0xFFFFFFFF,0.f / 512,50 / 512.f },
+					{ scopeState.x + scopeState.xScale,scopeState.y - scopeState.yScale,1.f,1.f,0xFFFFFFFF,256 / 512.f,50 / 512.f },
+					{ scopeState.x + scopeState.xScale,scopeState.y + scopeState.yScale,1.f,1.f,0xFFFFFFFF,256 / 512.f,306 / 512.f},
+					{ scopeState.x - scopeState.xScale,scopeState.y + scopeState.yScale,1.f,1.f,0xFFFFFFFF,0.f / 512,306 / 512.f}
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_bulletTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Scope, sizeof(CustomVertex));
+			}
+
+			if (0 < g_itemData.count[g_bulletItem] && g_itemData.count[g_bulletItem] < 181)
+			{
+				ImageState crackState = { 395.f,0.f,50.f / 2,50.f / 2 };
+
+				int countBuf = (6 < g_itemData.count[g_bulletItem]) ? 6 : g_itemData.count[g_bulletItem];
+
+				crackState.x = 395.f + 30 * (g_itemData.posYX[1]);
+				crackState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
+
+				CustomVertex cusV4crack[4] =
+				{
+					{ crackState.x - crackState.xScale,crackState.y - crackState.yScale,1.f,1.f,0xFFFFFFFF,75.f / 512,380 / 512.f },
+					{ crackState.x + crackState.xScale,crackState.y - crackState.yScale,1.f,1.f,0xFFFFFFFF,125 / 512.f,380 / 512.f },
+					{ crackState.x + crackState.xScale,crackState.y + crackState.yScale,1.f,1.f,0xFFFFFFFF,125 / 512.f,430 / 512.f },
+					{ crackState.x - crackState.xScale,crackState.y + crackState.yScale,1.f,1.f,0xFFFFFFFF,75.f / 512,430 / 512.f }
+				};
+
+				cusV4crack[0].x += -25.f * ((countBuf) / 2);
+				cusV4crack[0].y += -25.f * ((countBuf) / 2);
+				cusV4crack[1].x += 25.f * ((countBuf) / 2);
+				cusV4crack[1].y += -25.f * ((countBuf) / 2);
+				cusV4crack[2].x += 25.f * ((countBuf) / 2);
+				cusV4crack[2].y += 25.f * ((countBuf) / 2);
+				cusV4crack[3].x += -25.f * ((countBuf) / 2);
+				cusV4crack[3].y += 25.f * ((countBuf) / 2);
+
+				cusV4crack[0].tu += -25 * (countBuf / 2) / 512.f;
+				cusV4crack[0].tv += -25 * (countBuf / 2) / 512.f;
+				cusV4crack[1].tu += 25 * (countBuf / 2) / 512.f;
+				cusV4crack[1].tv += -25 * (countBuf / 2) / 512.f;
+				cusV4crack[2].tu += 25 * (countBuf / 2) / 512.f;
+				cusV4crack[2].tv += 25 * (countBuf / 2) / 512.f;
+				cusV4crack[3].tu += -25 * (countBuf / 2) / 512.f;
+				cusV4crack[3].tv += 25* (countBuf / 2) / 512.f;
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_bulletTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4crack, sizeof(CustomVertex));
+			}
+
+			if (49<g_itemData.count[g_bulletItem])
+			{
+				ImageState cartridgeState = { 0.f,0.f,50.f / 2,50.f / 2 };
+
+				CustomVertex cusV4Cartridge[4] =
+				{
+					{ cartridgeState.x - cartridgeState.xScale,cartridgeState.y - cartridgeState.yScale,1.f,1.f,0xFFFFFFFF,50.f / 512,0 / 512.f },
+					{ cartridgeState.x + cartridgeState.xScale,cartridgeState.y - cartridgeState.yScale,1.f,1.f,0xFFFFFFFF,100 / 512.f,0 / 512.f },
+					{ cartridgeState.x + cartridgeState.xScale,cartridgeState.y + cartridgeState.yScale,1.f,1.f,0xFFFFFFFF,100 / 512.f,50 / 512.f },
+					{ cartridgeState.x - cartridgeState.xScale,cartridgeState.y + cartridgeState.yScale,1.f,1.f,0xFFFFFFFF,50.f / 512,50 / 512.f }
+				};
+
+				CustomVertex rotateCusV4Cartridge[4];
+
+				const INT grand = 87;
+				static FLOAT grandPos = 0;
+
+				if (g_itemData.count[g_bulletItem] == grand)
+				{
+					accelY = 0;
+				}
+
+				if (g_itemData.count[g_bulletItem] >= grand)
+				{
+					RotateTexDeg(rotateCusV4Cartridge, cusV4Cartridge, -6.f * g_itemData.count[g_bulletItem], 600.f-(g_itemData.count[g_bulletItem]-grand), grandPos +(-6.f+accelY)*(g_itemData.count[g_bulletItem]-grand));
+				}
+
+				else
+				{
+					RotateTexDeg(rotateCusV4Cartridge, cusV4Cartridge, 6.f * g_itemData.count[g_bulletItem], 600.f, (4.f+accelY) * g_itemData.count[g_bulletItem]);
+
+					grandPos = rotateCusV4Cartridge->y;
+				}
+				
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_bulletTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, rotateCusV4Cartridge, sizeof(CustomVertex));
+
+				accelY += 0.1f;
+			}
+		}
 		}
 	}
 
@@ -986,468 +1092,6 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 	return;
 }
 
-//VOID SetItemVerticesAndRender(VOID)
-//{	
-//	static ImageState drillItemState = { 0.f,0.f,90.f / 2,90.f / 2 };
-//	static INT additonalPosY = 0;
-//
-//	if (g_itemData.count[g_ultraDrillItem] > 410)
-//	{
-//		additonalPosY += 200;
-//	}
-//
-//	else
-//	{
-//		additonalPosY = 0;
-//	}
-//
-//	CustomVertex cusV4drillItem[4] =
-//	{
-//		{ drillItemState.x - drillItemState.xScale, drillItemState.y - drillItemState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
-//		{ drillItemState.x + drillItemState.xScale, drillItemState.y - drillItemState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
-//		{ drillItemState.x + drillItemState.xScale, drillItemState.y + drillItemState.yScale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
-//		{ drillItemState.x - drillItemState.xScale, drillItemState.y + drillItemState.yScale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
-//	};
-//
-//	if (g_itemData.count[g_ultraDrillItem])
-//	{
-//		FLOAT additionalScale = 0;
-//
-//		if (g_itemData.count[g_ultraDrillItem] >= 180)
-//		{
-//			additionalScale = g_itemData.count[g_ultraDrillItem] - 180.f;
-//		}
-//
-//		if (additionalScale > 360 - 180.f)
-//		{
-//			additionalScale = 360 - 180.f;
-//		}
-//
-//		if (g_itemData.count[g_ultraDrillItem] < 180)
-//		{
-//			cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//			cusV4drillItem[0].y = 40.f;
-//			cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//			cusV4drillItem[1].y = 40.f;
-//			cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//			cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2;
-//			cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//			cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2;
-//
-//			cusV4drillItem[0].tu = 200 / 512.f;
-//			cusV4drillItem[0].tv = 0 / 256.f;
-//			cusV4drillItem[1].tu = 250 / 512.f;
-//			cusV4drillItem[1].tv = 0 / 256.f;
-//			cusV4drillItem[2].tu = 250 / 512.f;
-//			cusV4drillItem[2].tv = 50 / 256.f;
-//			cusV4drillItem[3].tu = 200 / 512.f;
-//			cusV4drillItem[3].tv = 50 / 256.f;
-//
-//			g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//		}
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale + additonalPosY;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale + additonalPosY;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 + additionalScale + additonalPosY;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 + additionalScale + additonalPosY;
-//
-//		switch (g_itemData.count[g_ultraDrillItem] / 60)
-//		{
-//		case 0:
-//			cusV4drillItem[0].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 11) % 4) / 512.f;
-//			cusV4drillItem[0].tv = 200 / 256.f;
-//			cusV4drillItem[1].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 11) % 4 + 1) / 512.f;
-//			cusV4drillItem[1].tv = 200 / 256.f;
-//			cusV4drillItem[2].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 11) % 4 + 1) / 512.f;
-//			cusV4drillItem[2].tv = 250 / 256.f;
-//			cusV4drillItem[3].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 11) % 4) / 512.f;
-//			cusV4drillItem[3].tv = 250 / 256.f;
-//
-//			break;
-//
-//		case 1:
-//			cusV4drillItem[0].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 9) % 4) / 512.f;
-//			cusV4drillItem[0].tv = 200 / 256.f;
-//			cusV4drillItem[1].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 9) % 4 + 1) / 512.f;
-//			cusV4drillItem[1].tv = 200 / 256.f;
-//			cusV4drillItem[2].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 9) % 4 + 1) / 512.f;
-//			cusV4drillItem[2].tv = 250 / 256.f;
-//			cusV4drillItem[3].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 9) % 4) / 512.f;
-//			cusV4drillItem[3].tv = 250 / 256.f;
-//
-//			break;
-//
-//		case 2:
-//			cusV4drillItem[0].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 5) % 4) / 512.f;
-//			cusV4drillItem[0].tv = 200 / 256.f;
-//			cusV4drillItem[1].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 5) % 4 + 1) / 512.f;
-//			cusV4drillItem[1].tv = 200 / 256.f;
-//			cusV4drillItem[2].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 5) % 4 + 1) / 512.f;
-//			cusV4drillItem[2].tv = 250 / 256.f;
-//			cusV4drillItem[3].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 5) % 4) / 512.f;
-//			cusV4drillItem[3].tv = 250 / 256.f;
-//
-//			break;
-//
-//		case 3:
-//			cusV4drillItem[0].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 3) % 4) / 512.f;
-//			cusV4drillItem[0].tv = 200 / 256.f;
-//			cusV4drillItem[1].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 3) % 4 + 1) / 512.f;
-//			cusV4drillItem[1].tv = 200 / 256.f;
-//			cusV4drillItem[2].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 3) % 4 + 1) / 512.f;
-//			cusV4drillItem[2].tv = 250 / 256.f;
-//			cusV4drillItem[3].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 3) % 4) / 512.f;
-//			cusV4drillItem[3].tv = 250 / 256.f;
-//
-//			break;
-//
-//		default:
-//			cusV4drillItem[0].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 1) % 4) / 512.f;
-//			cusV4drillItem[0].tv = 200 / 256.f;
-//			cusV4drillItem[1].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 1) % 4 + 1) / 512.f;
-//			cusV4drillItem[1].tv = 200 / 256.f;
-//			cusV4drillItem[2].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 1) % 4 + 1) / 512.f;
-//			cusV4drillItem[2].tv = 250 / 256.f;
-//			cusV4drillItem[3].tu = 50 * ((g_itemData.count[g_ultraDrillItem] / 1) % 4) / 512.f;
-//			cusV4drillItem[3].tv = 250 / 256.f;
-//
-//			break;
-//		}
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.0f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.0f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.0f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.0f;
-//
-//		cusV4drillItem[0].tu = 0 / 512.f;
-//		cusV4drillItem[0].tv = 100 / 256.f;
-//		cusV4drillItem[1].tu = 50 / 512.f;
-//		cusV4drillItem[1].tv = 100 / 256.f;
-//		cusV4drillItem[2].tu = 50 / 512.f;
-//		cusV4drillItem[2].tv = 150 / 256.f;
-//		cusV4drillItem[3].tu = 0 / 512.f;
-//		cusV4drillItem[3].tv = 150 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.5f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.5f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
-//
-//		cusV4drillItem[0].tu = 0 / 512.f;
-//		cusV4drillItem[0].tv = 150 / 256.f;
-//		cusV4drillItem[1].tu = 50 / 512.f;
-//		cusV4drillItem[1].tv = 150 / 256.f;
-//		cusV4drillItem[2].tu = 50 / 512.f;
-//		cusV4drillItem[2].tv = 200 / 256.f;
-//		cusV4drillItem[3].tu = 0 / 512.f;
-//		cusV4drillItem[3].tv = 200 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.7f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.7f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.7f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.7f;
-//
-//		cusV4drillItem[0].tu = 50 / 512.f;
-//		cusV4drillItem[0].tv = 100 / 256.f;
-//		cusV4drillItem[1].tu = 100 / 512.f;
-//		cusV4drillItem[1].tv = 100 / 256.f;
-//		cusV4drillItem[2].tu = 100 / 512.f;
-//		cusV4drillItem[2].tv = 150 / 256.f;
-//		cusV4drillItem[3].tu = 50 / 512.f;
-//		cusV4drillItem[3].tv = 150 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.1f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.1f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.3f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.3f;
-//
-//		cusV4drillItem[0].tu = 50 / 512.f;
-//		cusV4drillItem[0].tv = 150 / 256.f;
-//		cusV4drillItem[1].tu = 100 / 512.f;
-//		cusV4drillItem[1].tv = 150 / 256.f;
-//		cusV4drillItem[2].tu = 100 / 512.f;
-//		cusV4drillItem[2].tv = 200 / 256.f;
-//		cusV4drillItem[3].tu = 50 / 512.f;
-//		cusV4drillItem[3].tv = 200 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.4f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.4f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
-//
-//		cusV4drillItem[0].tu = 100 / 512.f;
-//		cusV4drillItem[0].tv = 100 / 256.f;
-//		cusV4drillItem[1].tu = 150 / 512.f;
-//		cusV4drillItem[1].tv = 100 / 256.f;
-//		cusV4drillItem[2].tu = 150 / 512.f;
-//		cusV4drillItem[2].tv = 150 / 256.f;
-//		cusV4drillItem[3].tu = 100 / 512.f;
-//		cusV4drillItem[3].tv = 150 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 1.7f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 1.7f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 1.7f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 1.7f;
-//
-//		cusV4drillItem[0].tu = 100 / 512.f;
-//		cusV4drillItem[0].tv = 150 / 256.f;
-//		cusV4drillItem[1].tu = 150 / 512.f;
-//		cusV4drillItem[1].tv = 150 / 256.f;
-//		cusV4drillItem[2].tu = 150 / 512.f;
-//		cusV4drillItem[2].tv = 200 / 256.f;
-//		cusV4drillItem[3].tu = 100 / 512.f;
-//		cusV4drillItem[3].tv = 200 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.0f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.0f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.5f;
-//
-//		cusV4drillItem[0].tu = 150 / 512.f;
-//		cusV4drillItem[0].tv = 100 / 256.f;
-//		cusV4drillItem[1].tu = 200 / 512.f;
-//		cusV4drillItem[1].tv = 100 / 256.f;
-//		cusV4drillItem[2].tu = 200 / 512.f;
-//		cusV4drillItem[2].tv = 150 / 256.f;
-//		cusV4drillItem[3].tu = 150 / 512.f;
-//		cusV4drillItem[3].tv = 150 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[0].y = 40.f - additionalScale / 2.9f;
-//		cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[1].y = 40.f - additionalScale / 2.9f;
-//		cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
-//		cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 - additionalScale / 2.9f;
-//
-//		cusV4drillItem[0].tu = 150 / 512.f;
-//		cusV4drillItem[0].tv = 150 / 256.f;
-//		cusV4drillItem[1].tu = 200 / 512.f;
-//		cusV4drillItem[1].tv = 150 / 256.f;
-//		cusV4drillItem[2].tu = 200 / 512.f;
-//		cusV4drillItem[2].tv = 200 / 256.f;
-//		cusV4drillItem[3].tu = 150 / 512.f;
-//		cusV4drillItem[3].tv = 200 / 256.f;
-//
-//		g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//		if (59 < g_itemData.count[g_ultraDrillItem] && g_itemData.count[g_ultraDrillItem] < 180)
-//		{
-//			cusV4drillItem[0].x = 395.f + g_itemData.posYX[1] * (15 * 2) - 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[0].y = 85.f - 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[1].x = 395.f + g_itemData.posYX[1] * (15 * 2) + 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[1].y = 85.f - 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[2].x = 395.f + g_itemData.posYX[1] * (15 * 2) + 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[2].y = 85.f + 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[3].x = 395.f + g_itemData.posYX[1] * (15 * 2) - 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//			cusV4drillItem[3].y = 85.f + 10.f * ((g_itemData.count[g_ultraDrillItem] - 60) / 24);
-//
-//			cusV4drillItem[0].tu = (275 - 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 512.f;
-//			cusV4drillItem[0].tv = (25 - 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 256.f;
-//			cusV4drillItem[1].tu = (275 + 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 512.f;
-//			cusV4drillItem[1].tv = (25 - 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 256.f;
-//			cusV4drillItem[2].tu = (275 + 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 512.f;
-//			cusV4drillItem[2].tv = (25 + 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 256.f;
-//			cusV4drillItem[3].tu = (275 - 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 512.f;
-//			cusV4drillItem[3].tv = (25 + 5 * ((g_itemData.count[g_ultraDrillItem] - 60) / 24)) / 256.f;
-//
-//			g_pD3dDevice->SetTexture(0, g_pTexture[g_drillEffectTex]);
-//			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//		}
-//
-//		INT flameScaleY = 10, flameScaleX = 30;
-//
-//		cusV4drillItem[0].x = 385.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale - flameScaleX;
-//		cusV4drillItem[0].y = 40.f - additionalScale - flameScaleY;
-//		cusV4drillItem[1].x = 385.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale + flameScaleX;
-//		cusV4drillItem[1].y = 40.f - additionalScale - flameScaleY;
-//		cusV4drillItem[2].x = 385.f + g_itemData.posYX[1] * (15 * 2) + drillItemState.xScale + additionalScale + flameScaleX;
-//		cusV4drillItem[2].y = 40.f + drillItemState.yScale * 2 + additionalScale + flameScaleY + additonalPosY;
-//		cusV4drillItem[3].x = 385.f + g_itemData.posYX[1] * (15 * 2) - drillItemState.xScale - additionalScale - flameScaleX;
-//		cusV4drillItem[3].y = 40.f + drillItemState.yScale * 2 + additionalScale + flameScaleY + additonalPosY;
-//
-//		if (179 < g_itemData.count[g_ultraDrillItem])
-//		{
-//			cusV4drillItem[0].color = 0x88FFFFFF;
-//			cusV4drillItem[1].color = 0x88FFFFFF;
-//			cusV4drillItem[2].color = 0x88FFFFFF;
-//			cusV4drillItem[3].color = 0x88FFFFFF;
-//
-//			if (g_itemData.count[g_ultraDrillItem] < 196)
-//			{
-//				cusV4drillItem[0].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4) % 4) / 1280.f;
-//				cusV4drillItem[0].tv = 0 / 64.f;
-//				cusV4drillItem[1].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4) % 4 + 1) / 1280.f;
-//				cusV4drillItem[1].tv = 0 / 64.f;
-//				cusV4drillItem[2].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4) % 4 + 1) / 1280.f;
-//				cusV4drillItem[2].tv = 63 / 64.f;
-//				cusV4drillItem[3].tu = 64 * (((g_itemData.count[g_ultraDrillItem] - 180) / 4)) % 4 / 1280.f;
-//				cusV4drillItem[3].tv = 63 / 64.f;
-//			}
-//
-//			if (195 < g_itemData.count[g_ultraDrillItem] && g_itemData.count[g_ultraDrillItem] < 420)
-//			{
-//				cusV4drillItem[0].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 3) % 7 + 4) / 1280.f;
-//				cusV4drillItem[0].tv = 0 / 64.f;
-//				cusV4drillItem[1].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 3) % 7 + 5) / 1280.f;
-//				cusV4drillItem[1].tv = 0 / 64.f;
-//				cusV4drillItem[2].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 3) % 7 + 5) / 1280.f;
-//				cusV4drillItem[2].tv = 63 / 64.f;
-//				cusV4drillItem[3].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 3) % 7 + 4) / 1280.f;
-//				cusV4drillItem[3].tv = 63 / 64.f;
-//			}
-//
-//			if (419 < g_itemData.count[g_ultraDrillItem])
-//			{
-//				cusV4drillItem[0].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 2) % 7 + 11) / 1280.f;
-//				cusV4drillItem[0].tv = 0 / 64.f;
-//				cusV4drillItem[1].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 2) % 7 + 12) / 1280.f;
-//				cusV4drillItem[1].tv = 0 / 64.f;
-//				cusV4drillItem[2].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 2) % 7 + 12) / 1280.f;
-//				cusV4drillItem[2].tv = 63 / 64.f;
-//				cusV4drillItem[3].tu = 64 * ((g_itemData.count[g_ultraDrillItem] / 2) % 7 + 11) / 1280.f;
-//				cusV4drillItem[3].tv = 63 / 64.f;
-//			}
-//
-//			g_pD3dDevice->SetTexture(0, g_pTexture[g_drillFlameEffectTex]);
-//			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4drillItem, sizeof(CustomVertex));
-//
-//			cusV4drillItem[0].color = 0xFFFFFFFF;
-//			cusV4drillItem[1].color = 0xFFFFFFFF;
-//			cusV4drillItem[2].color = 0xFFFFFFFF;
-//			cusV4drillItem[3].color = 0xFFFFFFFF;
-//		}
-//	}
-//
-//	static INT InitDeflecton = false;
-//
-//	typedef struct
-//	{
-//		INT deflectionalPosX;
-//		INT deflectionalInitialVelocityY;
-//		INT deflectionalInitialVelocityX;
-//	}ParticleDeflection;
-//
-//	static ParticleDeflection particleDeflection[12 * 4];
-//
-//	if (g_drillEffectCount == 84 || g_drillEffectCount == 108 || g_drillEffectCount == 132 || g_drillEffectCount == 156)
-//	{
-//		InitDeflecton = true;
-//	}
-//
-//	static FLOAT accelY = 0;
-//	
-//	if (InitDeflecton)
-//	{
-//		for (INT effect = 0; effect < 12; effect++)
-//		{
-//			(particleDeflection + effect)->deflectionalPosX = rand() % 90;
-//			(particleDeflection + effect)->deflectionalInitialVelocityY = rand() % 15 + 1;
-//			(particleDeflection + effect)->deflectionalInitialVelocityX = rand() % 15 - 7;
-//		}
-//
-//		accelY = 0;
-//	}
-//
-//	if ((83 < g_drillEffectCount&&g_drillEffectCount < 180))
-//	{
-//		CustomVertex CusV3HardDropParticleEffect[3] =
-//		{
-//			{ 0.f,0.f,1.f,1.f,0xFFFFFFFF,0.5f,0.f },
-//			{ 0.f,0.f,1.f,1.f,0xFFFFFFFF,1.f,1.f },
-//			{ 0.f,0.f,1.f,1.f,0xFFFFFFFF,0.f,1.f }
-//		};
-//
-//		InitDeflecton = false;
-//
-//		for (INT effect = 0; effect < 12; effect++)
-//		{
-//
-//			(CusV3HardDropParticleEffect)->x = 500.f + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*((g_drillEffectCount - 84) % 24));
-//			(CusV3HardDropParticleEffect)->y = 40.f + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*((g_drillEffectCount - 84) % 24));
-//
-//			(CusV3HardDropParticleEffect + 1)->x = 500.f + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*((g_drillEffectCount - 84) % 24));
-//			(CusV3HardDropParticleEffect + 1)->y = 40.f + +7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*((g_drillEffectCount - 84) % 24));
-//
-//			(CusV3HardDropParticleEffect + 2)->x = 500.f +particleDeflection[effect].deflectionalPosX+(particleDeflection[effect].deflectionalInitialVelocityX*((g_drillEffectCount - 84) % 24));
-//			(CusV3HardDropParticleEffect + 2)->y = 40.f + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*((g_drillEffectCount - 84) % 24));
-//
-//
-//			DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
-//
-//			CusV3HardDropParticleEffect->color = randomColor;
-//			(CusV3HardDropParticleEffect + 1)->color = randomColor;
-//			(CusV3HardDropParticleEffect + 2)->color = randomColor;
-//
-//			g_pD3dDevice->SetTexture(0, g_pTexture[g_hardDropEffectTex]);
-//			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, CusV3HardDropParticleEffect, sizeof(CustomVertex));
-//		}
-//
-//		accelY += 0.7f;
-//	}
-//
-//	return;
-//}
-
 VOID SetBlockVerticesAndRender(VOID)
 {
 	static INT swellingUp = 0;
@@ -1504,17 +1148,6 @@ VOID SetBlockVerticesAndRender(VOID)
 	}
 
 	static BOOL canRessetSwellingUp = false;
-
-	if(g_drillEffectCount>440)
-	{
-		swellingUp += 15;
-
-		if (swellingUp>150)
-		{
-			swellingUp = 150;
-		}
-
-	}
 
 	if(g_itemData.count[g_laserCannonItem]>80)
 	{
@@ -1997,7 +1630,7 @@ VOID RenderUndergroundStr(VOID)
 		(LONG)(g_undergroundStrState.x - g_undergroundStrState.xScale), (LONG)(g_undergroundStrState.y - g_undergroundStrState.yScale), (LONG)(g_undergroundStrState.x + g_undergroundStrState.xScale), (LONG)(g_undergroundStrState.y + g_undergroundStrState.yScale)
 	};
 
-	sprintf(g_undergroundArray, "%d", g_deletedLineCount);
+	sprintf(g_undergroundArray, "%d", g_deletedLineOverall);
 	g_pFont[g_undergroundFont]->DrawText(NULL, g_undergroundArray, -1, &rectUndergroundStr, DT_RIGHT, GAMEOVER_COLOR);
 
 	return;
@@ -2202,3 +1835,21 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 
 	return;
 }
+
+//////////////////////////////
+//度数法によるテクスチャの回転
+VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY)
+{
+	memcpy(dest, src, sizeof(CustomVertex) * 4);
+
+	double rad = (double)(degree * PI / 180);
+
+	for (INT vertex = 0; vertex < 4; vertex++)
+	{
+		dest[vertex].x = src[vertex].x*(FLOAT)cos(rad) - src[vertex].y*(FLOAT)sin(rad) + shiftX;
+		dest[vertex].y = src[vertex].x*(FLOAT)sin(rad) + src[vertex].y*(FLOAT)cos(rad) + shiftY;
+	}
+
+	return;
+}
+

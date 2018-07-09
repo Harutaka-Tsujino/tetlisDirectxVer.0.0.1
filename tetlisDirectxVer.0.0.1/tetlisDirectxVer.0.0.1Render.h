@@ -65,9 +65,6 @@ VOID RenderScoreStr(VOID);
 //どのくらい地面を掘り進んだかの文字列を描画する関数
 VOID RenderUndergroundStr(VOID);
 
-////ドリルアイテム使用時の描画をする関数
-//VOID SetItemVerticesAndRender(VOID);
-
 //テトリスのブロックの４頂点を設定し、描画する関数
 VOID SetBlockVerticesAndRender(VOID);
 
@@ -82,5 +79,8 @@ VOID SetTetliminoTargetTextureAndRender(VOID);
 
 //ターゲットブロックのアルファ値を点滅させるために変換する関数
 VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino);
+
+//度数法によるテクスチャの回転関数
+VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY);
 
 #endif

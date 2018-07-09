@@ -15,9 +15,8 @@
 BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
-INT g_deletedLine = 0;
-INT g_deletedLineNum = 0;
-INT g_drillEffectCount = -1;
+BOOL g_deletedLine = false;
+INT g_deletedLineOverall = 0;
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
@@ -40,7 +39,7 @@ VOID Control(VOID)
 		//生成されるのテトリミノ種類を決める
 		static INT rACount = 0, lACount = 0,uACount = 0, dACount = 0,qCount = 0,eCount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, deletedLineCount = 0;
 		
-		static INT lineCount = 0, additionalDeletableLine = 0;
+		static INT lineCount = 0, additionalDeletableLine = 0, prevDeletedLineCount = 0;
 		
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, UP[2] = { 0,diks[DIK_UP] & 0x80 },DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 }, Q[2] = { 0,diks[DIK_Q] & 0x80 }, E[2] = { 0,diks[DIK_E] & 0x80 };
 
@@ -110,7 +109,7 @@ VOID Control(VOID)
 							g_itemData.currentItemNum -= 1;
 						}
 
-						qCount = false;
+						canInputQ = false;
 					}
 
 					if (E[canInputE])
@@ -120,7 +119,7 @@ VOID Control(VOID)
 							g_itemData.currentItemNum += 1;
 						}
 
-						eCount = false;
+						canInputE = false;
 					}
 				}
 
@@ -128,41 +127,43 @@ VOID Control(VOID)
 				{
 					if (diks[DIK_NUMPAD1] & 0x80)
 					{
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-
-						if (g_itemData.useItem == false)
+						if (!(g_itemData.decideItemPos))
 						{
-							g_itemData.useItem = true;
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 
-							switch (g_itemData.currentItemNum)
+							if (g_itemData.useItem == false)
 							{
-							case g_ultraDrillItem:
+								g_itemData.useItem = true;
+
+								switch (g_itemData.currentItemNum)
+								{
+								case g_ultraDrillItem:
+
+									g_itemData.posYX[0] = 4 + g_deletedLineCount;
+									g_itemData.posYX[1] = 5;
+
+									break;
+								case g_laserCannonItem:
+
+									g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
+									g_itemData.posYX[1] = 1;
+
+									break;
+								case 2:
+								case 3:
+									break;
+								}
 
 								g_itemData.posYX[0] = 4 + g_deletedLineCount;
 								g_itemData.posYX[1] = 5;
-
-								break;
-							case g_laserCannonItem:
-
-								g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
-								g_itemData.posYX[1] = 1;
-
-								break;
-							case 2:
-							case 3:
-								break;
 							}
 
-							g_itemData.posYX[0] = 4 + g_deletedLineCount;
-							g_itemData.posYX[1] = 5;
-						}
-
-						else
-						{
-							g_itemData.useItem = false;
-							g_drillEffectCount = -1;//////////////////////////////////////////////////
-							g_itemData.posYX[0] = 0;
-							g_itemData.posYX[1] = 0;
+							else
+							{
+								g_itemData.useItem = false;
+								g_itemData.posYX[0] = 0;
+								g_itemData.posYX[1] = 0;
+							}
 						}
 					}
 				}
@@ -198,6 +199,7 @@ VOID Control(VOID)
 								SynchroTetlisBoardBufToTetlisBoard();
 
 								CountDeletedLine();
+								g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
 
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
@@ -243,6 +245,7 @@ VOID Control(VOID)
 								SynchroTetlisBoardBufToTetlisBoard();
 
 								CountDeletedLine();
+								g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
 
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
@@ -267,7 +270,65 @@ VOID Control(VOID)
 						}
 
 						break;
-					case 2:
+					case g_bulletItem:
+						if (g_itemData.decideItemPos)
+						{
+							
+							switch(g_tetlisBoard[g_itemData.posYX[0]][g_itemData.posYX[1]])
+							{
+							case 140:
+								g_itemData.haveItem[g_laserCannonItem] = true;
+								
+								break;
+							case 160:
+								g_itemData.haveItem[g_ultraDrillItem] = true;
+								
+								break;
+							case 150:
+								g_itemData.haveItem[g_bulletItem] = true;
+								
+								break;
+							}
+
+							g_tetlisBoard[g_itemData.posYX[0]][g_itemData.posYX[1]] = 151;
+
+							g_itemData.count[g_bulletItem]++;
+
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							if (g_itemData.count[g_bulletItem] == 170)
+							{
+								g_itemData.useItem = false;
+								g_itemData.decideItemPos = false;
+								g_itemData.posYX[0] = 0;
+								g_itemData.posYX[1] = 0;
+								g_itemData.count[g_bulletItem] = 0;
+							}
+						}
+						else
+						{
+							if (DOWN[canInputDA])
+							{
+								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
+							}
+
+							if (UP[canInputUA])
+							{
+								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
+							}
+
+							if (RIGHT[canInputRA])
+							{
+								ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
+							}
+
+							if (LEFT[canInputLA])
+							{
+								ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
+							}
+						}
+
+						break;
 					case 3:
 						break;
 					}
@@ -282,66 +343,16 @@ VOID Control(VOID)
 						g_itemData.count[g_ultraDrillItem] = 0;
 					}
 
-					if (!(prevDiks[DIK_RETURN]))
+					if (!(g_itemData.decideItemPos))
 					{
-						if (diks[DIK_RETURN] & 0x80)
+						if (!(prevDiks[DIK_RETURN]))
 						{
-							g_itemData.decideItemPos = true;
+							if (diks[DIK_RETURN] & 0x80)
+							{
+								g_itemData.decideItemPos = true;
+							}
 						}
 					}
-
-
-					/*if (RIGHT[canInputRA])
-					{
-						ShiftItemX(1, &canInputRA, 1, TETLIS_WIDTH - 3);
-					}
-
-					if (LEFT[canInputLA])
-					{
-						ShiftItemX(-1, &canInputLA, 2, TETLIS_WIDTH - 2);
-					}*/
-
-					//if (diks[DIK_RETURN]&0x80)
-					//{
-					//	g_drillEffectCount = 0;
-					//}
-
-					//if (g_drillEffectCount >= 0)
-					//{
-					//	g_drillEffectCount++;
-
-					//	if (g_drillEffectCount == 420 )
-					//	{
-					//		//////////////////////////////////
-					//		//アイテムを用いたブロック破壊処理
-					//		DeleteBlockWithItem(&g_useItem);
-
-					//		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					//		SynchroTetlisBoardBufToTetlisBoard();
-					//		g_inventory[g_ultraDrillItem]--;
-					//		g_itemPosYX[1] = 0;
-					//		canCanselItem[g_ultraDrillItem] = false;
-					//	}
-
-					//	if (g_drillEffectCount ==450 )
-					//	{
-					//		/////////////////////////////////////////////////////////////////////////////////////////////
-					//		//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
-					//		//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-					//		ShiftTetlisLine(&lineCount, &prevDeletedLineCount, &additionalDeletableLine);
-
-					//		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					//		SynchroTetlisBoardBufToTetlisBoard();
-
-					//		//////////////////////////////////////////////////
-					//		//いくつ初期状態からラインを消されたか確認する関数
-					//		CountDeletedLine();
-
-					//		g_useItem = false;
-
-					//		g_drillEffectCount = -1;
-					//	}
-					//}
 				}
 
 				else
@@ -510,12 +521,26 @@ VOID Control(VOID)
 							}
 						}
 
-
-
 						SynchroTetlisBoardBufToTetlisBoard();
+
+						INT shiftUpY;
+
+						for (INT block = 0; block < 4; block++)
+						{
+							shiftUpY = g_movMinoNumOfArBuf.YX[block][0] - (g_deletedLineCount + 4);
+						}
+
+						if (shiftUpY < -3)
+						{
+							shiftUpY = -3;
+						}
 
 						CountDeletedLine();
 
+						for (INT block = 0; block < 4; block++)
+						{
+							g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount+4+ shiftUpY;
+						}
 					}
 
 					//そろっている列があるか確認しカウントをとる
@@ -555,6 +580,7 @@ VOID Control(VOID)
 					//////////////////////////////////////////////////
 					//いくつ初期状態からラインを消されたか確認する関数
 					CountDeletedLine();
+					g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
 				}
 
 				if (deletedLineCount == 0)
@@ -590,6 +616,8 @@ VOID Control(VOID)
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 			}
 		}
+
+		prevDeletedLineCount = g_deletedLineCount;
 	}
 
 	return;
