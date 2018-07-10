@@ -19,8 +19,9 @@ typedef struct
 
 extern ImageState g_tetminoState;
 extern ImageState g_gameoverStrState;
-extern ImageState g_scoreStrState;
+extern ImageState g_scopeStrState;
 extern ImageState g_undergroundStrState;
+extern INT g_scopeShakeCount;
 
 typedef struct
 {

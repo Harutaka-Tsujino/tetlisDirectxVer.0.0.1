@@ -10,6 +10,7 @@
 #include "tetlisDirectxVer.0.0.1Common.h"
 #include "tetlisDirectxVer.0.0.1Initialize.h"
 #include "tetlisDirectxVer.0.0.1Control.h"
+#include "tetlisDirectxVer.0.0.1Render.h"
 #include <dinput.h>
 
 BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
@@ -100,26 +101,29 @@ VOID Control(VOID)
 				CountToMakeFlagTrue(&canInputQ, &qCount);
 				CountToMakeFlagTrue(&canInputE, &eCount);
 
-				if (diks[DIK_V] & 0x80)
+				if (g_itemData.useItem == false)
 				{
-					if (Q[canInputQ])
+					if (diks[DIK_V] & 0x80)
 					{
-						if (0 < g_itemData.currentItemNum)
+						if (Q[canInputQ])
 						{
-							g_itemData.currentItemNum -= 1;
+							if (0 < g_itemData.currentItemNum)
+							{
+								g_itemData.currentItemNum -= 1;
+							}
+
+							canInputQ = false;
 						}
 
-						canInputQ = false;
-					}
-
-					if (E[canInputE])
-					{
-						if (g_itemData.currentItemNum < g_itemMax - 1)
+						if (E[canInputE])
 						{
-							g_itemData.currentItemNum += 1;
-						}
+							if (g_itemData.currentItemNum < g_itemMax - 1)
+							{
+								g_itemData.currentItemNum += 1;
+							}
 
-						canInputE = false;
+							canInputE = false;
+						}
 					}
 				}
 
@@ -181,6 +185,11 @@ VOID Control(VOID)
 								{
 									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 									{
+										if (g_tetlisBoardBuf[column][row] != -1)
+										{
+											scoreBuf += 30;
+										}
+
 										g_tetlisBoard[column][row] = -1;
 									}
 								}
@@ -236,6 +245,8 @@ VOID Control(VOID)
 										g_itemData.swellingUpCount[g_laserCannonItem]++;
 									}
 								}
+
+								scoreBuf += 200;
 							}
 
 							if (g_itemData.count[g_laserCannonItem] == 111)
@@ -273,7 +284,6 @@ VOID Control(VOID)
 					case g_bulletItem:
 						if (g_itemData.decideItemPos)
 						{
-							
 							switch(g_tetlisBoard[g_itemData.posYX[0]][g_itemData.posYX[1]])
 							{
 							case 140:
@@ -298,15 +308,23 @@ VOID Control(VOID)
 
 							if (g_itemData.count[g_bulletItem] == 170)
 							{
+								/*if ((g_scopeShakeCount/16) == 1 && (g_scopeShakeCount/16) == 5)
+								{
+									scoreBuf += 30;
+								}*/
+
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
 								g_itemData.posYX[0] = 0;
 								g_itemData.posYX[1] = 0;
 								g_itemData.count[g_bulletItem] = 0;
+								g_scopeShakeCount = 0;
 							}
 						}
 						else
 						{
+							g_scopeShakeCount++;
+
 							if (DOWN[canInputDA])
 							{
 								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
@@ -1421,6 +1439,20 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					g_itemData.haveItem[g_laserCannonItem] = true;
 
 					break;
+
+				case 150:
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+					g_itemData.haveItem[g_bulletItem] = true;
+
+					break;
+
 				case 160:
 					if (isFirstDeletedLine)
 					{

@@ -221,6 +221,21 @@ VOID CreateTextureFromFile(VOID)
 		"texture/bullet.png",
 		&g_pTexture[g_bulletTex]);
 	
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/cartridgeTrajectory.png",
+		&g_pTexture[g_cartridgeTrajectoryEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/Landing.png",
+		&g_pTexture[g_landingEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/blackMask.png",
+		&g_pTexture[g_blackMaskTex]);
+	
 	return;
 }
 

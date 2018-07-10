@@ -19,6 +19,8 @@ ImageState g_gameoverStrState = { 990,790,800.f, 450.f };
 ImageState g_scoreStrState = { 800.f,790.f,400.f, 225.f };
 ImageState g_undergroundStrState = { 800.f,500.f,400.f, 225.f };
 
+INT g_scopeShakeCount = 0;
+
 VOID Render(VOID)//////////////////////////////////////////////////////////////////////////////////
 {
 	static INT toDeleteTargetBlockCount = 0, prevDeletedLineState;
@@ -122,26 +124,29 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 			g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
 			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
 
-			if (diks[DIK_V] & 0x80)
+			if (g_itemData.useItem == false)
 			{
-				inventoryTop.y -= 50.f;
-				inventoryBottom.y += 50.f;
+				if (diks[DIK_V] & 0x80)
+				{
+					inventoryTop.y -= 50.f;
+					inventoryBottom.y += 50.f;
 
-				cusV4ItemIconList[0].tu = 0.f;
-				cusV4ItemIconList[1].tu = 1.f;
-				cusV4ItemIconList[2].tu = 1.f;
-				cusV4ItemIconList[3].tu = 0.f;
+					cusV4ItemIconList[0].tu = 0.f;
+					cusV4ItemIconList[1].tu = 1.f;
+					cusV4ItemIconList[2].tu = 1.f;
+					cusV4ItemIconList[3].tu = 0.f;
 
-				const FLOAT posX = 162;
-				cusV4ItemIconList[0].x =posX+ itemIconList.x -512 + 100 * (g_itemMax-g_itemData.currentItemNum);
-				cusV4ItemIconList[1].x =posX+ itemIconList.x+512+ 100 * (g_itemMax-g_itemData.currentItemNum);
-				cusV4ItemIconList[2].x =posX+ itemIconList.x+512+ 100 * (g_itemMax-g_itemData.currentItemNum);
-				cusV4ItemIconList[3].x =posX+ itemIconList.x-512+ 100 * (g_itemMax-g_itemData.currentItemNum);
-													
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
-				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
+					const FLOAT posX = 162;
+					cusV4ItemIconList[0].x = posX + itemIconList.x - 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
+					cusV4ItemIconList[1].x = posX + itemIconList.x + 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
+					cusV4ItemIconList[2].x = posX + itemIconList.x + 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
+					cusV4ItemIconList[3].x = posX + itemIconList.x - 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
+
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
+					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
+				}
 			}
-
+			
 			CustomVertex CusV4InventoryTop[4] =
 			{
 				{ inventoryTop.x - inventoryTop.xScale,inventoryTop.y - inventoryTop.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
@@ -810,6 +815,40 @@ VOID SetItemVerticiesAndRender(VOID)
 				scopeState.x = 395.f + 30 * (g_itemData.posYX[1]);
 				scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
 
+				g_scopeShakeCount = (g_scopeShakeCount > 7*16) ? 0 : g_scopeShakeCount;
+				/*switch (g_scopeShakeCount / 16)
+				{
+				case 0:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1])+8;
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4)-8;
+					break;
+				case 1:
+				case 5:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1]);
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
+					break;
+				case 2:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1]) - 8;
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) +8;
+					break;
+				case 3:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1]) - 16;
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
+					break;
+				case 4:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1]) - 8;
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) - 8;
+					break;
+				case 6:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1]) + 8;
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) +8;
+					break;
+				case 7:
+					scopeState.x = 395.f + 30 * (g_itemData.posYX[1]) + 16;
+					scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
+					break;
+				}*/
+
 				accelY = 0;
 
 				CustomVertex cusV4Scope[4] =
@@ -826,6 +865,17 @@ VOID SetItemVerticiesAndRender(VOID)
 
 			if (0 < g_itemData.count[g_bulletItem] && g_itemData.count[g_bulletItem] < 181)
 			{
+				CustomVertex cusV4BlackMask[4] =
+				{
+					{ 0.f,   0.f, 0.f,1.f, 0x88FFFFFF, 0.f, 0.f },
+				{ 1280.f,   0.f, 0.f,1.f, 0x88FFFFFF, 1.f, 0.f },
+				{ 1280.f, 720.f, 0.f,1.f, 0x88FFFFFF, 1.f, 1.f },
+				{ 0.f, 720.f, 0.f,1.f, 0x88FFFFFF, 0.f, 1.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_blackMaskTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4BlackMask, sizeof(CustomVertex));
+
 				ImageState crackState = { 395.f,0.f,50.f / 2,50.f / 2 };
 
 				int countBuf = (6 < g_itemData.count[g_bulletItem]) ? 6 : g_itemData.count[g_bulletItem];
@@ -887,12 +937,41 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				if (g_itemData.count[g_bulletItem] >= grand)
 				{
+					static ImageState landingEffectState = { 600.f,680.f,0.f,0.f};
+
+					landingEffectState.xScale = 2.5f * (landingEffectState.yScale = 32.f * (g_itemData.count[g_bulletItem] - grand));
+
+					CustomVertex cusV4LandingEffect[4] =
+					{
+						{ landingEffectState.x - landingEffectState.xScale,landingEffectState.y - landingEffectState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f},
+						{ landingEffectState.x + landingEffectState.xScale,landingEffectState.y - landingEffectState.yScale,1.f,1.f,0xFFFFFFFF,1.0f,0.f},
+						{ landingEffectState.x + landingEffectState.xScale,landingEffectState.y + landingEffectState.yScale,1.f,1.f,0xFFFFFFFF,1.0f,1.0f},
+						{ landingEffectState.x - landingEffectState.xScale,landingEffectState.y + landingEffectState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.0f}
+					};
+
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_landingEffectTex]);
+					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LandingEffect, sizeof(CustomVertex));
+
 					RotateTexDeg(rotateCusV4Cartridge, cusV4Cartridge, -6.f * g_itemData.count[g_bulletItem], 600.f-(g_itemData.count[g_bulletItem]-grand), grandPos +(-6.f+accelY)*(g_itemData.count[g_bulletItem]-grand));
 				}
 
 				else
 				{
 					RotateTexDeg(rotateCusV4Cartridge, cusV4Cartridge, 6.f * g_itemData.count[g_bulletItem], 600.f, (4.f+accelY) * g_itemData.count[g_bulletItem]);
+
+					ImageState cartridgeTrajectoryEffectState = { 600.f,(4.f + accelY) * g_itemData.count[g_bulletItem]-64.f,128.f / 2,128.f / 2 };
+
+					CustomVertex cusV4CartridgeTrajectoryEffect[4] =
+					{
+						{ cartridgeTrajectoryEffectState.x - cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y - cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem]/3)/5120.f,0.f },
+						{ cartridgeTrajectoryEffectState.x + cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y - cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3+1) / 5120.f,0.f },
+						{ cartridgeTrajectoryEffectState.x + cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y + cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3 + 1) / 5120.f,1.0f },
+						{ cartridgeTrajectoryEffectState.x - cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y + cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3) / 5120.f,1.0f }
+					};
+
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_cartridgeTrajectoryEffectTex]);
+					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4CartridgeTrajectoryEffect, sizeof(CustomVertex));
+
 
 					grandPos = rotateCusV4Cartridge->y;
 				}
@@ -1295,6 +1374,40 @@ VOID SetBlockVerticesAndRender(VOID)
 					cusV4Tetmino[3].tu = 0.f;
 					cusV4Tetmino[3].tv = 97.f / 256;
 					break;
+
+				case 40:
+					cusV4Tetmino[0].tu = 200.f / 512;
+					cusV4Tetmino[0].tv = 46.f / 256;
+					cusV4Tetmino[1].tu = 250.f / 512;
+					cusV4Tetmino[1].tv = 46.f / 256;
+					cusV4Tetmino[2].tu = 250.f / 512;
+					cusV4Tetmino[2].tv = 96.f / 256;
+					cusV4Tetmino[3].tu = 200.f / 512;
+					cusV4Tetmino[3].tv = 96.f / 256;
+					break;
+
+				case 50:
+					cusV4Tetmino[0].tu = 250.f / 512;
+					cusV4Tetmino[0].tv = 46.f / 256;
+					cusV4Tetmino[1].tu = 300.f / 512;
+					cusV4Tetmino[1].tv = 46.f / 256;
+					cusV4Tetmino[2].tu = 300.f / 512;
+					cusV4Tetmino[2].tv = 96.f / 256;
+					cusV4Tetmino[3].tu = 250.f / 512;
+					cusV4Tetmino[3].tv = 96.f / 256;
+					break;
+
+				case 51:
+					cusV4Tetmino[0].tu = 300.f / 512;
+					cusV4Tetmino[0].tv = 46.f / 256;
+					cusV4Tetmino[1].tu = 350.f / 512;
+					cusV4Tetmino[1].tv = 46.f / 256;
+					cusV4Tetmino[2].tu = 350.f / 512;
+					cusV4Tetmino[2].tv = 96.f / 256;
+					cusV4Tetmino[3].tu = 300.f / 512;
+					cusV4Tetmino[3].tv = 96.f / 256;
+					break;
+
 				case 60:
 					cusV4Tetmino[0].tu = 151.f / 512;
 					cusV4Tetmino[0].tv = 45.f / 256;

@@ -66,6 +66,9 @@ enum TEX
 	g_effect_laserTex,
 	g_drillBurnEffectTex,
 	g_bulletTex,
+	g_cartridgeTrajectoryEffectTex,
+	g_landingEffectTex,
+	g_blackMaskTex,
 	g_texMax
 };
 
