@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Control
 // 
-// DATE 2018.06.13
+// DATE 2018.07.12
 // VER.0.0.5
 //
 // Author Harutaka-Tsujino
@@ -18,6 +18,9 @@ BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 BOOL g_deletedLine = false;
 INT g_deletedLineOverall = 0;
+INT g_additionalLand = 0;
+INT g_swellingUpHolder = 0;
+INT g_swellingUpSaver = 0;
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
@@ -40,7 +43,7 @@ VOID Control(VOID)
 		//生成されるのテトリミノ種類を決める
 		static INT rACount = 0, lACount = 0,uACount = 0, dACount = 0,qCount = 0,eCount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, deletedLineCount = 0;
 		
-		static INT lineCount = 0, additionalDeletableLine = 0, prevDeletedLineCount = 0;
+		static INT lineCount = 0, additionalDeletableLine = 0, prevDeletedLineCount = 0, additionalLandCount = 0;
 		
 		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, UP[2] = { 0,diks[DIK_UP] & 0x80 },DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 }, Q[2] = { 0,diks[DIK_Q] & 0x80 }, E[2] = { 0,diks[DIK_E] & 0x80 };
 
@@ -181,7 +184,7 @@ VOID Control(VOID)
 						{
 							if (g_itemData.count[g_ultraDrillItem] == 420)
 							{
-								for (INT column = 4 + g_deletedLineCount; column < 4 + g_deletedLineCount + 20; column++)
+								for (INT column = 4 + g_deletedLineCount + g_additionalLand; column < 4 + g_deletedLineCount + g_additionalLand + 20; column++)
 								{
 									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 									{
@@ -208,8 +211,9 @@ VOID Control(VOID)
 								SynchroTetlisBoardBufToTetlisBoard();
 
 								CountDeletedLine();
-								g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
+								g_deletedLineOverall += 5+ g_additionalLand;
 
+								g_additionalLand = 0;
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
 							}
@@ -219,12 +223,15 @@ VOID Control(VOID)
 
 						break;
 					case g_laserCannonItem:
-						
+					{
+						INT deletedAdditionalLine = 0;///////////////////////////////
+						static INT deleteLandNum = 0;
+
 						if (g_itemData.decideItemPos)
 						{
 							if (g_itemData.count[g_laserCannonItem] == 30)
 							{
-								for (INT column = g_itemData.posYX[0] - 1; column <= g_itemData.posYX[0] + 1; column++)
+								for (INT column = g_itemData.posYX[0] + g_additionalLand - 1; column <= g_itemData.posYX[0] + g_additionalLand + 1; column++)
 								{
 									INT numOfDirt = 0;
 
@@ -244,7 +251,22 @@ VOID Control(VOID)
 									{
 										g_itemData.swellingUpCount[g_laserCannonItem]++;
 									}
+
+									deleteLandNum = g_itemData.swellingUpCount[g_laserCannonItem];
 								}
+
+								deletedAdditionalLine = (g_itemData.swellingUpCount[g_laserCannonItem]);
+
+								if (g_additionalLand < deletedAdditionalLine)
+								{
+									deletedAdditionalLine = g_additionalLand;
+								}
+
+								g_itemData.swellingUpCount[g_laserCannonItem] -= g_additionalLand;
+
+								g_swellingUpHolder = deletedAdditionalLine;
+
+								g_additionalLand -= deletedAdditionalLine;
 
 								scoreBuf += 200;
 							}
@@ -256,7 +278,14 @@ VOID Control(VOID)
 								SynchroTetlisBoardBufToTetlisBoard();
 
 								CountDeletedLine();
-								g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
+
+								g_deletedLineOverall += deleteLandNum;
+
+								deleteLandNum = 0;
+
+								deletedAdditionalLine = 0;
+
+								g_swellingUpHolder = 0;
 
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
@@ -279,12 +308,12 @@ VOID Control(VOID)
 								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
 							}
 						}
-
+					}
 						break;
 					case g_bulletItem:
 						if (g_itemData.decideItemPos)
 						{
-							switch(g_tetlisBoard[g_itemData.posYX[0]][g_itemData.posYX[1]])
+							switch(g_tetlisBoard[g_itemData.posYX[0]+ g_additionalLand][g_itemData.posYX[1]])
 							{
 							case 140:
 								g_itemData.haveItem[g_laserCannonItem] = true;
@@ -292,15 +321,15 @@ VOID Control(VOID)
 								break;
 							case 160:
 								g_itemData.haveItem[g_ultraDrillItem] = true;
-								
-								break;
+
+break;
 							case 150:
 								g_itemData.haveItem[g_bulletItem] = true;
-								
+
 								break;
 							}
 
-							g_tetlisBoard[g_itemData.posYX[0]][g_itemData.posYX[1]] = 151;
+							g_tetlisBoard[g_itemData.posYX[0] + g_additionalLand][g_itemData.posYX[1]] = 151;
 
 							g_itemData.count[g_bulletItem]++;
 
@@ -321,6 +350,7 @@ VOID Control(VOID)
 								g_scopeShakeCount = 0;
 							}
 						}
+
 						else
 						{
 							g_scopeShakeCount++;
@@ -347,8 +377,131 @@ VOID Control(VOID)
 						}
 
 						break;
-					case 3:
+					case g_excaliberItem:
+
+						if (g_itemData.decideItemPos)
+						{
+
+							static INT deleteLandNum = 0;
+
+							INT deletedAdditionalLine = 0;
+
+							if (g_itemData.count[g_excaliberItem] == 398)
+							{
+								for (INT column = 4 + g_deletedLineCount + g_additionalLand; column < 4 + g_deletedLineCount + g_additionalLand + 20; column++)
+								{
+									INT numOfDirt = 0;
+
+									BOOL isOver3Dirts = 0;
+
+									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+									{
+										if (g_tetlisBoardBuf[column][row] == 110)
+										{
+											numOfDirt++;
+
+											if (numOfDirt > 3)
+											{
+												isOver3Dirts = true;
+											}
+										}
+									}
+
+									for (INT row = g_itemData.posYX[1] - 1; row < g_itemData.posYX[1] + 2; row++)
+									{
+										/*if ((column == (4 + g_deletedLineCount + g_additionalLand + 19)) && (row == (g_itemData.posYX[1] y 1)))
+										{
+											break;
+										}
+
+										if ((column ==( 4 + g_deletedLineCount + g_additionalLand + 19)) && (row == (g_itemData.posYX[1] + 1)))
+										{
+											break;
+										}*/
+
+										if (g_tetlisBoardBuf[column][row] == 110)
+										{
+											numOfDirt--;
+										}
+
+										if (g_tetlisBoardBuf[column][row] != 9)
+										{
+											g_tetlisBoard[column][row] = -1;
+										}
+										
+										SynchroTetlisBoardBufToTetlisBoard();
+
+										if (isOver3Dirts)
+										{
+											if (numOfDirt < 4)
+											{
+												isOver3Dirts = false;
+												g_itemData.swellingUpCount[g_excaliberItem]++;
+											}
+										}
+
+										deleteLandNum = g_itemData.swellingUpCount[g_excaliberItem];
+									}
+								}
+
+								deletedAdditionalLine = (g_itemData.swellingUpCount[g_excaliberItem]);
+
+								if (g_additionalLand < deletedAdditionalLine)
+								{
+									deletedAdditionalLine = g_additionalLand;
+								}
+
+								g_swellingUpHolder = deletedAdditionalLine;
+
+								g_additionalLand -= deletedAdditionalLine;
+
+							}
+
+							if (g_itemData.count[g_excaliberItem] == 398 + 30+30)
+							{
+								ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								CountDeletedLine();
+
+								g_itemData.swellingUpCount[g_excaliberItem] -= g_additionalLand;
+
+								g_deletedLineOverall += deleteLandNum;
+
+								deleteLandNum = 0;
+
+								g_swellingUpHolder = 0;
+
+								deletedAdditionalLine = 0;
+								g_itemData.useItem = false;
+								g_itemData.decideItemPos = false;
+								g_itemData.posYX[0] = 0;
+								g_itemData.posYX[1] = 0;
+							}
+
+							g_itemData.count[g_excaliberItem]++;
+						}
+
+						else
+						{
+							if (RIGHT[canInputRA])
+							{
+								ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
+							}
+
+							if (LEFT[canInputLA])
+							{
+								ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
+							}
+						}
+
 						break;
+					}
+
+					if (g_itemData.count[g_excaliberItem] == 399+30+30)
+					{
+						g_itemData.count[g_excaliberItem] = 0;
 					}
 
 					if (g_itemData.count[g_laserCannonItem] == 112)
@@ -375,6 +528,8 @@ VOID Control(VOID)
 
 				else
 				{
+					AddLand(&scoreBuf, &additionalLandCount);
+
 					//前フレーム時にスペースキーが押されていた場合この処理を通さない、とすることによって連続したフレーム毎にこの処理がされるのを防いでいる
 					if (!(prevSpaceKeyState))
 					{
@@ -557,7 +712,7 @@ VOID Control(VOID)
 
 						for (INT block = 0; block < 4; block++)
 						{
-							g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount+4+ shiftUpY;
+							g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount +4+ shiftUpY;
 						}
 					}
 
@@ -585,6 +740,9 @@ VOID Control(VOID)
 
 				if (deletedLineCount == 60)
 				{
+					g_swellingUpSaver = 0;
+					g_swellingUpHolder = 0;
+
 					//そろった列を空欄にして下にずらしている
 					/////////////////////////////////////////////////////////////////////////////////////////////
 					//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
@@ -886,6 +1044,7 @@ VOID ReturnToInitialStateWithTetlis(BOOL *isGameover, BOOL *canCreate, BOOL *can
 	*downCount = 0;
 	*scoreBuf = 0;
 	g_deletedLineCount = 0;
+	g_additionalLand = 0;
 	g_hold = -1;
 	g_next = rand() % 7;
 	g_nextNext = rand() % 7;
@@ -1341,6 +1500,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 	INT firstDeletedColumn = 0;
 	BOOL isFirstDeletedLine = true;
+	INT prevAdditionalLand = g_additionalLand;
 
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
@@ -1361,6 +1521,8 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 	for (INT column = TETLIS_HEIGHT - 2; column > 3; column--)
 	{
+		INT additionalLandCount = 0;
+
 		if (g_tetlisBoardBuf[column][1] % 100 != -1 &&
 			g_tetlisBoardBuf[column][2] % 100 != -1 &&
 			g_tetlisBoardBuf[column][3] % 100 != -1 &&
@@ -1374,9 +1536,23 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 		{
 			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 			{
+				if (g_tetlisBoardBuf[column][row] == 110)
+				{
+					additionalLandCount++;
+				}
+			}
+
+			if (g_additionalLand&&additionalLandCount > 3)
+			{
+				g_additionalLand--;
+			}
+
+			for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+			{
 				switch (g_tetlisBoardBuf[column][row])
 				{
 				case 110:
+
 					if (isFirstDeletedLine)
 					{
 						firstDeletedColumn = column;
@@ -1387,6 +1563,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
 				case 120:
 					if (isFirstDeletedLine)
 					{
@@ -1398,12 +1575,14 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
 				case 121:
 					g_tetlisBoard[column][row] -= 1;
 					g_durableBlockBeared[column][row] = 1;
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
 				case 130:
 					if (isFirstDeletedLine)
 					{
@@ -1488,16 +1667,27 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 	switch (*lineCount)
 	{
 	case 1:
+
 		*additionalDeletableLine = 0;
+
 		break;
+
 	case 2:
+
 		*additionalDeletableLine = 2;
+		
 		break;
+
 	case 3:
+
 		*additionalDeletableLine = 4;
+		
 		break;
+
 	case 4:
+
 		*additionalDeletableLine = 7;
+		
 		break;
 	}
 
@@ -1506,6 +1696,21 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 	for (INT column = firstDeletedColumn + 1; column < loopLimiter ; column++)
 	{
+		INT additionalLandCount = 0;
+
+		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+		{
+			if (g_tetlisBoardBuf[column][row] == 110)
+			{
+				additionalLandCount++;
+			}
+		}
+
+		if (g_additionalLand&&additionalLandCount > 3)
+		{
+			g_additionalLand--;
+		}
+
 		for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 		{
 			switch (*lineCount)
@@ -1592,6 +1797,11 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 		}
 
 		g_deletedLine = true;
+	}
+
+	if (prevAdditionalLand - g_additionalLand)
+	{
+		g_swellingUpSaver = -(prevAdditionalLand - g_additionalLand);
 	}
 
 	SynchroTetlisBoardBufToTetlisBoard();
@@ -1731,11 +1941,83 @@ VOID CheckGameover(BOOL *isGameover)
 {
 	for (INT coordinateX = 1; coordinateX < 11; coordinateX++)
 	{
-		if (g_tetlisBoardBuf[4 + g_deletedLineCount][coordinateX] != -1)
+		if (g_tetlisBoardBuf[4 + g_deletedLineCount+ g_additionalLand][coordinateX] != -1)
 		{
 			*isGameover = true;
 		}
 	}
 
+	return;
+}
+
+//時間で地面をせり上げる
+VOID AddLand(INT *scoreBuf,INT *additionalLandCount)
+{
+	switch ((*scoreBuf) / 2000)
+	{
+	case 0:
+
+		if (*additionalLandCount > 300)
+		{
+			g_additionalLand++;
+			*additionalLandCount = 0;
+		}
+
+		break;
+
+	case 1:
+
+		if (*additionalLandCount > 1020)
+		{
+			g_additionalLand++;
+			*additionalLandCount = 0;
+		}
+
+		break;
+
+	case 2:
+
+		if (*additionalLandCount > 840)
+		{
+			g_additionalLand++;
+			*additionalLandCount = 0;
+		}
+
+		break;
+
+	case 3:
+
+		if (*additionalLandCount > 660)
+		{
+			g_additionalLand++;
+			*additionalLandCount = 0;
+		}
+
+		break;
+
+	case 4:
+
+		if (*additionalLandCount > 560)
+		{
+			g_additionalLand++;
+			*additionalLandCount = 0;
+		}
+
+		break;
+
+	default:
+
+		if (*additionalLandCount > 360)
+		{
+			g_additionalLand++;
+			*additionalLandCount = 0;
+		}
+
+		break;
+
+	}
+
+	(*additionalLandCount) += 1;
+	
 	return;
 }

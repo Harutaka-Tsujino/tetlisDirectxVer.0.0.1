@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Render
 //
-// DATE 2018.06.13
+// DATE 2018.07.12
 // VER.0.0.5
 //
 // Author Harutaka-Tsujino
@@ -82,6 +82,6 @@ VOID SetTetliminoTargetTextureAndRender(VOID);
 VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino);
 
 //度数法によるテクスチャの回転関数
-VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY);
+VOID RotateTexDeg(INT axis, CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY);
 
 #endif

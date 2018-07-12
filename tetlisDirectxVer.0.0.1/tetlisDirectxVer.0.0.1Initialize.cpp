@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialize
 //
-// DATE 2018.06.13
+// DATE 2018.07.12
 // VER.0.0.5
 //
 // Author Harutaka-Tsujino
@@ -235,7 +235,32 @@ VOID CreateTextureFromFile(VOID)
 		g_pD3dDevice,
 		"texture/blackMask.png",
 		&g_pTexture[g_blackMaskTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/excaliber.png",
+		&g_pTexture[g_excaliberTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/excaliberSmoke.png",
+		&g_pTexture[g_excaliberSmokeTex]);
 	
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/slashEffect.png",
+		&g_pTexture[g_slashEffectTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/excaliberFlame.png",
+		&g_pTexture[g_excaliberFlameTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/excaliberSlash.png",
+		&g_pTexture[g_excaliberSlashTex]);
+
 	return;
 }
 

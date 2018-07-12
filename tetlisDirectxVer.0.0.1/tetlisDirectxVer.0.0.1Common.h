@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Common
 //
-// DATE 2018.06.13
+// DATE 2018.07.12
 // VER.0.0.5
 //
 // Author Harutaka-Tsujino
@@ -69,6 +69,11 @@ enum TEX
 	g_cartridgeTrajectoryEffectTex,
 	g_landingEffectTex,
 	g_blackMaskTex,
+	g_excaliberTex,
+	g_excaliberSmokeTex,
+	g_slashEffectTex,
+	g_excaliberFlameTex,
+	g_excaliberSlashTex,
 	g_texMax
 };
 
@@ -85,6 +90,7 @@ enum ITEM
 	g_ultraDrillItem,
 	g_laserCannonItem,
 	g_bulletItem,
+	g_excaliberItem,
 	g_itemMax
 };
 

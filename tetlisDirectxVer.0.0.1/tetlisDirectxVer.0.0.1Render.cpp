@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Render
 //
-// DATE 2018.06.13
+// DATE 2018.07.12
 // VER.0.0.5
 //
 // Author Harutaka-Tsujino
@@ -136,7 +136,7 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 					cusV4ItemIconList[2].tu = 1.f;
 					cusV4ItemIconList[3].tu = 0.f;
 
-					const FLOAT posX = 162;
+					const FLOAT posX = 62.f;
 					cusV4ItemIconList[0].x = posX + itemIconList.x - 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
 					cusV4ItemIconList[1].x = posX + itemIconList.x + 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
 					cusV4ItemIconList[2].x = posX + itemIconList.x + 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
@@ -245,6 +245,17 @@ VOID SetItemVerticiesAndRender(VOID)
 
 			if (g_itemData.count[g_ultraDrillItem] > 410)
 			{
+				CustomVertex cusV4BlackMask[4] =
+				{
+					{ 0.f,   0.f, 0.f,1.f, 0x88FFFFFF, 0.f, 0.f },
+					{ 1280.f,   0.f, 0.f,1.f, 0x88FFFFFF, 1.f, 0.f },
+					{ 1280.f, 720.f, 0.f,1.f, 0x88FFFFFF, 1.f, 1.f },
+					{ 0.f, 720.f, 0.f,1.f, 0x88FFFFFF, 0.f, 1.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_blackMaskTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4BlackMask, sizeof(CustomVertex));
+
 				additonalPosY += 200;
 			}
 
@@ -815,7 +826,7 @@ VOID SetItemVerticiesAndRender(VOID)
 				scopeState.x = 395.f + 30 * (g_itemData.posYX[1]);
 				scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
 
-				g_scopeShakeCount = (g_scopeShakeCount > 7*16) ? 0 : g_scopeShakeCount;
+				g_scopeShakeCount = (g_scopeShakeCount > 7 * 16) ? 0 : g_scopeShakeCount;
 				/*switch (g_scopeShakeCount / 16)
 				{
 				case 0:
@@ -878,7 +889,7 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				ImageState crackState = { 395.f,0.f,50.f / 2,50.f / 2 };
 
-				int countBuf = (6 < g_itemData.count[g_bulletItem]) ? 6 : g_itemData.count[g_bulletItem];
+				INT countBuf = (6 < g_itemData.count[g_bulletItem]) ? 6 : g_itemData.count[g_bulletItem];
 
 				crackState.x = 395.f + 30 * (g_itemData.posYX[1]);
 				crackState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
@@ -907,13 +918,13 @@ VOID SetItemVerticiesAndRender(VOID)
 				cusV4crack[2].tu += 25 * (countBuf / 2) / 512.f;
 				cusV4crack[2].tv += 25 * (countBuf / 2) / 512.f;
 				cusV4crack[3].tu += -25 * (countBuf / 2) / 512.f;
-				cusV4crack[3].tv += 25* (countBuf / 2) / 512.f;
+				cusV4crack[3].tv += 25 * (countBuf / 2) / 512.f;
 
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_bulletTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4crack, sizeof(CustomVertex));
 			}
 
-			if (49<g_itemData.count[g_bulletItem])
+			if (49 < g_itemData.count[g_bulletItem])
 			{
 				ImageState cartridgeState = { 0.f,0.f,50.f / 2,50.f / 2 };
 
@@ -937,7 +948,7 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				if (g_itemData.count[g_bulletItem] >= grand)
 				{
-					static ImageState landingEffectState = { 600.f,680.f,0.f,0.f};
+					static ImageState landingEffectState = { 600.f,680.f,0.f,0.f };
 
 					landingEffectState.xScale = 2.5f * (landingEffectState.yScale = 32.f * (g_itemData.count[g_bulletItem] - grand));
 
@@ -952,19 +963,19 @@ VOID SetItemVerticiesAndRender(VOID)
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_landingEffectTex]);
 					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LandingEffect, sizeof(CustomVertex));
 
-					RotateTexDeg(rotateCusV4Cartridge, cusV4Cartridge, -6.f * g_itemData.count[g_bulletItem], 600.f-(g_itemData.count[g_bulletItem]-grand), grandPos +(-6.f+accelY)*(g_itemData.count[g_bulletItem]-grand));
+					RotateTexDeg('z', rotateCusV4Cartridge, cusV4Cartridge, -6.f * g_itemData.count[g_bulletItem], 600.f - (g_itemData.count[g_bulletItem] - grand), grandPos + (-6.f + accelY)*(g_itemData.count[g_bulletItem] - grand));
 				}
 
 				else
 				{
-					RotateTexDeg(rotateCusV4Cartridge, cusV4Cartridge, 6.f * g_itemData.count[g_bulletItem], 600.f, (4.f+accelY) * g_itemData.count[g_bulletItem]);
+					RotateTexDeg('z', rotateCusV4Cartridge, cusV4Cartridge, 6.f * g_itemData.count[g_bulletItem], 600.f, (4.f + accelY) * g_itemData.count[g_bulletItem]);
 
-					ImageState cartridgeTrajectoryEffectState = { 600.f,(4.f + accelY) * g_itemData.count[g_bulletItem]-64.f,128.f / 2,128.f / 2 };
+					ImageState cartridgeTrajectoryEffectState = { 600.f,(4.f + accelY) * g_itemData.count[g_bulletItem] - 64.f,128.f / 2,128.f / 2 };
 
 					CustomVertex cusV4CartridgeTrajectoryEffect[4] =
 					{
-						{ cartridgeTrajectoryEffectState.x - cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y - cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem]/3)/5120.f,0.f },
-						{ cartridgeTrajectoryEffectState.x + cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y - cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3+1) / 5120.f,0.f },
+						{ cartridgeTrajectoryEffectState.x - cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y - cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3) / 5120.f,0.f },
+						{ cartridgeTrajectoryEffectState.x + cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y - cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3 + 1) / 5120.f,0.f },
 						{ cartridgeTrajectoryEffectState.x + cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y + cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3 + 1) / 5120.f,1.0f },
 						{ cartridgeTrajectoryEffectState.x - cartridgeTrajectoryEffectState.xScale,cartridgeTrajectoryEffectState.y + cartridgeTrajectoryEffectState.yScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_bulletItem] / 3) / 5120.f,1.0f }
 					};
@@ -975,13 +986,211 @@ VOID SetItemVerticiesAndRender(VOID)
 
 					grandPos = rotateCusV4Cartridge->y;
 				}
-				
+
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_bulletTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, rotateCusV4Cartridge, sizeof(CustomVertex));
 
 				accelY += 0.1f;
 			}
 		}
+
+		break;
+
+		case g_excaliberItem:
+
+			const INT purificatonCountLimit = 91;
+
+			ImageState excaliberCursorState = { 395.f,85.f,30.f / 2,30.f / 2 };
+			ImageState excaliberState = { 395.f,85.f,90.f / 2,90.f / 2 };
+
+			excaliberState.x = 395.f + 30 * (g_itemData.posYX[1]);
+			excaliberCursorState.x = 395.f + 30 * (g_itemData.posYX[1]);
+
+			if (g_itemData.count[g_excaliberItem] == 0)
+			{
+				CustomVertex cusV4Excaliber[4] =
+				{
+					{ excaliberCursorState.x - excaliberCursorState.xScale,excaliberCursorState.y - excaliberCursorState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60) / 512.f,0.f },
+					{ excaliberCursorState.x + excaliberCursorState.xScale,excaliberCursorState.y - excaliberCursorState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60 + 1) / 512.f,0.f },
+					{ excaliberCursorState.x + excaliberCursorState.xScale,excaliberCursorState.y + excaliberCursorState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60 + 1) / 512.f,50 / 256.f },
+					{ excaliberCursorState.x - excaliberCursorState.xScale,excaliberCursorState.y + excaliberCursorState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60) / 512.f,50 / 256.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Excaliber, sizeof(CustomVertex));
+			}
+
+			if (0 < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < purificatonCountLimit)
+			{
+				FLOAT excaliberSmokeYScale = excaliberState.yScale*2;
+
+				CustomVertex cusV4ExcaliberSmoke[4] =
+				{
+					{ excaliberState.x - excaliberState.xScale,excaliberState.y - excaliberSmokeYScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_excaliberItem] / 5) / 5120.f,0.f },
+					{ excaliberState.x + excaliberState.xScale,excaliberState.y - excaliberSmokeYScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_excaliberItem] / 5+ 1) / 5120.f,0.f },
+					{ excaliberState.x + excaliberState.xScale,excaliberState.y + excaliberSmokeYScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_excaliberItem] / 5+ 1) / 5120.f,256 / 256.f },
+					{ excaliberState.x - excaliberState.xScale,excaliberState.y + excaliberSmokeYScale,1.f,1.f,0xFFFFFFFF,256 * (g_itemData.count[g_excaliberItem] / 5) / 5120.f,256 / 256.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberSmokeTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ExcaliberSmoke, sizeof(CustomVertex));
+
+				CustomVertex cusV4Excaliber[4] =
+				{
+					{ excaliberState.x - excaliberState.xScale,excaliberState.y - excaliberState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60) / 512.f,0.f },
+					{ excaliberState.x + excaliberState.xScale,excaliberState.y - excaliberState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60 + 1) / 512.f,0.f },
+					{ excaliberState.x + excaliberState.xScale,excaliberState.y + excaliberState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60 + 1) / 512.f,50 / 256.f },
+					{ excaliberState.x - excaliberState.xScale,excaliberState.y + excaliberState.yScale,1.f,1.f,0xFFFFFFFF,50 * (g_itemData.count[g_excaliberItem] / 60) / 512.f,50 / 256.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Excaliber, sizeof(CustomVertex));
+			}
+
+			const INT purificatedBlankCountLimit = purificatonCountLimit + 45;
+
+			if (purificatonCountLimit - 1 < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < purificatedBlankCountLimit)
+			{
+				CustomVertex cusV4Excaliber[4] =
+				{
+					{ excaliberState.x - excaliberState.xScale,excaliberState.y - excaliberState.yScale,1.f,1.f,0xFFFFFFFF,50 / 512.f,0.f },
+					{ excaliberState.x + excaliberState.xScale,excaliberState.y - excaliberState.yScale,1.f,1.f,0xFFFFFFFF,100 / 512.f,0.f },
+					{ excaliberState.x + excaliberState.xScale,excaliberState.y + excaliberState.yScale,1.f,1.f,0xFFFFFFFF,100 / 512.f,50 / 256.f },
+					{ excaliberState.x - excaliberState.xScale,excaliberState.y + excaliberState.yScale,1.f,1.f,0xFFFFFFFF,50 / 512.f,50 / 256.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Excaliber, sizeof(CustomVertex));
+			}
+
+			ImageState excaliberBladeState = { 0.f,0.f,(FLOAT)((293 - 216.f)*1.4),(FLOAT)((243 - 11.f)*1.4) };
+
+			CustomVertex cusV4ExcaliberBlade[4] =
+			{
+				{ excaliberBladeState.x - excaliberBladeState.xScale,excaliberBladeState.y - excaliberBladeState.yScale,1.f,1.f,0xFFFFFFFF, 216 / 512.f,11.f / 256.f },
+				{ excaliberBladeState.x + excaliberBladeState.xScale,excaliberBladeState.y - excaliberBladeState.yScale,1.f,1.f,0xFFFFFFFF, 293 / 512.f,11.f / 256.f },
+				{ excaliberBladeState.x + excaliberBladeState.xScale,excaliberBladeState.y + excaliberBladeState.yScale,1.f,1.f,0xFFFFFFFF, 293 / 512.f, 243 / 256.f },
+				{ excaliberBladeState.x - excaliberBladeState.xScale,excaliberBladeState.y + excaliberBladeState.yScale,1.f,1.f,0xFFFFFFFF, 216 / 512.f, 243 / 256.f }
+			};
+
+			CustomVertex rotateCusV4ExcaliberBlade[4];
+
+			FLOAT degree = 0;
+
+			FLOAT shiftX = 395 + 30 * 5 + 15;
+
+			const INT rotationStartCount = purificatedBlankCountLimit + 30;
+
+			const INT rotationCountLimit = rotationStartCount + 120;
+
+			if (purificatedBlankCountLimit < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < rotationCountLimit)
+			{
+				if (rotationStartCount -1 < g_itemData.count[g_excaliberItem])
+				{
+					degree = 9.f * (g_itemData.count[g_excaliberItem] - rotationStartCount);
+				}
+
+				if (degree > 180)
+				{
+					degree = 180;
+				}
+
+				RotateTexDeg('z', rotateCusV4ExcaliberBlade, cusV4ExcaliberBlade, degree, shiftX, 330.f);
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, rotateCusV4ExcaliberBlade, sizeof(CustomVertex));
+			}
+
+			const INT postureCountLimit = rotationCountLimit+6;
+
+			if (rotationCountLimit-1 < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < postureCountLimit)
+			{
+				CustomVertex RotateYCusV4rotateCusV4ExcaliberBlade[4];
+
+				FLOAT axisYDegree = 0;
+
+				axisYDegree = 30.f * (g_itemData.count[g_excaliberItem] - rotationCountLimit);
+
+				RotateTexDeg('z', rotateCusV4ExcaliberBlade, cusV4ExcaliberBlade, 180.f,0.f, 0.f);
+				RotateTexDeg('y', RotateYCusV4rotateCusV4ExcaliberBlade, rotateCusV4ExcaliberBlade,axisYDegree, shiftX,330.f);
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, RotateYCusV4rotateCusV4ExcaliberBlade, sizeof(CustomVertex));
+			}
+
+			if (rotationStartCount + 20 < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < postureCountLimit)
+			{
+				ImageState excaliberBladeFlameState = { 395 + 30 * 5 + 15.f,330-128.f,200.f,256.f};
+
+				CustomVertex cusV4ExcaliberFlame[4] =
+				{
+					{ excaliberBladeFlameState.x - excaliberBladeFlameState.xScale,excaliberBladeFlameState.y - excaliberBladeFlameState.yScale,1.f,1.f,0xAAFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3) / 5120.f,0.f },
+					{ excaliberBladeFlameState.x + excaliberBladeFlameState.xScale,excaliberBladeFlameState.y - excaliberBladeFlameState.yScale,1.f,1.f,0xAAFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3 + 1) / 5120.f,0.f },
+					{ excaliberBladeFlameState.x + excaliberBladeFlameState.xScale,excaliberBladeFlameState.y + excaliberBladeFlameState.yScale,1.f,1.f,0xAAFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3 + 1) / 5120.f,1.f },
+					{ excaliberBladeFlameState.x - excaliberBladeFlameState.xScale,excaliberBladeFlameState.y + excaliberBladeFlameState.yScale,1.f,1.f,0xAAFFFFFF, 256 * ((g_itemData.count[g_excaliberItem]-rotationStartCount - 20)   /3) / 5120.f, 1.f }
+				};
+
+				if (((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3) > 19)
+				{
+					cusV4ExcaliberFlame[0].tu = 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3 %7+13) / 5120.f;
+					cusV4ExcaliberFlame[1].tu = 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3 %7 + 14) / 5120.f;
+					cusV4ExcaliberFlame[2].tu = 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3 %7 + 14) / 5120.f;
+					cusV4ExcaliberFlame[3].tu = 256 * ((g_itemData.count[g_excaliberItem] - rotationStartCount - 20) / 3 %7+13) / 5120.f;
+				}
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberFlameTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ExcaliberFlame, sizeof(CustomVertex));
+			}
+
+			const INT slashStartCountLimit = postureCountLimit + 30;
+
+			if (postureCountLimit < g_itemData.count[g_excaliberItem]&& g_itemData.count[g_excaliberItem]<398)
+			{
+				/*CustomVertex cusV4BlackMask[4] =
+				{
+					{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
+					{ 1280.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
+					{ 1280.f, 720.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
+					{ 0.f, 720.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_blackMaskTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4BlackMask, sizeof(CustomVertex));*/
+
+				if (slashStartCountLimit < g_itemData.count[g_excaliberItem])
+				{
+					ImageState slashEffectState = { 395+165.f,360.f,64.f / 2,1195.f / 2 };
+
+					CustomVertex cusV4SlashEffectState[4] =
+					{
+						{ slashEffectState.x - slashEffectState.xScale,slashEffectState.y - slashEffectState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
+						{ slashEffectState.x + slashEffectState.xScale,slashEffectState.y - slashEffectState.yScale,1.f,1.f,0xFFFFFFFF,1.f,0.f },
+						{ slashEffectState.x + slashEffectState.xScale,slashEffectState.y + slashEffectState.yScale,1.f,1.f,0xFFFFFFFF,1.f,1.f },
+						{ slashEffectState.x - slashEffectState.xScale,slashEffectState.y + slashEffectState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.f }
+					};
+
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_slashEffectTex]);
+					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4SlashEffectState, sizeof(CustomVertex));
+
+					if (slashStartCountLimit + 15 < g_itemData.count[g_excaliberItem])
+					{
+
+						ImageState excaliberSlashState = { 395 + 30 * 5 + 15.f,360.f,526.f,526.f };
+
+						CustomVertex cusV4ExcaliberSlash[4] =
+						{
+							{ excaliberSlashState.x - excaliberSlashState.xScale,excaliberSlashState.y - excaliberSlashState.yScale,1.f,1.f,0xFFFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - slashStartCountLimit-15) / 3) / 5120.f,0.f },
+							{ excaliberSlashState.x + excaliberSlashState.xScale,excaliberSlashState.y - excaliberSlashState.yScale,1.f,1.f,0xFFFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - slashStartCountLimit-15) / 3 + 1) / 5120.f,0.f },
+							{ excaliberSlashState.x + excaliberSlashState.xScale,excaliberSlashState.y + excaliberSlashState.yScale,1.f,1.f,0xFFFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - slashStartCountLimit-15) / 3 + 1) / 5120.f,1.f },
+							{ excaliberSlashState.x - excaliberSlashState.xScale,excaliberSlashState.y + excaliberSlashState.yScale,1.f,1.f,0xFFFFFFFF, 256 * ((g_itemData.count[g_excaliberItem] - slashStartCountLimit-15) / 3) / 5120.f, 1.f }
+						};
+
+						g_pD3dDevice->SetTexture(0, g_pTexture[g_excaliberSlashTex]);
+						g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ExcaliberSlash, sizeof(CustomVertex));
+						
+					}
+				}
+			}
 		}
 	}
 
@@ -1061,13 +1270,13 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 			if (installatedBlock[0] == 1)
 			{
 				(CusV3HardDropParticleEffect)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 1)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 2)->x = 395.f + hardDropNumofArBuf.YX[0][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 0 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[0][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 
 				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
@@ -1086,13 +1295,13 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 			if (installatedBlock[1] == 1)
 			{
 				(CusV3HardDropParticleEffect)->x = 380.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 1)->x = 380.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 2)->x = 380.f + hardDropNumofArBuf.YX[1][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[1][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
@@ -1110,13 +1319,13 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 			if (installatedBlock[2] == 1)
 			{
 				(CusV3HardDropParticleEffect)->x = 380.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 1)->x = 380.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 2)->x = 380.f + hardDropNumofArBuf.YX[2][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[2][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
@@ -1134,13 +1343,13 @@ VOID SetHardDropEffectTextureAndRender(VOID)
 			if (installatedBlock[3] == 1)
 			{
 				(CusV3HardDropParticleEffect)->x = 380.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 4 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 1)->x = 380.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + 8 + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 1)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				(CusV3HardDropParticleEffect + 2)->x = 380.f + hardDropNumofArBuf.YX[3][1] * (g_tetminoState.xScale * 2) + particleDeflection[effect].deflectionalPosX + (particleDeflection[effect].deflectionalInitialVelocityX*(hardDropEffectCount - 1));
-				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
+				(CusV3HardDropParticleEffect + 2)->y = -35.f + (hardDropNumofArBuf.YX[3][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + 7 + ((-particleDeflection[effect].deflectionalInitialVelocityY + accelY)*(hardDropEffectCount - 1));
 
 				DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
@@ -1199,38 +1408,50 @@ VOID SetBlockVerticesAndRender(VOID)
 
 	if (!(g_deletedLine))
 	{
+		swellingUpCount = 0;
+
 		prevDeletedLineCount = deletedLineCount;
 	}
 
 	if (g_deletedLine && (swellingUpCount == 0))
 	{
-		differenceDeletedLineCount = deletedLineCount - prevDeletedLineCount;
+		differenceDeletedLineCount = deletedLineCount - prevDeletedLineCount + g_swellingUpSaver;
 	}
 
 	if (g_deletedLine)
 	{
-		swellingUpCount++;
-		if ((swellingUpCount > 30) && (swellingUp < differenceDeletedLineCount * 30))
+		if (differenceDeletedLineCount != 0)
 		{
-			swellingUp += 15;
-		}
+			swellingUpCount++;
 
-		if (swellingUpCount == 60)
-		{
-			swellingUp = 0;
-		}
-	}
+			if ((swellingUpCount > 30) && (swellingUp < differenceDeletedLineCount * 30))
+			{
+				swellingUp += 30;
+			}
 
-	else
-	{
-		swellingUpCount = 0;
+			if (59 < swellingUpCount)
+			{
+				swellingUp = 0;
+				swellingUpCount = 0;
+			}
+		}
 	}
 
 	static BOOL canRessetSwellingUp = false;
 
+	if (g_itemData.count[g_excaliberItem]>398+30)
+	{
+		swellingUp += 30;
+
+		if (swellingUp>30 * g_itemData.swellingUpCount[g_excaliberItem])
+		{
+			swellingUp = 30 * g_itemData.swellingUpCount[g_excaliberItem];
+		}
+	}
+
 	if(g_itemData.count[g_laserCannonItem]>80)
 	{
-		swellingUp += 15;
+		swellingUp += 30;
 
 		if (swellingUp>30*g_itemData.swellingUpCount[g_laserCannonItem])
 		{
@@ -1240,7 +1461,7 @@ VOID SetBlockVerticesAndRender(VOID)
 
 	if (g_itemData.count[g_ultraDrillItem]>450)
 	{
-		swellingUp += 15;
+		swellingUp += 30;
 
 		if (swellingUp>30 * g_itemData.swellingUpCount[g_ultraDrillItem])
 		{
@@ -1252,6 +1473,12 @@ VOID SetBlockVerticesAndRender(VOID)
 	{
 		swellingUp = 0; 
 		canRessetSwellingUp = false;
+	}
+
+	if (g_itemData.count[g_excaliberItem] == 398+30+30)
+	{
+		canRessetSwellingUp = true;
+		g_itemData.swellingUpCount[g_excaliberItem] = 0;
 	}
 	
 	if (g_itemData.count[g_laserCannonItem] == 111)
@@ -1281,13 +1508,13 @@ VOID SetBlockVerticesAndRender(VOID)
 			if ((g_tetlisBoard[column][row] != -1) && (g_tetlisBoard[column][row] != 9))
 			{
 				cusV4Tetmino[0].x = 395.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[0].y = -35.f - swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[0].y = -35.f - swellingUp + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[1].x = 395.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				cusV4Tetmino[1].y = -35.f - swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+				cusV4Tetmino[1].y = -35.f - swellingUp + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 				cusV4Tetmino[2].x = 395.f + row * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-				cusV4Tetmino[2].y = -35.f - swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[2].y = -35.f - swellingUp + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 				cusV4Tetmino[3].x = 395.f + row * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-				cusV4Tetmino[3].y = -35.f - swellingUp + (column - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+				cusV4Tetmino[3].y = -35.f - swellingUp + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_integratedBlockTex]);
 
@@ -1445,13 +1672,13 @@ VOID SetTetliminoTargetTextureAndRender(VOID)
 	for (INT block = 0; block < 4; block++)
 	{
 		cusV4Tetmino[0].x = 2 + 395.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4Tetmino[0].y = 2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4Tetmino[0].y = 2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount -g_additionalLand) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 		cusV4Tetmino[1].x = -2 + 395.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		cusV4Tetmino[1].y = 2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
+		cusV4Tetmino[1].y = 2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) - g_tetminoState.yScale;
 		cusV4Tetmino[2].x = -2 + 395.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) + g_tetminoState.xScale;
-		cusV4Tetmino[2].y = -2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4Tetmino[2].y = -2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 		cusV4Tetmino[3].x = 2 + 395.f + g_targetMinoNumOfArBuf.YX[block][1] * (g_tetminoState.xScale * 2) - g_tetminoState.xScale;
-		cusV4Tetmino[3].y = -2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
+		cusV4Tetmino[3].y = -2 + -35.f + (g_targetMinoNumOfArBuf.YX[block][0] - g_deletedLineCount - g_additionalLand) * (g_tetminoState.yScale * 2) + g_tetminoState.yScale;
 
 		g_pD3dDevice->SetTexture(0, g_pTexture[g_integratedBlockTex]);
 		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));
@@ -1534,13 +1761,13 @@ VOID SetDeletedLineEffectTextureAndRender(VOID)
 				g_deletedLineEffectState.xScale = 15.f + additionalDeletedEffectScale;
 
 				cusV4DeletedLineEffect[0].x = 560.f - g_deletedLineEffectState.xScale;
-				cusV4DeletedLineEffect[0].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
-				cusV4DeletedLineEffect[1].x = 560.f + g_deletedLineEffectState.xScale;
-				cusV4DeletedLineEffect[1].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
-				cusV4DeletedLineEffect[2].x = 560.f + g_deletedLineEffectState.xScale;
-				cusV4DeletedLineEffect[2].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + g_deletedLineEffectState.yScale;
-				cusV4DeletedLineEffect[3].x = 560.f - g_deletedLineEffectState.xScale;
-				cusV4DeletedLineEffect[3].y = -35.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[0].y = -35.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[1].x = 560.f + g_deletedLineEffectState.xScale;				 
+				cusV4DeletedLineEffect[1].y = -35.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) - g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[2].x = 560.f + g_deletedLineEffectState.xScale;				 
+				cusV4DeletedLineEffect[2].y = -35.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) + g_deletedLineEffectState.yScale;
+				cusV4DeletedLineEffect[3].x = 560.f - g_deletedLineEffectState.xScale;				 
+				cusV4DeletedLineEffect[3].y = -35.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder+ g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) + g_deletedLineEffectState.yScale;
 
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_reduceBlockDurTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4DeletedLineEffect, sizeof(CustomVertex));
@@ -1613,13 +1840,13 @@ VOID SetDeletedLineEffectTextureAndRender(VOID)
 				for (INT effect = 0; effect < 16; effect++)
 				{
 					cusV4DeletedCirculeEffect->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) - (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
-					cusV4DeletedCirculeEffect->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
+					cusV4DeletedCirculeEffect->y = -50 + 5.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder + g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
 					(cusV4DeletedCirculeEffect + 1)->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) - (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
-					(cusV4DeletedCirculeEffect + 1)->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
+					(cusV4DeletedCirculeEffect + 1)->y = -50 + 5.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder + g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
 					(cusV4DeletedCirculeEffect + 2)->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) - ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
-					(cusV4DeletedCirculeEffect + 2)->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
+					(cusV4DeletedCirculeEffect + 2)->y = -50 + 5.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder + g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
 					(cusV4DeletedCirculeEffect + 3)->x = 410 + 5.f + (effectDeflection + line)->effectDeflectionalPosX[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) - ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
-					(cusV4DeletedCirculeEffect + 3)->y = -50 + 5.f + (column - g_deletedLineCount) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
+					(cusV4DeletedCirculeEffect + 3)->y = -50 + 5.f + (column - g_deletedLineCount - g_additionalLand + g_swellingUpHolder + g_swellingUpSaver) * (g_deletedLineEffectState.yScale * 2) + (effectDeflection + line)->effectDeflectionalPosY[effect] + (-(effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)sin((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180) + ((effectDeflection + line)->effectDeflectionalScale[effect])*(FLOAT)cos((effectDeflection + line)->effectDeflectionalDegree[effect] * PI / 180);
 
 					DWORD randomColor = (0xFF000000) + ((rand() % 256) * 0x10000) + ((rand() % 256) * 0x100) + (rand() % 256);
 
@@ -1951,16 +2178,50 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 
 //////////////////////////////
 //度数法によるテクスチャの回転
-VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY)
+VOID RotateTexDeg(INT axis,CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY)
 {
 	memcpy(dest, src, sizeof(CustomVertex) * 4);
 
 	double rad = (double)(degree * PI / 180);
 
+	switch (axis)
+	{
+	case 'x':
+
+		for (INT vertex = 0; vertex < 4; vertex++)
+		{
+			dest[vertex].y = src[vertex].y*(FLOAT)cos(rad) - src[vertex].z*(FLOAT)sin(rad);
+			dest[vertex].z = src[vertex].y*(FLOAT)sin(rad) + src[vertex].z*(FLOAT)cos(rad);
+		}
+
+		break;
+
+	case 'y':
+		
+		for (INT vertex = 0; vertex < 4; vertex++)
+
+		{
+			dest[vertex].z = src[vertex].z*(FLOAT)cos(rad) - src[vertex].x*(FLOAT)sin(rad);
+			dest[vertex].x = src[vertex].z*(FLOAT)sin(rad) + src[vertex].x*(FLOAT)cos(rad);
+		}
+
+		break;
+
+	case 'z':
+		
+		for (INT vertex = 0; vertex < 4; vertex++)
+		{
+			dest[vertex].x = src[vertex].x*(FLOAT)cos(rad) - src[vertex].y*(FLOAT)sin(rad);
+			dest[vertex].y = src[vertex].x*(FLOAT)sin(rad) + src[vertex].y*(FLOAT)cos(rad);
+		}
+
+		break;
+	}
+
 	for (INT vertex = 0; vertex < 4; vertex++)
 	{
-		dest[vertex].x = src[vertex].x*(FLOAT)cos(rad) - src[vertex].y*(FLOAT)sin(rad) + shiftX;
-		dest[vertex].y = src[vertex].x*(FLOAT)sin(rad) + src[vertex].y*(FLOAT)cos(rad) + shiftY;
+		dest[vertex].x += shiftX;
+		dest[vertex].y += shiftY;
 	}
 
 	return;

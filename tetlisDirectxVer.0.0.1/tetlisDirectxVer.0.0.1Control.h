@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Control
 //
-// DATE 2018.06.13
+// DATE 2018.07.12
 // VER.0.0.5
 //
 // Author Harutaka-Tsujino
@@ -17,6 +17,9 @@ extern BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
 extern INT g_deletedLine;
 extern INT g_deletedLineOverall;
+extern INT g_additionalLand;
+extern INT g_swellingUpHolder;
+extern INT g_swellingUpSaver;
 
 //テトリスなどの操作に関する関数
 VOID Control(VOID);
@@ -112,5 +115,8 @@ VOID GetScoreByLineCount(INT lineCount, INT *scoreBuf);
 
 //ゲームオーバーか、否かを調べる関数
 VOID CheckGameover(BOOL *isGameover);
+
+//時間で地面をせり上げる関数
+VOID AddLand(INT *scoreBuf, INT *additionalLandCount);
 
 #endif
