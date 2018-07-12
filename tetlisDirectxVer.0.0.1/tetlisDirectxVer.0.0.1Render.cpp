@@ -1645,6 +1645,17 @@ VOID SetBlockVerticesAndRender(VOID)
 					cusV4Tetmino[3].tu = 151.f / 512;
 					cusV4Tetmino[3].tv = 96.f / 256;
 					break;
+
+				case 70:
+					cusV4Tetmino[0].tu = 350.f / 512;
+					cusV4Tetmino[0].tv = 45.f / 256;
+					cusV4Tetmino[1].tu = 400.f / 512;
+					cusV4Tetmino[1].tv = 45.f / 256;
+					cusV4Tetmino[2].tu = 400.f / 512;
+					cusV4Tetmino[2].tv = 96.f / 256;
+					cusV4Tetmino[3].tu = 350.f / 512;
+					cusV4Tetmino[3].tv = 96.f / 256;
+					break;
 				}
 
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Tetmino, sizeof(CustomVertex));

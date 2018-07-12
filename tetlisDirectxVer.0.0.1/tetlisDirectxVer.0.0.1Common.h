@@ -126,7 +126,7 @@ extern ItemData g_itemData;
 extern INT g_tetminoNum;
 extern INT g_deletedLineCount;
 extern INT g_hold, g_next, g_nextNext;
-extern INT g_tetlisBoardSource[][TETLIS_WIDTH];
+extern INT g_tetlisBoardSource[12][TETLIS_WIDTH];
 extern INT g_tetlisBoard[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_tetlisBoardBuf[TETLIS_HEIGHT][TETLIS_WIDTH];
 extern INT g_holdBoard[4][4];

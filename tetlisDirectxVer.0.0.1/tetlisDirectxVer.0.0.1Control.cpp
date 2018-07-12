@@ -322,9 +322,13 @@ VOID Control(VOID)
 							case 160:
 								g_itemData.haveItem[g_ultraDrillItem] = true;
 
-break;
+								break;
 							case 150:
 								g_itemData.haveItem[g_bulletItem] = true;
+
+								break;
+							case 170:
+								g_itemData.haveItem[g_excaliberItem] = true;
 
 								break;
 							}
@@ -473,6 +477,7 @@ break;
 
 								g_swellingUpHolder = 0;
 
+								scoreBuf += 150;
 								deletedAdditionalLine = 0;
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
@@ -846,11 +851,13 @@ VOID ChooseAndCpyTetlisBoardSourceToBoard(VOID)
 {
 	for (INT line = 19; line < 137; line += 3)
 	{
-		for (INT column = 0; column < 3; column++)
+		INT ran = 3 * (rand() % 4);
+
+		for (INT column = ran; column < (ran+3); column++)
 		{
 			for (INT row = 0; row < 12; row++)
 			{
-				g_tetlisBoard[line + column][row] = g_tetlisBoardSource[column][row];
+				g_tetlisBoard[line + column-ran][row] = g_tetlisBoardSource[column][row];
 			}
 		}
 	}
@@ -1001,6 +1008,7 @@ VOID SynchroTetlisBoardBufToTetlisBoard(VOID)
 			{
 				g_tetlisBoardBuf[column][row] = -1;
 			}
+
 			else
 			{
  				g_tetlisBoardBuf[column][row] = g_tetlisBoard[column][row];
@@ -1565,6 +1573,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					break;
 
 				case 120:
+
 					if (isFirstDeletedLine)
 					{
 						firstDeletedColumn = column;
@@ -1577,6 +1586,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					break;
 
 				case 121:
+
 					g_tetlisBoard[column][row] -= 1;
 					g_durableBlockBeared[column][row] = 1;
 					g_reduceBlockDurPosition[column][row] = 1;
@@ -1584,6 +1594,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					break;
 
 				case 130:
+
 					if (isFirstDeletedLine)
 					{
 						firstDeletedColumn = column;
@@ -1594,19 +1605,25 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
 				case 131:
+
 					g_tetlisBoard[column][row] -= 1;
 					g_durableBlockBeared[column][row] = 1;
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
 				case 132:
+
 					g_tetlisBoard[column][row] -= 1;
 					g_durableBlockBeared[column][row] = 1;
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
 				case 140:
+
 					if (isFirstDeletedLine)
 					{
 						firstDeletedColumn = column;
@@ -1620,6 +1637,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					break;
 
 				case 150:
+
 					if (isFirstDeletedLine)
 					{
 						firstDeletedColumn = column;
@@ -1646,6 +1664,23 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 					g_reduceBlockDurPosition[column][row] = 1;
 
 					break;
+
+				case 170:
+
+					if (isFirstDeletedLine)
+					{
+						firstDeletedColumn = column;
+						isFirstDeletedLine = false;
+					}
+
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+					g_itemData.haveItem[g_excaliberItem] = true;
+					g_tetlisBoard[column][row] = -1;
+					g_reduceBlockDurPosition[column][row] = 1;
+
+					break;
+
 				default:
 					if (isFirstDeletedLine)
 					{
@@ -1788,6 +1823,23 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 				g_reduceBlockDurPosition[column][row] = 1;
 
 				break;
+
+			case 170:
+
+				if (isFirstDeletedLine)
+				{
+					firstDeletedColumn = column;
+					isFirstDeletedLine = false;
+				}
+
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+				g_itemData.haveItem[g_excaliberItem] = true;
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+
+				break;
+
 			default:
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
