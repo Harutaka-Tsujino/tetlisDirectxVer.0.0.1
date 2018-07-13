@@ -261,6 +261,11 @@ VOID CreateTextureFromFile(VOID)
 		"texture/excaliberSlash.png",
 		&g_pTexture[g_excaliberSlashTex]);
 
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"texture/saito_touka.png",
+		&g_pTexture[g_saito_toukaTex]);
+
 	return;
 }
 

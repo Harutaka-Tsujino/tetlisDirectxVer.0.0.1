@@ -41,14 +41,22 @@ VOID Control(VOID)
 		static BOOL canInputLA = true, canInputDA = true, canInputRA = true, canInputUA = true, canInputR = true, canInputSpace = true,canInputQ = true,canInputE = true, isGameover = false, isNewGame = true, canHold = true, wasHold = false, canCreate = true;
 
 		//生成されるのテトリミノ種類を決める
-		static INT rACount = 0, lACount = 0,uACount = 0, dACount = 0,qCount = 0,eCount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevNum1KeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, deletedLineCount = 0;
+		static INT rACount = 0, lACount = 0,uACount = 0, dACount = 0,qCount = 0,eCount = 0, stopCount = 0, downCount = 0, scoreBuf = 0, minoIRoatationCount = 0,prevUpKeyState = 0,prevCKeyState = 0, prevRKeyState = 0, prevSpaceKeyState = 0, currentTetmino = rand() % 7, deletedLineCount = 0;
 		
 		static INT lineCount = 0, additionalDeletableLine = 0, prevDeletedLineCount = 0, additionalLandCount = 0;
 		
-		INT LEFT[2] = { 0,diks[DIK_LEFT] & 0x80 }, UP[2] = { 0,diks[DIK_UP] & 0x80 },DOWN[2] = { 0,diks[DIK_DOWN] & 0x80 }, RIGHT[2] = { 0,diks[DIK_RIGHT] & 0x80 }, Q[2] = { 0,diks[DIK_Q] & 0x80 }, E[2] = { 0,diks[DIK_E] & 0x80 };
+		INT A[2] = { 0,diks[DIK_A] & 0x80 }, W[2] = { 0,diks[DIK_W] & 0x80 },S[2] = { 0,diks[DIK_S] & 0x80 }, D[2] = { 0,diks[DIK_D] & 0x80 }, Q[2] = { 0,diks[DIK_Q] & 0x80 }, E[2] = { 0,diks[DIK_E] & 0x80 };
 
 		//テトリス配列にテトリス配列バッファーの要素全てをコピーしている
 		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+
+		if (diks[DIK_J] & 0x80)
+		{
+			for (INT item = 0; item < g_itemMax; item++)
+			{
+				g_itemData.haveItem[item] = true;
+			}
+		}
 
 		//リセットボタン、初期状態に戻す
 		if (diks[DIK_BACK] & 0x80)
@@ -130,46 +138,49 @@ VOID Control(VOID)
 					}
 				}
 
-				if (!(prevNum1KeyState))
+				if (!(prevCKeyState))
 				{
-					if (diks[DIK_NUMPAD1] & 0x80)
+					if (diks[DIK_C] & 0x80)
 					{
-						if (!(g_itemData.decideItemPos))
+						if (g_itemData.haveItem[g_itemData.currentItemNum])
 						{
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-
-							if (g_itemData.useItem == false)
+							if (!(g_itemData.decideItemPos))
 							{
-								g_itemData.useItem = true;
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 
-								switch (g_itemData.currentItemNum)
+								if (g_itemData.useItem == false)
 								{
-								case g_ultraDrillItem:
+									g_itemData.useItem = true;
+
+									switch (g_itemData.currentItemNum)
+									{
+									case g_ultraDrillItem:
+
+										g_itemData.posYX[0] = 4 + g_deletedLineCount;
+										g_itemData.posYX[1] = 5;
+
+										break;
+									case g_laserCannonItem:
+
+										g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
+										g_itemData.posYX[1] = 1;
+
+										break;
+									case 2:
+									case 3:
+										break;
+									}
 
 									g_itemData.posYX[0] = 4 + g_deletedLineCount;
 									g_itemData.posYX[1] = 5;
-
-									break;
-								case g_laserCannonItem:
-
-									g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
-									g_itemData.posYX[1] = 1;
-
-									break;
-								case 2:
-								case 3:
-									break;
 								}
 
-								g_itemData.posYX[0] = 4 + g_deletedLineCount;
-								g_itemData.posYX[1] = 5;
-							}
-
-							else
-							{
-								g_itemData.useItem = false;
-								g_itemData.posYX[0] = 0;
-								g_itemData.posYX[1] = 0;
+								else
+								{
+									g_itemData.useItem = false;
+									g_itemData.posYX[0] = 0;
+									g_itemData.posYX[1] = 0;
+								}
 							}
 						}
 					}
@@ -180,6 +191,7 @@ VOID Control(VOID)
 					switch (g_itemData.currentItemNum)
 					{
 					case g_ultraDrillItem:
+
 						if (g_itemData.decideItemPos)
 						{
 							if (g_itemData.count[g_ultraDrillItem] == 420)
@@ -212,7 +224,7 @@ VOID Control(VOID)
 
 								CountDeletedLine();
 								g_deletedLineOverall += 5+ g_additionalLand;
-
+								g_itemData.haveItem[g_ultraDrillItem] = false;
 								g_additionalLand = 0;
 								g_itemData.useItem = false;
 								g_itemData.decideItemPos = false;
@@ -226,7 +238,7 @@ VOID Control(VOID)
 					{
 						INT deletedAdditionalLine = 0;///////////////////////////////
 						static INT deleteLandNum = 0;
-
+						static INT swellingUpCount = 0;
 						if (g_itemData.decideItemPos)
 						{
 							if (g_itemData.count[g_laserCannonItem] == 30)
@@ -249,24 +261,15 @@ VOID Control(VOID)
 
 									if (numOfDirt > 3)
 									{
-										g_itemData.swellingUpCount[g_laserCannonItem]++;
+										swellingUpCount++;
 									}
 
-									deleteLandNum = g_itemData.swellingUpCount[g_laserCannonItem];
+									deleteLandNum = swellingUpCount;
 								}
 
-								deletedAdditionalLine = (g_itemData.swellingUpCount[g_laserCannonItem]);
+								deletedAdditionalLine = g_additionalLand - swellingUpCount;
 
-								if (g_additionalLand < deletedAdditionalLine)
-								{
-									deletedAdditionalLine = g_additionalLand;
-								}
-
-								g_itemData.swellingUpCount[g_laserCannonItem] -= g_additionalLand;
-
-								g_swellingUpHolder = deletedAdditionalLine;
-
-								g_additionalLand -= deletedAdditionalLine;
+								g_itemData.swellingUpCount[g_laserCannonItem] -= deletedAdditionalLine;
 
 								scoreBuf += 200;
 							}
@@ -279,15 +282,25 @@ VOID Control(VOID)
 
 								CountDeletedLine();
 
+								if (deletedAdditionalLine < 0)
+								{
+									g_additionalLand = 0;
+								}
+
+								else
+								{
+									g_additionalLand = deletedAdditionalLine;
+								}
+
 								g_deletedLineOverall += deleteLandNum;
+								
 
+								swellingUpCount = 0;
 								deleteLandNum = 0;
-
 								deletedAdditionalLine = 0;
 
-								g_swellingUpHolder = 0;
-
 								g_itemData.useItem = false;
+								g_itemData.haveItem[g_laserCannonItem] = false;
 								g_itemData.decideItemPos = false;
 								g_itemData.posYX[0] = 0;
 								g_itemData.posYX[1] = 0;
@@ -298,12 +311,12 @@ VOID Control(VOID)
 
 						else
 						{
-							if (DOWN[canInputDA])
+							if (S[canInputDA])
 							{
 								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
 							}
 
-							if (UP[canInputUA])
+							if (W[canInputUA])
 							{
 								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
 							}
@@ -347,6 +360,7 @@ VOID Control(VOID)
 								}*/
 
 								g_itemData.useItem = false;
+								g_itemData.haveItem[g_bulletItem] = false;
 								g_itemData.decideItemPos = false;
 								g_itemData.posYX[0] = 0;
 								g_itemData.posYX[1] = 0;
@@ -359,22 +373,22 @@ VOID Control(VOID)
 						{
 							g_scopeShakeCount++;
 
-							if (DOWN[canInputDA])
+							if (S[canInputDA])
 							{
 								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
 							}
 
-							if (UP[canInputUA])
+							if (W[canInputUA])
 							{
 								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
 							}
 
-							if (RIGHT[canInputRA])
+							if (D[canInputRA])
 							{
 								ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
 							}
 
-							if (LEFT[canInputLA])
+							if (A[canInputLA])
 							{
 								ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
 							}
@@ -385,8 +399,8 @@ VOID Control(VOID)
 
 						if (g_itemData.decideItemPos)
 						{
-
 							static INT deleteLandNum = 0;
+							static INT swellingUpCount = 0;
 
 							INT deletedAdditionalLine = 0;
 
@@ -440,25 +454,17 @@ VOID Control(VOID)
 											if (numOfDirt < 4)
 											{
 												isOver3Dirts = false;
-												g_itemData.swellingUpCount[g_excaliberItem]++;
+												swellingUpCount++;
 											}
 										}
 
-										deleteLandNum = g_itemData.swellingUpCount[g_excaliberItem];
+										deleteLandNum = swellingUpCount;
 									}
 								}
 
-								deletedAdditionalLine = (g_itemData.swellingUpCount[g_excaliberItem]);
+								deletedAdditionalLine = g_additionalLand - swellingUpCount;
 
-								if (g_additionalLand < deletedAdditionalLine)
-								{
-									deletedAdditionalLine = g_additionalLand;
-								}
-
-								g_swellingUpHolder = deletedAdditionalLine;
-
-								g_additionalLand -= deletedAdditionalLine;
-
+								g_itemData.swellingUpCount[g_excaliberItem] -= deletedAdditionalLine;
 							}
 
 							if (g_itemData.count[g_excaliberItem] == 398 + 30+30)
@@ -469,17 +475,26 @@ VOID Control(VOID)
 
 								CountDeletedLine();
 
-								g_itemData.swellingUpCount[g_excaliberItem] -= g_additionalLand;
+								if (deletedAdditionalLine < 0)
+								{
+									g_additionalLand = 0;
+								}
+
+								else
+								{
+									g_additionalLand = deletedAdditionalLine;
+								}
+
+								deletedAdditionalLine = 0;
 
 								g_deletedLineOverall += deleteLandNum;
 
 								deleteLandNum = 0;
-
-								g_swellingUpHolder = 0;
+								swellingUpCount = 0;
 
 								scoreBuf += 150;
-								deletedAdditionalLine = 0;
 								g_itemData.useItem = false;
+								g_itemData.haveItem[g_excaliberItem] = false;
 								g_itemData.decideItemPos = false;
 								g_itemData.posYX[0] = 0;
 								g_itemData.posYX[1] = 0;
@@ -490,12 +505,12 @@ VOID Control(VOID)
 
 						else
 						{
-							if (RIGHT[canInputRA])
+							if (D[canInputRA])
 							{
 								ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
 							}
 
-							if (LEFT[canInputLA])
+							if (A[canInputLA])
 							{
 								ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
 							}
@@ -554,7 +569,7 @@ VOID Control(VOID)
 					//ホールドが行われていた場合新しくテトリミノを生成するので、この処理を通さない
 					if (!(wasHold))
 					{
-						if (RIGHT[canInputRA])
+						if (D[canInputRA])
 						{
 							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -565,7 +580,7 @@ VOID Control(VOID)
 							ShiftTetliminoX(1, &canInputRA);
 						}
 
-						if (LEFT[canInputLA])
+						if (A[canInputLA])
 						{
 							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -595,7 +610,7 @@ VOID Control(VOID)
 							}
 						}
 
-						if (DOWN[canInputDA])
+						if (S[canInputDA])
 						{
 							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -609,7 +624,7 @@ VOID Control(VOID)
 						//ハードドロップ　テトリミノのブロックを一個づつ下方を確認し、そこが空欄ではない場合、そこから1つ上にワープさせる
 						if (!(prevUpKeyState))
 						{
-							if (diks[DIK_UP] & 0x80)
+							if (diks[DIK_W] & 0x80)
 							{
 								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
@@ -701,23 +716,26 @@ VOID Control(VOID)
 
 						SynchroTetlisBoardBufToTetlisBoard();
 
-						INT shiftUpY;
+						INT shiftUpY[4];
 
 						for (INT block = 0; block < 4; block++)
 						{
-							shiftUpY = g_movMinoNumOfArBuf.YX[block][0] - (g_deletedLineCount + 4);
+							shiftUpY[block] = g_movMinoNumOfArBuf.YX[block][0] -(g_deletedLineCount + 4);
 						}
 
-						if (shiftUpY < -3)
+						/*for (INT block = 0; block < 4; block++)
 						{
-							shiftUpY = -3;
-						}
+							if (shiftUpY[block] < -3)
+							{
+								shiftUpY[block] = -3;
+							}
+						}*/
 
 						CountDeletedLine();
 
 						for (INT block = 0; block < 4; block++)
 						{
-							g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount +4+ shiftUpY;
+							g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount +4+ shiftUpY[block];
 						}
 					}
 
@@ -787,8 +805,8 @@ VOID Control(VOID)
 			//キー入力状態を保存
 			prevRKeyState = diks[DIK_R] & 0x80;
 			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
-			prevUpKeyState = diks[DIK_UP] & 0x80;
-			prevNum1KeyState = diks[DIK_NUMPAD1] & 0x80;
+			prevUpKeyState = diks[DIK_W] & 0x80;
+			prevCKeyState = diks[DIK_C] & 0x80;
 			memcpy(prevDiks, diks, sizeof(BYTE) * 256);
 
 			//ホールド時にブロックが表示されているので消す
@@ -2009,7 +2027,7 @@ VOID AddLand(INT *scoreBuf,INT *additionalLandCount)
 	{
 	case 0:
 
-		if (*additionalLandCount > 300)
+		if (*additionalLandCount > 1200)
 		{
 			g_additionalLand++;
 			*additionalLandCount = 0;

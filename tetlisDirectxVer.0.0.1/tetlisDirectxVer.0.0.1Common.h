@@ -74,6 +74,7 @@ enum TEX
 	g_slashEffectTex,
 	g_excaliberFlameTex,
 	g_excaliberSlashTex,
+	g_saito_toukaTex,
 	g_texMax
 };
 

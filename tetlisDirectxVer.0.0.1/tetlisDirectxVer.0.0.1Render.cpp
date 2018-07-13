@@ -90,6 +90,25 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	////////////////////////////////////
 	//ドリルアイテムに関係する描画をする
 	//SetItemVerticesAndRender();
+	
+	for (INT item = 0; item < g_itemMax; item++)
+	{
+		if (g_itemData.haveItem[item] == 1)
+		{
+			ImageState itemState = { 800.f + 50 * item,495.f,50.f / 2,50.f / 2 };
+
+			CustomVertex cusV4ItemList[4] =
+			{
+				{ itemState.x - itemState.xScale,itemState.y - itemState.yScale,1.f,1.f,0xFFFFFFFF,50 * item / 512.f,0.f },
+				{ itemState.x + itemState.xScale,itemState.y - itemState.yScale,1.f,1.f,0xFFFFFFFF,(50 * (item+1)) / 512.f,0.f },
+				{ itemState.x + itemState.xScale,itemState.y + itemState.yScale,1.f,1.f,0xFFFFFFFF,(50 * (item+1)) / 512.f,50 / 64.f },
+				{ itemState.x - itemState.xScale,itemState.y + itemState.yScale,1.f,1.f,0xFFFFFFFF,50 * item  / 512.f,50 / 64.f }
+			};
+
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
+			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemList, sizeof(CustomVertex));
+		}
+	}
 
 	////////////////////////////////////
 	//アイテムの使用時に関する描画をする
@@ -123,11 +142,26 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 
 			g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
 			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
-
+			
+			if (!g_itemData.haveItem[g_itemData.currentItemNum])
+			{
+				for (INT vertex = 0; vertex < 4; vertex++)
+				{
+					cusV4ItemIconList[vertex].color = 0x88FFFFFF;
+				}
+					g_pD3dDevice->SetTexture(0, g_pTexture[g_blackMaskTex]);
+					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
+			}
+			
 			if (g_itemData.useItem == false)
 			{
 				if (diks[DIK_V] & 0x80)
 				{
+					for (INT vertex = 0; vertex < 4; vertex++)
+					{
+						cusV4ItemIconList[vertex].color = 0xFFFFFFFF;
+					}
+
 					inventoryTop.y -= 50.f;
 					inventoryBottom.y += 50.f;
 
@@ -137,6 +171,7 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 					cusV4ItemIconList[3].tu = 0.f;
 
 					const FLOAT posX = 62.f;
+
 					cusV4ItemIconList[0].x = posX + itemIconList.x - 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
 					cusV4ItemIconList[1].x = posX + itemIconList.x + 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
 					cusV4ItemIconList[2].x = posX + itemIconList.x + 512 + 100 * (g_itemMax - g_itemData.currentItemNum);
@@ -144,6 +179,25 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_itemIconListTex]);
 					g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemIconList, sizeof(CustomVertex));
+
+					for (INT item = 0; item < g_itemMax; item++)
+					{
+						if (!g_itemData.haveItem[item])
+						{
+							ImageState itemState = { (100*item)+posX-262+(100 * (g_itemMax - g_itemData.currentItemNum)),560.f,100.f / 2,100.f / 2 };
+
+							CustomVertex cusV4ItemList[4] =
+							{
+								{ itemState.x - itemState.xScale,itemState.y - itemState.yScale,1.f,1.f,0x88FFFFFF,50 * item / 512.f,0.f },
+								{ itemState.x + itemState.xScale,itemState.y - itemState.yScale,1.f,1.f,0x88FFFFFF,(50 * (item + 1)) / 512.f,0.f },
+								{ itemState.x + itemState.xScale,itemState.y + itemState.yScale,1.f,1.f,0x88FFFFFF,(50 * (item + 1)) / 512.f,50 / 64.f },
+								{ itemState.x - itemState.xScale,itemState.y + itemState.yScale,1.f,1.f,0x88FFFFFF,50 * item / 512.f,50 / 64.f }
+							};
+
+							g_pD3dDevice->SetTexture(0, g_pTexture[g_blackMaskTex]);
+							g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4ItemList, sizeof(CustomVertex));
+						}
+					}
 				}
 			}
 			
@@ -168,10 +222,6 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, CusV4InventoryBottom, sizeof(CustomVertex));
 		}
 	}
-	////////////////////////////////
-	//ゲームオーバー時の文字列の描画
-	RenderGameoverStr();
-
 	////////////////////
 	//スコア文字列の描画
 	RenderScoreStr();
@@ -184,6 +234,10 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	//ホールド、ネクスト、ネクストネクストの4頂点を設定、描画
 	SetHoldNextNextNextVerticesAndRender();
 
+	////////////////////////////////
+	//ゲームオーバー時の文字列の描画
+	RenderGameoverStr();
+	
 	//描画の終了
 	g_pD3dDevice->EndScene();
 
@@ -823,8 +877,8 @@ VOID SetItemVerticiesAndRender(VOID)
 			{
 				ImageState scopeState = { 395.f,0.f,256.f / 2,256.f / 2 };
 
-				scopeState.x = 395.f + 30 * (g_itemData.posYX[1]);
-				scopeState.y = 85.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
+				scopeState.x = 396.f + 30 * (g_itemData.posYX[1]);
+				scopeState.y = 86.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4);
 
 				g_scopeShakeCount = (g_scopeShakeCount > 7 * 16) ? 0 : g_scopeShakeCount;
 				/*switch (g_scopeShakeCount / 16)
@@ -864,13 +918,13 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				CustomVertex cusV4Scope[4] =
 				{
-					{ scopeState.x - scopeState.xScale,scopeState.y - scopeState.yScale,1.f,1.f,0xFFFFFFFF,0.f / 512,50 / 512.f },
-					{ scopeState.x + scopeState.xScale,scopeState.y - scopeState.yScale,1.f,1.f,0xFFFFFFFF,256 / 512.f,50 / 512.f },
-					{ scopeState.x + scopeState.xScale,scopeState.y + scopeState.yScale,1.f,1.f,0xFFFFFFFF,256 / 512.f,306 / 512.f},
-					{ scopeState.x - scopeState.xScale,scopeState.y + scopeState.yScale,1.f,1.f,0xFFFFFFFF,0.f / 512,306 / 512.f}
+					{ scopeState.x - scopeState.xScale,scopeState.y - scopeState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
+					{ scopeState.x + scopeState.xScale,scopeState.y - scopeState.yScale,1.f,1.f,0xFFFFFFFF,1.f,0.f },
+					{ scopeState.x + scopeState.xScale,scopeState.y + scopeState.yScale,1.f,1.f,0xFFFFFFFF,1.f,1.f},
+					{ scopeState.x - scopeState.xScale,scopeState.y + scopeState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.f}
 				};
 
-				g_pD3dDevice->SetTexture(0, g_pTexture[g_bulletTex]);
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_saito_toukaTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Scope, sizeof(CustomVertex));
 			}
 
