@@ -13,6 +13,8 @@
 #include "tetlisDirectxVer.0.0.1Render.h"
 #include <dinput.h>
 
+
+
 BOOL g_durableBlockBeared[TETLIS_HEIGHT][TETLIS_WIDTH];
 BOOL g_reduceBlockDurPosition[TETLIS_HEIGHT][TETLIS_WIDTH];
 
@@ -26,6 +28,8 @@ INT g_swellingUpSaver = 0;
 //テトリスなどの操作に関する関数
 VOID Control(VOID)
 {
+	SoundManager& soundManager = SoundManager::GetInstance();
+	
 	//キーデバイスに入っている情報を読み取る準備
 	HRESULT hr = g_pDKeyDevice->Acquire();
 
@@ -57,7 +61,7 @@ VOID Control(VOID)
 				g_itemData.haveItem[item] = true;
 			}
 		}
-
+		static BOOL playMusic = true;
 		//リセットボタン、初期状態に戻す
 		if (diks[DIK_BACK] & 0x80)
 		{
@@ -65,10 +69,20 @@ VOID Control(VOID)
 			//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
 			ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
 				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+			
+			playMusic = true;
 		}
 
 		if (isGameover)
 		{
+			
+
+			if (playMusic)
+			{
+				soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+				soundManager.Play(g_pD3DSound[g_gameoverAudio], false);
+				playMusic = false;
+			}
 			//ゲームオーバー時に文字列を表示させる
 			g_showGameoverStr = true;
 		}
@@ -77,6 +91,8 @@ VOID Control(VOID)
 		{
 			if (isNewGame)
 			{
+				soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+
 				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				//ニューゲーム(一番最初のフレーム)時にはg_nextとg_nextNextは初期化されていないので初期化し、isNewGameをfalseにする
 				InitNextAndNextNext(&isNewGame);
@@ -365,13 +381,13 @@ VOID Control(VOID)
 								g_itemData.posYX[0] = 0;
 								g_itemData.posYX[1] = 0;
 								g_itemData.count[g_bulletItem] = 0;
-								g_scopeShakeCount = 0;
+								soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+
 							}
 						}
 
 						else
 						{
-							g_scopeShakeCount++;
 
 							if (S[canInputDA])
 							{
@@ -522,16 +538,19 @@ VOID Control(VOID)
 					if (g_itemData.count[g_excaliberItem] == 399+30+30)
 					{
 						g_itemData.count[g_excaliberItem] = 0;
+						soundManager.Play(g_pD3DSound[g_bgmAudio], true);
 					}
 
 					if (g_itemData.count[g_laserCannonItem] == 112)
 					{
 						g_itemData.count[g_laserCannonItem] = 0;
+						soundManager.Play(g_pD3DSound[g_bgmAudio], true);
 					}
 
 					if (g_itemData.count[g_ultraDrillItem] == 481)
 					{
 						g_itemData.count[g_ultraDrillItem] = 0;
+						soundManager.Play(g_pD3DSound[g_bgmAudio], true);
 					}
 
 					if (!(g_itemData.decideItemPos))
@@ -1828,12 +1847,22 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 
 				break;
 			case 140:
+
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
-
 				g_itemData.haveItem[g_laserCannonItem] = true;
 				break;
+
+			case 150:
+
+				g_tetlisBoard[column][row] = -1;
+				g_reduceBlockDurPosition[column][row] = 1;
+				g_itemData.haveItem[g_bulletItem] = true;
+
+				break;
+
 			case 160:
+
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
 				g_itemData.haveItem[g_ultraDrillItem] = true;
@@ -1859,6 +1888,7 @@ VOID DeleteAndCountFilledLine(INT *lineCount, INT *additionalDeletableLine)
 				break;
 
 			default:
+
 				g_tetlisBoard[column][row] = -1;
 				g_reduceBlockDurPosition[column][row] = 1;
 

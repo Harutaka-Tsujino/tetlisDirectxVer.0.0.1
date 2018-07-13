@@ -117,6 +117,22 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 		return 0;
 	}
 
+	///////////////////////////////////////////////////////////////
+	// 音声ライブラリを生成
+	DirectSound::CreateInstance(hWnd);
+	SoundManager& soundManager = SoundManager::GetInstance();
+	///////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////
+	// 必要な音声ファイルを読み込む
+	soundManager.Load(g_pD3DSound[g_bgmAudio]="sound/BGM.wav");
+	soundManager.Load(g_pD3DSound[g_ultraDrillAudio]="sound/ウルトラドリル.wav");
+	soundManager.Load(g_pD3DSound[g_excaliberAudio]="sound/エクスカリバ－.wav");
+	soundManager.Load(g_pD3DSound[g_gameoverAudio]="sound/ゲームオーバー.wav");
+	soundManager.Load(g_pD3DSound[g_laserCannonAudio]="sound/レーザー.wav");
+	soundManager.Load(g_pD3DSound[g_bulletAudio]="sound/銃.wav");
+	///////////////////////////////////////////////////////////////
+
 	//メッセージの中身の消去
 	ZeroMemory(&msg, sizeof(msg));
 	

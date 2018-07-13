@@ -16,12 +16,24 @@
 #include <stdio.h>
 #include <d3dx9.h>
 #include <dinput.h>
+///////////////////////////////////////////////////////////////
+// 音声ライブラリのヘッダをinclude
+#include "SoundLib/DirectSound.h"
+#include "SoundLib/SoundManager.h"
+///////////////////////////////////////////////////////////////
+
 
 #pragma comment(lib,"d3dx9d.lib")
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"winmm.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "SoundLib/Debug/Sound.lib")
+#else
+#pragma comment(lib, "SoundLib/Release/Sound.lib")
+#endif
 
 #define DISPLAY_WIDTH 1280
 #define DISPLAY_HEIGHT 720
@@ -93,6 +105,17 @@ enum ITEM
 	g_bulletItem,
 	g_excaliberItem,
 	g_itemMax
+};
+
+enum AUDIO
+{
+	g_bgmAudio,
+	g_ultraDrillAudio,
+	g_excaliberAudio,
+	g_gameoverAudio,
+	g_laserCannonAudio,
+	g_bulletAudio,
+	g_audioMax
 };
 
 typedef struct

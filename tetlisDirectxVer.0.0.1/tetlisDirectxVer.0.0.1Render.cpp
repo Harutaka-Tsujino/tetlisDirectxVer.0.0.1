@@ -274,10 +274,10 @@ VOID RenderBackground(VOID)
 {
 	CustomVertex cusV4Background[4] =
 	{
-		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
-		{ 1280.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
-		{ 1280.f, 720.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
-		{ 0.f, 720.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
+		{ -1.f,   0-1.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
+		{ 1280-1.f,   0-1.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
+		{ 1280-1.f, 720-1.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
+		{ -1.f, 720-1.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
 	};
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_backgroundTex]);
@@ -352,6 +352,13 @@ VOID SetItemVerticiesAndRender(VOID)
 
 			if (g_itemData.count[g_ultraDrillItem] > 0)
 			{
+				if (g_itemData.count[g_ultraDrillItem] == 1)
+				{
+					SoundManager& soundManager = SoundManager::GetInstance();
+					soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+					soundManager.Play(g_pD3DSound[g_ultraDrillAudio], false);
+				}
+
 				FLOAT additionalScale = 0;
 
 				if (g_itemData.count[g_ultraDrillItem] >= 180)
@@ -812,21 +819,49 @@ VOID SetItemVerticiesAndRender(VOID)
 			}
 		}
 		break;
+
 		case g_laserCannonItem:
 		{
-			ImageState laserCannonState = { 395.f,0.f,15.f,15.f };
-			laserCannonState.y = 70.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) + laserCannonState.yScale;
-
-			CustomVertex cusV4LaserCannon[4] =
+			if (!g_itemData.count[g_laserCannonItem])
 			{
-				{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
+				ImageState laserCannonState = { 395.f,0.f,15.f,15.f };
+				laserCannonState.y = 70.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) + laserCannonState.yScale;
+
+				CustomVertex cusV4LaserCannon[4] =
+				{
+					{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
+					{ laserCannonState.x + laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,1.f,0.f },
+					{ laserCannonState.x + laserCannonState.xScale,laserCannonState.y + laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,1.f,1.f },
+					{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y + laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.f }
+				};
+
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_laserCannonTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LaserCannon, sizeof(CustomVertex));
+			}
+
+			else
+			{
+				ImageState laserCannonState = { 355.f,0.f,50.f,50.f };
+				laserCannonState.y = 40.f + 30 * (g_itemData.posYX[0] - g_deletedLineCount - 4) + laserCannonState.yScale;
+
+				CustomVertex cusV4LaserCannon[4] =
+				{
+					{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,0.f },
 				{ laserCannonState.x + laserCannonState.xScale,laserCannonState.y - laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,1.f,0.f },
 				{ laserCannonState.x + laserCannonState.xScale,laserCannonState.y + laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,1.f,1.f },
 				{ laserCannonState.x - laserCannonState.xScale,laserCannonState.y + laserCannonState.yScale,1.f,1.f,0xFFFFFFFF,0.f,1.f }
-			};
+				};
 
-			g_pD3dDevice->SetTexture(0, g_pTexture[g_laserCannonTex]);
-			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LaserCannon, sizeof(CustomVertex));
+				g_pD3dDevice->SetTexture(0, g_pTexture[g_laserCannonTex]);
+				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4LaserCannon, sizeof(CustomVertex));
+			}
+
+			if (g_itemData.count[g_laserCannonItem] == 1)
+			{
+				SoundManager& soundManager = SoundManager::GetInstance();
+				soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+				soundManager.Play(g_pD3DSound[g_laserCannonAudio], false);
+			}
 
 			if (0 < g_itemData.count[g_laserCannonItem] && g_itemData.count[g_laserCannonItem] < 51)
 			{
@@ -926,6 +961,13 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				g_pD3dDevice->SetTexture(0, g_pTexture[g_saito_toukaTex]);
 				g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, cusV4Scope, sizeof(CustomVertex));
+			}
+
+			if (1 == g_itemData.count[g_bulletItem])
+			{
+				SoundManager& soundManager = SoundManager::GetInstance();
+				soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+				soundManager.Play(g_pD3DSound[g_bulletAudio], false);
 			}
 
 			if (0 < g_itemData.count[g_bulletItem] && g_itemData.count[g_bulletItem] < 181)
@@ -1076,6 +1118,9 @@ VOID SetItemVerticiesAndRender(VOID)
 
 			if (0 < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < purificatonCountLimit)
 			{
+				SoundManager& soundManager = SoundManager::GetInstance();
+				soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+
 				FLOAT excaliberSmokeYScale = excaliberState.yScale*2;
 
 				CustomVertex cusV4ExcaliberSmoke[4] =
@@ -1131,7 +1176,7 @@ VOID SetItemVerticiesAndRender(VOID)
 
 			FLOAT degree = 0;
 
-			FLOAT shiftX = 395 + 30 * 5 + 15;
+			FLOAT shiftX = 395.f + 30 * (g_itemData.posYX[1]);
 
 			const INT rotationStartCount = purificatedBlankCountLimit + 30;
 
@@ -1174,7 +1219,13 @@ VOID SetItemVerticiesAndRender(VOID)
 
 			if (rotationStartCount + 20 < g_itemData.count[g_excaliberItem] && g_itemData.count[g_excaliberItem] < postureCountLimit)
 			{
-				ImageState excaliberBladeFlameState = { 395 + 30 * 5 + 15.f,330-128.f,200.f,256.f};
+				if (rotationStartCount + 20 +1 == g_itemData.count[g_excaliberItem])
+				{
+					SoundManager& soundManager = SoundManager::GetInstance();
+					soundManager.Play(g_pD3DSound[g_excaliberAudio], false);
+				}
+
+				ImageState excaliberBladeFlameState = { 395.f + 30 * (g_itemData.posYX[1]),330-128.f,200.f,256.f};
 
 				CustomVertex cusV4ExcaliberFlame[4] =
 				{
@@ -1213,7 +1264,7 @@ VOID SetItemVerticiesAndRender(VOID)
 
 				if (slashStartCountLimit < g_itemData.count[g_excaliberItem])
 				{
-					ImageState slashEffectState = { 395+165.f,360.f,64.f / 2,1195.f / 2 };
+					ImageState slashEffectState = { 395.f + 30 * (g_itemData.posYX[1]),360.f,64.f / 2,1195.f / 2 };
 
 					CustomVertex cusV4SlashEffectState[4] =
 					{
@@ -1228,8 +1279,13 @@ VOID SetItemVerticiesAndRender(VOID)
 
 					if (slashStartCountLimit + 15 < g_itemData.count[g_excaliberItem])
 					{
+						if (slashStartCountLimit + 15 + 1 == g_itemData.count[g_excaliberItem])
+						{
+							SoundManager& soundManager = SoundManager::GetInstance();
+							soundManager.Play(g_pD3DSound[g_excaliberAudio], false);
+						}
 
-						ImageState excaliberSlashState = { 395 + 30 * 5 + 15.f,360.f,526.f,526.f };
+						ImageState excaliberSlashState = { 445.f + 30 * (g_itemData.posYX[1]),360.f,526.f,526.f };
 
 						CustomVertex cusV4ExcaliberSlash[4] =
 						{
@@ -1596,64 +1652,68 @@ VOID SetBlockVerticesAndRender(VOID)
 					g_pD3dDevice->SetTexture(0, g_pTexture[g_tetminoOTex]);
 					break;
 				case 10:
-					cusV4Tetmino[0].tu = 101.f / 512;
-					cusV4Tetmino[0].tv = 51.f / 256;
+
+					cusV4Tetmino[0].tu = 100.f / 512;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 150.f / 512;
-					cusV4Tetmino[1].tv = 51.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 150.f / 512;
-					cusV4Tetmino[2].tv = 97.f / 256;
-					cusV4Tetmino[3].tu = 101.f / 512;
-					cusV4Tetmino[3].tv = 97.f / 256;
+					cusV4Tetmino[2].tv = 96.f / 256;
+					cusV4Tetmino[3].tu = 100.f / 512;
+					cusV4Tetmino[3].tv = 96.f / 256;
 					break;
+
 				case 21:
-					cusV4Tetmino[0].tu = 51.f / 512;
-					cusV4Tetmino[0].tv = 51.f / 256;
+
+					cusV4Tetmino[0].tu = 50.f / 512;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 100.f / 512;
-					cusV4Tetmino[1].tv = 51.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 100.f / 512;
-					cusV4Tetmino[2].tv = 97.f / 256;
-					cusV4Tetmino[3].tu = 51.f / 512;
-					cusV4Tetmino[3].tv = 97.f / 256;
+					cusV4Tetmino[2].tv = 96.f / 256;
+					cusV4Tetmino[3].tu = 50.f / 512;
+					cusV4Tetmino[3].tv = 96.f / 256;
 					break;
+
 				case 20:
-					cusV4Tetmino[0].tu = 51.f / 512;
-					cusV4Tetmino[0].tv = 51.f / 256;
+					cusV4Tetmino[0].tu = 50.f / 512;
+					cusV4Tetmino[0].tv = 50.f / 256;
 					cusV4Tetmino[1].tu = 100.f / 512;
-					cusV4Tetmino[1].tv = 51.f / 256;
+					cusV4Tetmino[1].tv = 50.f / 256;
 					cusV4Tetmino[2].tu = 100.f / 512;
-					cusV4Tetmino[2].tv = 97.f / 256;
-					cusV4Tetmino[3].tu = 51.f / 512;
-					cusV4Tetmino[3].tv = 97.f / 256;
+					cusV4Tetmino[2].tv = 100.f / 256;
+					cusV4Tetmino[3].tu = 50.f / 512;
+					cusV4Tetmino[3].tv = 100.f / 256;
 					break;
 				case 32:
 					cusV4Tetmino[0].tu = 0.f;
-					cusV4Tetmino[0].tv = 51.f / 256;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 50.f / 512;
-					cusV4Tetmino[1].tv = 51.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 50.f / 512;
-					cusV4Tetmino[2].tv = 97.f / 256;
+					cusV4Tetmino[2].tv = 96.f / 256;
 					cusV4Tetmino[3].tu = 0.f;
-					cusV4Tetmino[3].tv = 97.f / 256;
+					cusV4Tetmino[3].tv = 96.f / 256;
 					break;
 				case 31:
 					cusV4Tetmino[0].tu = 0.f;
-					cusV4Tetmino[0].tv = 51.f / 256;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 50.f / 512;
-					cusV4Tetmino[1].tv = 51.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 50.f / 512;
-					cusV4Tetmino[2].tv = 97.f / 256;
+					cusV4Tetmino[2].tv = 96.f / 256;
 					cusV4Tetmino[3].tu = 0.f;
-					cusV4Tetmino[3].tv = 97.f / 256;
+					cusV4Tetmino[3].tv = 96.f / 256;
 					break;
 				case 30:
 					cusV4Tetmino[0].tu = 0.f;
-					cusV4Tetmino[0].tv = 51.f / 256;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 50.f / 512;
-					cusV4Tetmino[1].tv = 51.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 50.f / 512;
-					cusV4Tetmino[2].tv = 97.f / 256;
+					cusV4Tetmino[2].tv = 96.f / 256;
 					cusV4Tetmino[3].tu = 0.f;
-					cusV4Tetmino[3].tv = 97.f / 256;
+					cusV4Tetmino[3].tv = 96.f / 256;
 					break;
 
 				case 40:
@@ -1691,9 +1751,9 @@ VOID SetBlockVerticesAndRender(VOID)
 
 				case 60:
 					cusV4Tetmino[0].tu = 151.f / 512;
-					cusV4Tetmino[0].tv = 45.f / 256;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 201.f / 512;
-					cusV4Tetmino[1].tv = 45.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 201.f / 512;
 					cusV4Tetmino[2].tv = 96.f / 256;
 					cusV4Tetmino[3].tu = 151.f / 512;
@@ -1702,9 +1762,9 @@ VOID SetBlockVerticesAndRender(VOID)
 
 				case 70:
 					cusV4Tetmino[0].tu = 350.f / 512;
-					cusV4Tetmino[0].tv = 45.f / 256;
+					cusV4Tetmino[0].tv = 46.f / 256;
 					cusV4Tetmino[1].tu = 400.f / 512;
-					cusV4Tetmino[1].tv = 45.f / 256;
+					cusV4Tetmino[1].tv = 46.f / 256;
 					cusV4Tetmino[2].tu = 400.f / 512;
 					cusV4Tetmino[2].tv = 96.f / 256;
 					cusV4Tetmino[3].tu = 350.f / 512;
@@ -1989,10 +2049,10 @@ VOID RnderFrame(VOID)
 {
 	CustomVertex cusV4Frame[4] =
 	{
-		{ 0.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
-		{ 1280.f,   0.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
-		{ 1280.f, 720.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
-		{ 0.f, 720.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
+		{ 0-1.f,   0-1.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 0.f },
+		{ 1280-1.f,   0-1.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 0.f },
+		{ 1280-1.f, 720-1.f, 0.f,1.f, 0xFFFFFFFF, 1.f, 1.f },
+		{ 0-1.f, 720-1.f, 0.f,1.f, 0xFFFFFFFF, 0.f, 1.f }
 	};
 
 	g_pD3dDevice->SetTexture(0, g_pTexture[g_frameTex]);
@@ -2243,12 +2303,12 @@ VOID SetHoldNextNextNextVerticesAndRender(VOID)
 
 //////////////////////////////
 //度数法によるテクスチャの回転
-VOID RotateTexDeg(INT axis,CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY)
+VOID RotateTexDeg(INT axis, CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY)
 {
 	memcpy(dest, src, sizeof(CustomVertex) * 4);
 
 	double rad = (double)(degree * PI / 180);
-
+	
 	switch (axis)
 	{
 	case 'x':
@@ -2273,7 +2333,7 @@ VOID RotateTexDeg(INT axis,CustomVertex *dest, CustomVertex *src, FLOAT degree, 
 		break;
 
 	case 'z':
-		
+	default:
 		for (INT vertex = 0; vertex < 4; vertex++)
 		{
 			dest[vertex].x = src[vertex].x*(FLOAT)cos(rad) - src[vertex].y*(FLOAT)sin(rad);
@@ -2292,3 +2352,100 @@ VOID RotateTexDeg(INT axis,CustomVertex *dest, CustomVertex *src, FLOAT degree, 
 	return;
 }
 
+VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY, INT axis = 'z')
+{
+	memcpy(dest, src, sizeof(CustomVertex) * 4);
+
+	double rad = (double)(degree * PI / 180);
+
+	switch (axis)
+	{
+	case 'x':
+
+		for (INT vertex = 0; vertex < 4; vertex++)
+		{
+			dest[vertex].y = src[vertex].y*(FLOAT)cos(rad) - src[vertex].z*(FLOAT)sin(rad);
+			dest[vertex].z = src[vertex].y*(FLOAT)sin(rad) + src[vertex].z*(FLOAT)cos(rad);
+		}
+
+		break;
+
+	case 'y':
+
+		for (INT vertex = 0; vertex < 4; vertex++)
+
+		{
+			dest[vertex].z = src[vertex].z*(FLOAT)cos(rad) - src[vertex].x*(FLOAT)sin(rad);
+			dest[vertex].x = src[vertex].z*(FLOAT)sin(rad) + src[vertex].x*(FLOAT)cos(rad);
+		}
+
+		break;
+
+	case 'z':
+	default:
+		for (INT vertex = 0; vertex < 4; vertex++)
+		{
+			dest[vertex].x = src[vertex].x*(FLOAT)cos(rad) - src[vertex].y*(FLOAT)sin(rad);
+			dest[vertex].y = src[vertex].x*(FLOAT)sin(rad) + src[vertex].y*(FLOAT)cos(rad);
+		}
+
+		break;
+	}
+
+	for (INT vertex = 0; vertex < 4; vertex++)
+	{
+		dest[vertex].x += shiftX;
+		dest[vertex].y += shiftY;
+	}
+
+	return;
+}
+
+VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY,INT , INT axis = 'z')
+{
+	memcpy(dest, src, sizeof(CustomVertex) * 4);
+
+	double rad = (double)(degree * PI / 180);
+
+	switch (axis)
+	{
+	case 'x':
+
+		for (INT vertex = 0; vertex < 4; vertex++)
+		{
+			dest[vertex].y = src[vertex].y*(FLOAT)cos(rad) - src[vertex].z*(FLOAT)sin(rad);
+			dest[vertex].z = src[vertex].y*(FLOAT)sin(rad) + src[vertex].z*(FLOAT)cos(rad);
+		}
+
+		break;
+
+	case 'y':
+
+		for (INT vertex = 0; vertex < 4; vertex++)
+
+		{
+			dest[vertex].z = src[vertex].z*(FLOAT)cos(rad) - src[vertex].x*(FLOAT)sin(rad);
+			dest[vertex].x = src[vertex].z*(FLOAT)sin(rad) + src[vertex].x*(FLOAT)cos(rad);
+		}
+
+		break;
+
+	case 'z':
+	default:
+		for (INT vertex = 0; vertex < 4; vertex++)
+		{
+			dest[vertex].x = src[vertex].x*(FLOAT)cos(rad) - src[vertex].y*(FLOAT)sin(rad);
+			dest[vertex].y = src[vertex].x*(FLOAT)sin(rad) + src[vertex].y*(FLOAT)cos(rad);
+		}
+
+		break;
+	}
+
+	for (INT vertex = 0; vertex < 4; vertex++)
+	{
+		dest[vertex].x += shiftX;
+		dest[vertex].y += shiftY;
+	}
+
+	return;
+}

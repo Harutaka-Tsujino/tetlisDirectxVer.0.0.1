@@ -17,6 +17,7 @@ LPDIRECT3DTEXTURE9 g_pTexture[g_texMax];
 LPDIRECTINPUTDEVICE8 g_pDKeyDevice = NULL;
 LPD3DXFONT g_pFont[g_fontMax];
 D3DPRESENT_PARAMETERS g_D3dPresentParameters;
+const CHAR *g_pD3DSound[g_audioMax];
 
 //////////////////////////////////
 //ダイレクト3Dの初期化に関する関数

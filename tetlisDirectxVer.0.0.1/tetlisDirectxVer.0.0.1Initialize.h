@@ -21,6 +21,7 @@ extern LPDIRECT3DTEXTURE9 g_pTexture[g_texMax];
 extern LPDIRECTINPUTDEVICE8 g_pDKeyDevice;
 extern LPD3DXFONT g_pFont[g_fontMax];
 extern D3DPRESENT_PARAMETERS g_D3dPresentParameters;
+extern const CHAR *g_pD3DSound[g_audioMax];
 
 //ダイレクト3Dに関する初期化の関数
 HRESULT InitDirect3D(HWND hWnd);
