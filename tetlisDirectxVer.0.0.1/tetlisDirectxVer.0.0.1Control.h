@@ -21,6 +21,9 @@ extern INT g_additionalLand;
 extern INT g_swellingUpHolder;
 extern INT g_swellingUpSaver;
 
+//タイトル画面の操作関数
+VOID titleControl();
+
 //テトリスなどの操作に関する関数
 VOID Control(VOID);
 

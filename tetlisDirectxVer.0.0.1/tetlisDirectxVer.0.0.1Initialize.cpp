@@ -107,6 +107,36 @@ VOID SetTextureStageStateOverall(VOID)
 
 VOID CreateTextureFromFile(VOID)
 {
+	//チームロゴのテクスチャの生成
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"teamLogo.png",
+		&g_pTexture[g_teamLogoTex]);
+
+	//チームロゴの背景のテクスチャの生成
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"teamLogoBg.png",
+		&g_pTexture[g_teamLogoBgTex]);
+
+	//タイトルロゴのテクスチャ生成
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"titleLogo.png",
+		&g_pTexture[g_titleLogoTex]);
+
+	//タイトル背景のテクスチャ生成
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"titleSample.png",
+		&g_pTexture[g_titleBgTex]);
+
+	//矢印アイコンのテクスチャ生成
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"arrow.png",
+		&g_pTexture[g_titleIconTex]);
+
 	D3DXCreateTextureFromFile(
 		g_pD3dDevice,
 		"texture/background.png",
@@ -267,6 +297,27 @@ VOID CreateTextureFromFile(VOID)
 		"texture/saito_touka.png",
 		&g_pTexture[g_saito_toukaTex]);
 
+	//ポーズ画面のテクスチャ
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"pauseMenu.png",
+		&g_pTexture[g_pauseTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"arrow.png",
+		&g_pTexture[g_pauseIconTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"resultMenu.png",
+		&g_pTexture[g_resultTex]);
+
+	D3DXCreateTextureFromFile(
+		g_pD3dDevice,
+		"arrow.png",
+		&g_pTexture[g_resultIconTex]);
+
 	return;
 }
 
@@ -317,6 +368,35 @@ HRESULT InitDfont(HWND hWnd)
 
 VOID CreateFont(VOID)
 {
+	//タイトルフォントのオブジェクトの生成
+	D3DXCreateFont(
+		g_pD3dDevice,
+		50,
+		0,
+		FW_NORMAL,
+		1,
+		FALSE,
+		DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS,
+		DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_SWISS,
+		"Comic Sans MS Bold",
+		&g_pFont[g_titleFont]);
+
+	D3DXCreateFont(
+		g_pD3dDevice,
+		80,
+		0,
+		FW_NORMAL,
+		1,
+		FALSE,
+		DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS,
+		DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_SWISS,
+		"Comic Sans MS Bold",
+		&g_pFont[g_finalScoreFont]);
+
 	D3DXCreateFont(g_pD3dDevice, 120, 60, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_gameoverFont]);
 	D3DXCreateFont(g_pD3dDevice, 40, 20, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_scoreFont]);
 	D3DXCreateFont(g_pD3dDevice, 40, 20, 0, 0, 0, 0, 0, 0, 0, "Times New Roman", &g_pFont[g_undergroundFont]);

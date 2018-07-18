@@ -23,13 +23,123 @@ INT g_deletedLineOverall = 0;
 INT g_additionalLand = 0;
 INT g_swellingUpHolder = 0;
 INT g_swellingUpSaver = 0;
+//
+INT  scene = g_titleScene;
+
+INT inputCount = 0;
+BOOL changeFont, deleteFont = false, arrowMoveUp, arrowMoveDown, arrowMoveRight, arrowMoveLeft, pause;
+
+//
+
+////////////////////////////////
+//タイトル制御処理関数
+void titleControl()
+{
+	SoundManager& soundManager = SoundManager::GetInstance();
+	soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+	inputCount++;
+
+	HRESULT hr = g_pDKeyDevice->Acquire();
+
+	if ((hr == DI_OK) || (hr == S_FALSE))
+	{
+		BYTE diks[256];
+		g_pDKeyDevice->GetDeviceState(sizeof(diks), &diks);
+
+		if (diks[DIK_RETURN] & 0x80)
+		{
+			if (inputCount >= 10)
+			{
+				deleteFont = true;
+			}
+
+			if (!changeFont)
+			{
+				if (inputCount >= 10)
+				{
+					changeFont = true;
+					inputCount = 0;
+				}
+			}
+			else if ((changeFont) && (arrowIconState.y == 425.f))
+			{
+				if (inputCount >= 10)
+				{
+					soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+					scene = g_gameScene;
+					inputCount = 0;
+				}
+			}
+			else if ((changeFont) && (arrowIconState.y == 525.f))
+			{
+				if (inputCount >= 10)
+				{
+					PostQuitMessage(0);
+				}
+			}
+		}
+
+		if ((diks[DIK_DOWN] & 0x80) || (diks[DIK_S] & 0x80))
+		{
+			arrowMoveDown = true;
+
+			if ((arrowMoveDown) && (arrowIconState.y == 525.f))
+			{
+				if (inputCount >= 10)
+				{
+					arrowIconState.y = 425.f;
+					arrowMoveDown = false;
+					inputCount = 0;
+				}
+			}
+			else if (arrowMoveDown)
+			{
+				if (inputCount >= 10)
+				{
+					arrowIconState.y = 525.f;
+					arrowMoveDown = false;
+					inputCount = 0;
+				}
+			}
+		}
+
+		if ((diks[DIK_UP] & 0x80) || (diks[DIK_W] & 0x80))
+		{
+			arrowMoveUp = true;
+
+			if ((arrowMoveUp) && (arrowIconState.y == 425.f))
+			{
+				if (inputCount >= 10)
+				{
+					arrowIconState.y = 525.f;
+					arrowMoveUp = false;
+					inputCount = 0;
+				}
+			}
+			else if (arrowMoveUp)
+			{
+				if (inputCount >= 10)
+				{
+					arrowIconState.y = 425.f;
+					arrowMoveUp = false;
+					inputCount = 0;
+				}
+			}
+		}
+
+		if (diks[DIK_ESCAPE] & 0x80)
+		{
+			PostQuitMessage(0);
+		}
+	}
+}
 
 ////////////////////////////////
 //テトリスなどの操作に関する関数
 VOID Control(VOID)
 {
 	SoundManager& soundManager = SoundManager::GetInstance();
-	
+	inputCount++;
 	//キーデバイスに入っている情報を読み取る準備
 	HRESULT hr = g_pDKeyDevice->Acquire();
 
@@ -53,7 +163,122 @@ VOID Control(VOID)
 
 		//テトリス配列にテトリス配列バッファーの要素全てをコピーしている
 		memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+		
+		if (!isGameover)
+		{
+			if (diks[DIK_ESCAPE] & 0x80)
+			{
+				if ((inputCount >= 10) && (pause))
+				{
+					pause = false;
+					inputCount = 0;
+				}
+				else if (inputCount >= 10)
+				{
+					pause = true;
+					inputCount = 0;
+				}
+			}
+		}
 
+		if (pause)
+		{
+			if (diks[DIK_RETURN] & 0x80)
+			{
+				if (pauseIconState.y == 305.f)
+				{
+					if (inputCount >= 10)
+					{
+						pause = false;
+					}
+				}
+				else if (pauseIconState.y == 385.f)
+				{
+					///////////////////////////////////////////////////////////////////////////
+					//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+					ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+						&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+					pauseIconState.y = 305.f;
+					pause = false;
+					additionalLandCount = 0;
+				}
+				else if (pauseIconState.y == 465.f)
+				{
+					///////////////////////////////////////////////////////////////////////////
+					//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+					ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+						&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+					pauseIconState.y = 305.f;
+					pause = false;
+					deleteFont = false;
+					changeFont = false;
+					inputCount = 0;
+					additionalLandCount = 0;
+					scene = g_titleScene;
+				}
+			}
+
+			if ((diks[DIK_UP] & 0x80) || (diks[DIK_W] & 0x80))
+			{
+				arrowMoveUp = true;
+
+				if ((arrowMoveUp) && (pauseIconState.y == 385.f))
+				{
+					if (inputCount >= 10)
+					{
+						pauseIconState.y = 305.f;
+						inputCount = 0;
+					}
+				}
+				else if ((arrowMoveUp) && (pauseIconState.y == 465.f))
+				{
+					if (inputCount >= 10)
+					{
+						pauseIconState.y = 385.f;
+						inputCount = 0;
+					}
+				}
+				else if (arrowMoveUp)
+				{
+					if (inputCount >= 10)
+					{
+						pauseIconState.y = 465.f;
+						inputCount = 0;
+					}
+				}
+			}
+
+			if ((diks[DIK_DOWN] & 0x80) || (diks[DIK_S] & 0x80))
+			{
+				arrowMoveDown = true;
+
+				if ((arrowMoveDown) && (pauseIconState.y == 305.f))
+				{
+					if (inputCount >= 10)
+					{
+						pauseIconState.y = 385.f;
+						inputCount = 0;
+					}
+				}
+				else if ((arrowMoveDown) && (pauseIconState.y == 385.f))
+				{
+					if (inputCount >= 10)
+					{
+						pauseIconState.y = 465.f;
+						inputCount = 0;
+					}
+				}
+				else if (arrowMoveDown)
+				{
+					if (inputCount >= 10)
+					{
+						pauseIconState.y = 305.f;
+						inputCount = 0;
+					}
+				}
+			}
+		}
+		
 		if (diks[DIK_J] & 0x80)
 		{
 			for (INT item = 0; item < g_itemMax; item++)
@@ -62,21 +287,48 @@ VOID Control(VOID)
 			}
 		}
 		static BOOL playMusic = true;
-		//リセットボタン、初期状態に戻す
-		if (diks[DIK_BACK] & 0x80)
+
+		if (pause)
 		{
-			///////////////////////////////////////////////////////////////////////////
-			//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
-			ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
-				&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
-			
-			playMusic = true;
+			//リセットボタン、初期状態に戻す
+			if (diks[DIK_BACK] & 0x80)
+			{
+				if (pauseIconState.y == 305.f)
+				{
+					if (inputCount >= 10)
+					{
+						pause = false;
+					}
+				}
+				else if (pauseIconState.y == 385.f)
+				{
+					///////////////////////////////////////////////////////////////////////////
+					//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+					ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+						&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+					soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+					additionalLandCount = 0;
+					playMusic = true;
+				}
+				else if (pauseIconState.y == 465.f)
+				{
+					///////////////////////////////////////////////////////////////////////////
+					//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+					ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+						&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+					pauseIconState.y = 305.f;
+					additionalLandCount = 0;
+					pause = false;
+					deleteFont = false;
+					changeFont = false;
+					inputCount = 0;
+					scene = g_titleScene;
+				}
+			}
 		}
 
 		if (isGameover)
 		{
-			
-
 			if (playMusic)
 			{
 				soundManager.Stop(g_pD3DSound[g_bgmAudio]);
@@ -85,753 +337,854 @@ VOID Control(VOID)
 			}
 			//ゲームオーバー時に文字列を表示させる
 			g_showGameoverStr = true;
+
+		}
+
+		if (isGameover)
+		{
+
+			////リセットボタン、初期状態に戻す
+			//if (diks[DIK_BACK] & 0x80)
+			//{
+			//	///////////////////////////////////////////////////////////////////////////
+			//	//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+			//	ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+			//		&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &prevDeletedLineCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+			//}
+
+			if (isGameover)
+			{
+				//ゲームオーバー時に文字列を表示させる
+				g_showGameoverStr = true;
+
+				if ((diks[DIK_RIGHT] & 0x80) || (diks[DIK_D] & 0x80))
+				{
+					arrowMoveRight = true;
+
+					if ((arrowMoveRight) & (resultIconState.x == 760.f))
+					{
+						if (inputCount >= 10)
+						{
+							resultIconState.x = 300.f;
+							inputCount = 0;
+						}
+					}
+					if (arrowMoveRight)
+					{
+						if (inputCount >= 10)
+						{
+							resultIconState.x = 760.f;
+							inputCount = 0;
+						}
+					}
+				}
+
+				if ((diks[DIK_LEFT] & 0x80) || (diks[DIK_A] & 0x80))
+				{
+					arrowMoveLeft = true;
+
+					if ((arrowMoveLeft) & (resultIconState.x == 300.f))
+					{
+						if (inputCount >= 10)
+						{
+							resultIconState.x = 760.f;
+							inputCount = 0;
+						}
+					}
+					else if (arrowMoveLeft)
+					{
+						if (inputCount >= 10)
+						{
+							resultIconState.x = 300.f;
+							inputCount = 0;
+						}
+					}
+				}
+
+				if (diks[DIK_RETURN] & 0x80)
+				{
+					if (resultIconState.x == 300.f)
+					{
+						if (inputCount >= 10)
+						{
+							///////////////////////////////////////////////////////////////////////////
+							//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+							ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+								&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+							inputCount = 0;
+							additionalLandCount = 0;
+							soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+						}
+					}
+					else if (resultIconState.x == 760.f)
+					{
+						if (inputCount >= 10)
+						{
+							///////////////////////////////////////////////////////////////////////////
+							//フラグ、カウント、配列を初期状態に戻しUpdateHoldNextNextNextBoardを用いる
+							ReturnToInitialStateWithTetlis(&isGameover, &canCreate, &canInputRA, &canInputLA, &canInputDA, &canInputR, &canInputSpace,
+								&canHold, &wasHold, &rACount, &lACount, &dACount, &stopCount, &downCount, &scoreBuf, &currentTetmino, &minoIRoatationCount, &deletedLineCount, &lineCount, &additionalDeletableLine);
+							resultIconState.x = 300.f;
+							additionalLandCount = 0;
+							isGameover = false;
+							deleteFont = false;
+							changeFont = false;
+							scene = g_titleScene;
+							inputCount = 0;
+						}
+					}
+				}
+			}
 		}
 
 		else
 		{
-			if (isNewGame)
+			if (!pause)
 			{
-				soundManager.Play(g_pD3DSound[g_bgmAudio], true);
-
-				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				//ニューゲーム(一番最初のフレーム)時にはg_nextとg_nextNextは初期化されていないので初期化し、isNewGameをfalseにする
-				InitNextAndNextNext(&isNewGame);
-				InitTetlisBoard();
-				ChooseAndCpyTetlisBoardSourceToBoard();
-				memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-				memset(prevDiks, 0, sizeof(BYTE) * 256);
-				isNewGame = false;
-			}
-
-			if (!(g_deletedLine))
-			{
-				for (g_tetminoNum = 0; g_tetminoNum < 7; g_tetminoNum++)
+				if (isNewGame)
 				{
-					if (g_tetmino[g_tetminoNum].number == currentTetmino)
-					{
-						//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_canCreateを確認しtrueならばg_movMinoNumOfArBufにcurrentTetminoと同じ種類のテトリミノ初期座標を代入し、キー入力のフラグ、
-						//I型のテトリミノが何回転したかを確認するカウント、ホールドが行われたか否かのフラグを初期状態に戻し、g_canCreateをfalseにする
-						CreateTetlimino(currentTetmino, &canInputLA, &canInputDA, &canInputRA,
-							&canInputR, &canInputSpace, &wasHold, &stopCount, &downCount, &minoIRoatationCount, &canCreate);
+					soundManager.Play(g_pD3DSound[g_bgmAudio], true);
 
-						break;
-					}
+					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					//ニューゲーム(一番最初のフレーム)時にはg_nextとg_nextNextは初期化されていないので初期化し、isNewGameをfalseにする
+					InitNextAndNextNext(&isNewGame);
+					InitTetlisBoard();
+					ChooseAndCpyTetlisBoardSourceToBoard();
+					memcpy(g_tetlisBoardBuf, g_tetlisBoard, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+					memset(prevDiks, 0, sizeof(BYTE) * 256);
+					isNewGame = false;
 				}
-
-				//////////////////////////////////////////////////////////////////////////////////////////////
-				//フラグがfalseならばカウントを1増やし、一定値ならばフラグはtrueに変えカウントを初期状態にする
-				CountToMakeFlagTrue(&canInputLA, &lACount);
-				CountToMakeFlagTrue(&canInputRA, &rACount);
-				CountToMakeFlagTrue(&canInputDA, &dACount);
-				CountToMakeFlagTrue(&canInputUA, &uACount);
-				CountToMakeFlagTrue(&canInputQ, &qCount);
-				CountToMakeFlagTrue(&canInputE, &eCount);
-
-				if (g_itemData.useItem == false)
+			
+				if (!(g_deletedLine))
 				{
-					if (diks[DIK_V] & 0x80)
+					for (g_tetminoNum = 0; g_tetminoNum < 7; g_tetminoNum++)
 					{
-						if (Q[canInputQ])
+						if (g_tetmino[g_tetminoNum].number == currentTetmino)
 						{
-							if (0 < g_itemData.currentItemNum)
-							{
-								g_itemData.currentItemNum -= 1;
-							}
+							//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+							//g_canCreateを確認しtrueならばg_movMinoNumOfArBufにcurrentTetminoと同じ種類のテトリミノ初期座標を代入し、キー入力のフラグ、
+							//I型のテトリミノが何回転したかを確認するカウント、ホールドが行われたか否かのフラグを初期状態に戻し、g_canCreateをfalseにする
+							CreateTetlimino(currentTetmino, &canInputLA, &canInputDA, &canInputRA,
+								&canInputR, &canInputSpace, &wasHold, &stopCount, &downCount, &minoIRoatationCount, &canCreate);
 
-							canInputQ = false;
-						}
-
-						if (E[canInputE])
-						{
-							if (g_itemData.currentItemNum < g_itemMax - 1)
-							{
-								g_itemData.currentItemNum += 1;
-							}
-
-							canInputE = false;
+							break;
 						}
 					}
-				}
 
-				if (!(prevCKeyState))
-				{
-					if (diks[DIK_C] & 0x80)
+					//////////////////////////////////////////////////////////////////////////////////////////////
+					//フラグがfalseならばカウントを1増やし、一定値ならばフラグはtrueに変えカウントを初期状態にする
+					CountToMakeFlagTrue(&canInputLA, &lACount);
+					CountToMakeFlagTrue(&canInputRA, &rACount);
+					CountToMakeFlagTrue(&canInputDA, &dACount);
+					CountToMakeFlagTrue(&canInputUA, &uACount);
+					CountToMakeFlagTrue(&canInputQ, &qCount);
+					CountToMakeFlagTrue(&canInputE, &eCount);
+
+					if (g_itemData.useItem == false)
 					{
-						if (g_itemData.haveItem[g_itemData.currentItemNum])
+						if (diks[DIK_V] & 0x80)
 						{
-							if (!(g_itemData.decideItemPos))
+							if (Q[canInputQ])
 							{
-								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-
-								if (g_itemData.useItem == false)
+								if (0 < g_itemData.currentItemNum)
 								{
-									g_itemData.useItem = true;
+									g_itemData.currentItemNum -= 1;
+								}
 
-									switch (g_itemData.currentItemNum)
+								canInputQ = false;
+							}
+
+							if (E[canInputE])
+							{
+								if (g_itemData.currentItemNum < g_itemMax - 1)
+								{
+									g_itemData.currentItemNum += 1;
+								}
+
+								canInputE = false;
+							}
+						}
+					}
+
+					if (!(prevCKeyState))
+					{
+						if (diks[DIK_C] & 0x80)
+						{
+							if (g_itemData.haveItem[g_itemData.currentItemNum])
+							{
+								if (!(g_itemData.decideItemPos))
+								{
+									memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+
+									if (g_itemData.useItem == false)
 									{
-									case g_ultraDrillItem:
+										g_itemData.useItem = true;
+
+										switch (g_itemData.currentItemNum)
+										{
+										case g_ultraDrillItem:
+
+											g_itemData.posYX[0] = 4 + g_deletedLineCount;
+											g_itemData.posYX[1] = 5;
+
+											break;
+										case g_laserCannonItem:
+
+											g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
+											g_itemData.posYX[1] = 1;
+
+											break;
+										case 2:
+										case 3:
+											break;
+										}
 
 										g_itemData.posYX[0] = 4 + g_deletedLineCount;
 										g_itemData.posYX[1] = 5;
-
-										break;
-									case g_laserCannonItem:
-
-										g_itemData.posYX[0] = 4 + g_deletedLineCount + 1;
-										g_itemData.posYX[1] = 1;
-
-										break;
-									case 2:
-									case 3:
-										break;
 									}
 
-									g_itemData.posYX[0] = 4 + g_deletedLineCount;
-									g_itemData.posYX[1] = 5;
-								}
-
-								else
-								{
-									g_itemData.useItem = false;
-									g_itemData.posYX[0] = 0;
-									g_itemData.posYX[1] = 0;
+									else
+									{
+										g_itemData.useItem = false;
+										g_itemData.posYX[0] = 0;
+										g_itemData.posYX[1] = 0;
+									}
 								}
 							}
 						}
 					}
-				}
 
-				if (g_itemData.useItem)
-				{
-					switch (g_itemData.currentItemNum)
+					if (g_itemData.useItem)
 					{
-					case g_ultraDrillItem:
-
-						if (g_itemData.decideItemPos)
+						switch (g_itemData.currentItemNum)
 						{
-							if (g_itemData.count[g_ultraDrillItem] == 420)
+						case g_ultraDrillItem:
+
+							if (g_itemData.decideItemPos)
 							{
-								for (INT column = 4 + g_deletedLineCount + g_additionalLand; column < 4 + g_deletedLineCount + g_additionalLand + 20; column++)
+								if (g_itemData.count[g_ultraDrillItem] == 420)
 								{
-									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+									for (INT column = 4 + g_deletedLineCount + g_additionalLand; column < 4 + g_deletedLineCount + g_additionalLand + 20; column++)
 									{
-										if (g_tetlisBoardBuf[column][row] != -1)
+										for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 										{
-											scoreBuf += 30;
-										}
-
-										g_tetlisBoard[column][row] = -1;
-									}
-								}
-
-								SynchroTetlisBoardBufToTetlisBoard();
-								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-								g_itemData.swellingUpCount[g_ultraDrillItem] = 5;
-							}
-
-							if (g_itemData.count[g_ultraDrillItem] == 480)
-							{
-								
-								ShiftTetlisLine(&lineCount, &additionalDeletableLine);
-
-								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-								SynchroTetlisBoardBufToTetlisBoard();
-
-								CountDeletedLine();
-								g_deletedLineOverall += 5+ g_additionalLand;
-								g_itemData.haveItem[g_ultraDrillItem] = false;
-								g_additionalLand = 0;
-								g_itemData.useItem = false;
-								g_itemData.decideItemPos = false;
-							}
-
-							g_itemData.count[g_ultraDrillItem]++;
-						}
-
-						break;
-					case g_laserCannonItem:
-					{
-						INT deletedAdditionalLine = 0;///////////////////////////////
-						static INT deleteLandNum = 0;
-						static INT swellingUpCount = 0;
-						if (g_itemData.decideItemPos)
-						{
-							if (g_itemData.count[g_laserCannonItem] == 30)
-							{
-								for (INT column = g_itemData.posYX[0] + g_additionalLand - 1; column <= g_itemData.posYX[0] + g_additionalLand + 1; column++)
-								{
-									INT numOfDirt = 0;
-
-									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
-									{
-										if (g_tetlisBoardBuf[column][row] == 110)
-										{
-											numOfDirt++;
-										}
-
-										g_tetlisBoard[column][row] = -1;
-
-										SynchroTetlisBoardBufToTetlisBoard();
-									}
-
-									if (numOfDirt > 3)
-									{
-										swellingUpCount++;
-									}
-
-									deleteLandNum = swellingUpCount;
-								}
-
-								deletedAdditionalLine = g_additionalLand - swellingUpCount;
-
-								g_itemData.swellingUpCount[g_laserCannonItem] -= deletedAdditionalLine;
-
-								scoreBuf += 200;
-							}
-
-							if (g_itemData.count[g_laserCannonItem] == 111)
-							{
-								ShiftTetlisLine(&lineCount, &additionalDeletableLine);
-
-								SynchroTetlisBoardBufToTetlisBoard();
-
-								CountDeletedLine();
-
-								if (deletedAdditionalLine < 0)
-								{
-									g_additionalLand = 0;
-								}
-
-								else
-								{
-									g_additionalLand = deletedAdditionalLine;
-								}
-
-								g_deletedLineOverall += deleteLandNum;
-								
-
-								swellingUpCount = 0;
-								deleteLandNum = 0;
-								deletedAdditionalLine = 0;
-
-								g_itemData.useItem = false;
-								g_itemData.haveItem[g_laserCannonItem] = false;
-								g_itemData.decideItemPos = false;
-								g_itemData.posYX[0] = 0;
-								g_itemData.posYX[1] = 0;
-							}
-
-							g_itemData.count[g_laserCannonItem]++;
-						}
-
-						else
-						{
-							if (S[canInputDA])
-							{
-								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
-							}
-
-							if (W[canInputUA])
-							{
-								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
-							}
-						}
-					}
-						break;
-					case g_bulletItem:
-						if (g_itemData.decideItemPos)
-						{
-							switch(g_tetlisBoard[g_itemData.posYX[0]+ g_additionalLand][g_itemData.posYX[1]])
-							{
-							case 140:
-								g_itemData.haveItem[g_laserCannonItem] = true;
-								
-								break;
-							case 160:
-								g_itemData.haveItem[g_ultraDrillItem] = true;
-
-								break;
-							case 150:
-								g_itemData.haveItem[g_bulletItem] = true;
-
-								break;
-							case 170:
-								g_itemData.haveItem[g_excaliberItem] = true;
-
-								break;
-							}
-
-							g_tetlisBoard[g_itemData.posYX[0] + g_additionalLand][g_itemData.posYX[1]] = 151;
-
-							g_itemData.count[g_bulletItem]++;
-
-							SynchroTetlisBoardBufToTetlisBoard();
-
-							if (g_itemData.count[g_bulletItem] == 170)
-							{
-								/*if ((g_scopeShakeCount/16) == 1 && (g_scopeShakeCount/16) == 5)
-								{
-									scoreBuf += 30;
-								}*/
-
-								g_itemData.useItem = false;
-								g_itemData.haveItem[g_bulletItem] = false;
-								g_itemData.decideItemPos = false;
-								g_itemData.posYX[0] = 0;
-								g_itemData.posYX[1] = 0;
-								g_itemData.count[g_bulletItem] = 0;
-								soundManager.Play(g_pD3DSound[g_bgmAudio], true);
-
-							}
-						}
-
-						else
-						{
-
-							if (S[canInputDA])
-							{
-								ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
-							}
-
-							if (W[canInputUA])
-							{
-								ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
-							}
-
-							if (D[canInputRA])
-							{
-								ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
-							}
-
-							if (A[canInputLA])
-							{
-								ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
-							}
-						}
-
-						break;
-					case g_excaliberItem:
-
-						if (g_itemData.decideItemPos)
-						{
-							static INT deleteLandNum = 0;
-							static INT swellingUpCount = 0;
-
-							INT deletedAdditionalLine = 0;
-
-							if (g_itemData.count[g_excaliberItem] == 398)
-							{
-								for (INT column = 4 + g_deletedLineCount + g_additionalLand; column < 4 + g_deletedLineCount + g_additionalLand + 20; column++)
-								{
-									INT numOfDirt = 0;
-
-									BOOL isOver3Dirts = 0;
-
-									for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
-									{
-										if (g_tetlisBoardBuf[column][row] == 110)
-										{
-											numOfDirt++;
-
-											if (numOfDirt > 3)
+											if (g_tetlisBoardBuf[column][row] != -1)
 											{
-												isOver3Dirts = true;
+												scoreBuf += 30;
 											}
-										}
-									}
 
-									for (INT row = g_itemData.posYX[1] - 1; row < g_itemData.posYX[1] + 2; row++)
-									{
-										/*if ((column == (4 + g_deletedLineCount + g_additionalLand + 19)) && (row == (g_itemData.posYX[1] y 1)))
-										{
-											break;
-										}
-
-										if ((column ==( 4 + g_deletedLineCount + g_additionalLand + 19)) && (row == (g_itemData.posYX[1] + 1)))
-										{
-											break;
-										}*/
-
-										if (g_tetlisBoardBuf[column][row] == 110)
-										{
-											numOfDirt--;
-										}
-
-										if (g_tetlisBoardBuf[column][row] != 9)
-										{
 											g_tetlisBoard[column][row] = -1;
 										}
-										
-										SynchroTetlisBoardBufToTetlisBoard();
+									}
 
-										if (isOver3Dirts)
+									SynchroTetlisBoardBufToTetlisBoard();
+									memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+									g_itemData.swellingUpCount[g_ultraDrillItem] = 5;
+								}
+
+								if (g_itemData.count[g_ultraDrillItem] == 480)
+								{
+
+									ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+
+									memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+									SynchroTetlisBoardBufToTetlisBoard();
+
+									CountDeletedLine();
+									g_deletedLineOverall += 5 + g_additionalLand;
+									g_itemData.haveItem[g_ultraDrillItem] = false;
+									g_additionalLand = 0;
+									g_itemData.useItem = false;
+									g_itemData.decideItemPos = false;
+								}
+
+								g_itemData.count[g_ultraDrillItem]++;
+							}
+
+							break;
+						case g_laserCannonItem:
+						{
+							INT deletedAdditionalLine = 0;///////////////////////////////
+							static INT deleteLandNum = 0;
+							static INT swellingUpCount = 0;
+							if (g_itemData.decideItemPos)
+							{
+								if (g_itemData.count[g_laserCannonItem] == 30)
+								{
+									for (INT column = g_itemData.posYX[0] + g_additionalLand - 1; column <= g_itemData.posYX[0] + g_additionalLand + 1; column++)
+									{
+										INT numOfDirt = 0;
+
+										for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
 										{
-											if (numOfDirt < 4)
+											if (g_tetlisBoardBuf[column][row] == 110)
 											{
-												isOver3Dirts = false;
-												swellingUpCount++;
+												numOfDirt++;
 											}
+
+											g_tetlisBoard[column][row] = -1;
+
+											SynchroTetlisBoardBufToTetlisBoard();
+										}
+
+										if (numOfDirt > 3)
+										{
+											swellingUpCount++;
 										}
 
 										deleteLandNum = swellingUpCount;
 									}
+
+									deletedAdditionalLine = g_additionalLand - swellingUpCount;
+
+									g_itemData.swellingUpCount[g_laserCannonItem] -= deletedAdditionalLine;
+
+									scoreBuf += 200;
 								}
 
-								deletedAdditionalLine = g_additionalLand - swellingUpCount;
+								if (g_itemData.count[g_laserCannonItem] == 111)
+								{
+									ShiftTetlisLine(&lineCount, &additionalDeletableLine);
 
-								g_itemData.swellingUpCount[g_excaliberItem] -= deletedAdditionalLine;
+									SynchroTetlisBoardBufToTetlisBoard();
+
+									CountDeletedLine();
+
+									if (deletedAdditionalLine < 0)
+									{
+										g_additionalLand = 0;
+									}
+
+									else
+									{
+										g_additionalLand = deletedAdditionalLine;
+									}
+
+									g_deletedLineOverall += deleteLandNum;
+
+
+									swellingUpCount = 0;
+									deleteLandNum = 0;
+									deletedAdditionalLine = 0;
+
+									g_itemData.useItem = false;
+									g_itemData.haveItem[g_laserCannonItem] = false;
+									g_itemData.decideItemPos = false;
+									g_itemData.posYX[0] = 0;
+									g_itemData.posYX[1] = 0;
+								}
+
+								g_itemData.count[g_laserCannonItem]++;
 							}
 
-							if (g_itemData.count[g_excaliberItem] == 398 + 30+30)
+							else
 							{
-								ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+								if (S[canInputDA])
+								{
+									ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
+								}
+
+								if (W[canInputUA])
+								{
+									ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
+								}
+							}
+						}
+						break;
+						case g_bulletItem:
+							if (g_itemData.decideItemPos)
+							{
+								switch (g_tetlisBoard[g_itemData.posYX[0] + g_additionalLand][g_itemData.posYX[1]])
+								{
+								case 140:
+									g_itemData.haveItem[g_laserCannonItem] = true;
+
+									break;
+								case 160:
+									g_itemData.haveItem[g_ultraDrillItem] = true;
+
+									break;
+								case 150:
+									g_itemData.haveItem[g_bulletItem] = true;
+
+									break;
+								case 170:
+									g_itemData.haveItem[g_excaliberItem] = true;
+
+									break;
+								}
+
+								g_tetlisBoard[g_itemData.posYX[0] + g_additionalLand][g_itemData.posYX[1]] = 151;
+
+								g_itemData.count[g_bulletItem]++;
 
 								SynchroTetlisBoardBufToTetlisBoard();
 
-								CountDeletedLine();
-
-								if (deletedAdditionalLine < 0)
+								if (g_itemData.count[g_bulletItem] == 170)
 								{
-									g_additionalLand = 0;
+									/*if ((g_scopeShakeCount/16) == 1 && (g_scopeShakeCount/16) == 5)
+									{
+										scoreBuf += 30;
+									}*/
+
+									g_itemData.useItem = false;
+									g_itemData.haveItem[g_bulletItem] = false;
+									g_itemData.decideItemPos = false;
+									g_itemData.posYX[0] = 0;
+									g_itemData.posYX[1] = 0;
+									g_itemData.count[g_bulletItem] = 0;
+									soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+
 								}
-
-								else
-								{
-									g_additionalLand = deletedAdditionalLine;
-								}
-
-								deletedAdditionalLine = 0;
-
-								g_deletedLineOverall += deleteLandNum;
-
-								deleteLandNum = 0;
-								swellingUpCount = 0;
-
-								scoreBuf += 150;
-								g_itemData.useItem = false;
-								g_itemData.haveItem[g_excaliberItem] = false;
-								g_itemData.decideItemPos = false;
-								g_itemData.posYX[0] = 0;
-								g_itemData.posYX[1] = 0;
 							}
 
-							g_itemData.count[g_excaliberItem]++;
+							else
+							{
+
+								if (S[canInputDA])
+								{
+									ShiftItemY(1, &canInputDA, 3 + g_deletedLineCount, g_deletedLineCount + 23);
+								}
+
+								if (W[canInputUA])
+								{
+									ShiftItemY(-1, &canInputUA, 4 + g_deletedLineCount, g_deletedLineCount + 24);
+								}
+
+								if (D[canInputRA])
+								{
+									ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
+								}
+
+								if (A[canInputLA])
+								{
+									ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
+								}
+							}
+
+							break;
+						case g_excaliberItem:
+
+							if (g_itemData.decideItemPos)
+							{
+								static INT deleteLandNum = 0;
+								static INT swellingUpCount = 0;
+
+								INT deletedAdditionalLine = 0;
+
+								if (g_itemData.count[g_excaliberItem] == 398)
+								{
+									for (INT column = 4 + g_deletedLineCount + g_additionalLand; column < 4 + g_deletedLineCount + g_additionalLand + 20; column++)
+									{
+										INT numOfDirt = 0;
+
+										BOOL isOver3Dirts = 0;
+
+										for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+										{
+											if (g_tetlisBoardBuf[column][row] == 110)
+											{
+												numOfDirt++;
+
+												if (numOfDirt > 3)
+												{
+													isOver3Dirts = true;
+												}
+											}
+										}
+
+										for (INT row = g_itemData.posYX[1] - 1; row < g_itemData.posYX[1] + 2; row++)
+										{
+											/*if ((column == (4 + g_deletedLineCount + g_additionalLand + 19)) && (row == (g_itemData.posYX[1] y 1)))
+											{
+												break;
+											}
+
+											if ((column ==( 4 + g_deletedLineCount + g_additionalLand + 19)) && (row == (g_itemData.posYX[1] + 1)))
+											{
+												break;
+											}*/
+
+											if (g_tetlisBoardBuf[column][row] == 110)
+											{
+												numOfDirt--;
+											}
+
+											if (g_tetlisBoardBuf[column][row] != 9)
+											{
+												g_tetlisBoard[column][row] = -1;
+											}
+
+											SynchroTetlisBoardBufToTetlisBoard();
+
+											if (isOver3Dirts)
+											{
+												if (numOfDirt < 4)
+												{
+													isOver3Dirts = false;
+													swellingUpCount++;
+												}
+											}
+
+											deleteLandNum = swellingUpCount;
+										}
+									}
+
+									deletedAdditionalLine = g_additionalLand - swellingUpCount;
+
+									g_itemData.swellingUpCount[g_excaliberItem] -= deletedAdditionalLine;
+								}
+
+								if (g_itemData.count[g_excaliberItem] == 398 + 30 + 30)
+								{
+									ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+
+									SynchroTetlisBoardBufToTetlisBoard();
+
+									CountDeletedLine();
+
+									if (deletedAdditionalLine < 0)
+									{
+										g_additionalLand = 0;
+									}
+
+									else
+									{
+										g_additionalLand = deletedAdditionalLine;
+									}
+
+									deletedAdditionalLine = 0;
+
+									g_deletedLineOverall += deleteLandNum;
+
+									deleteLandNum = 0;
+									swellingUpCount = 0;
+
+									scoreBuf += 150;
+									g_itemData.useItem = false;
+									g_itemData.haveItem[g_excaliberItem] = false;
+									g_itemData.decideItemPos = false;
+									g_itemData.posYX[0] = 0;
+									g_itemData.posYX[1] = 0;
+								}
+
+								g_itemData.count[g_excaliberItem]++;
+							}
+
+							else
+							{
+								if (D[canInputRA])
+								{
+									ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
+								}
+
+								if (A[canInputLA])
+								{
+									ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
+								}
+							}
+
+							break;
 						}
 
-						else
+						if (g_itemData.count[g_excaliberItem] == 399 + 30 + 30)
+						{
+							g_itemData.count[g_excaliberItem] = 0;
+							soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+						}
+
+						if (g_itemData.count[g_laserCannonItem] == 112)
+						{
+							g_itemData.count[g_laserCannonItem] = 0;
+							soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+						}
+
+						if (g_itemData.count[g_ultraDrillItem] == 481)
+						{
+							g_itemData.count[g_ultraDrillItem] = 0;
+							soundManager.Play(g_pD3DSound[g_bgmAudio], true);
+						}
+
+						if (!(g_itemData.decideItemPos))
+						{
+							if (!(prevDiks[DIK_RETURN]))
+							{
+								if (diks[DIK_RETURN] & 0x80)
+								{
+									g_itemData.decideItemPos = true;
+								}
+							}
+						}
+					}
+
+					else
+					{
+						AddLand(&scoreBuf, &additionalLandCount);
+
+						//前フレーム時にスペースキーが押されていた場合この処理を通さない、とすることによって連続したフレーム毎にこの処理がされるのを防いでいる
+						if (!(prevSpaceKeyState))
+						{
+							if (diks[DIK_SPACE] & 0x80)
+							{
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								//canHoldがtrueならばg_holdに現在のテトリミノの値を代入し、すでに-1(空欄)以外が入っていた場合currentTetminoにg_holdの値を入れる、
+								//その後g_canCreateをtrueにしUpdateHoldNextNextNextBoardを呼び出す
+								HoldTetlimino(&canHold, &currentTetmino, &canCreate, &wasHold);
+							}
+						}
+
+						//ホールドが行われていた場合新しくテトリミノを生成するので、この処理を通さない
+						if (!(wasHold))
 						{
 							if (D[canInputRA])
 							{
-								ShiftItemX(1, &canInputRA, 0, TETLIS_WIDTH - 2);
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								//g_movMinoNumOfArBufに引数を足した配列番号をg_tetlisBoardBufで参照し、空欄だった場合g_movMinoNumOfArBufに引数を足した値を代入する
+								ShiftTetliminoX(1, &canInputRA);
 							}
 
 							if (A[canInputLA])
 							{
-								ShiftItemX(-1, &canInputLA, 1, TETLIS_WIDTH - 1);
+								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+								SynchroTetlisBoardBufToTetlisBoard();
+
+								ShiftTetliminoX(-1, &canInputLA);
 							}
-						}
 
-						break;
-					}
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+							SynchroTetlisBoardBufToTetlisBoard();
 
-					if (g_itemData.count[g_excaliberItem] == 399+30+30)
-					{
-						g_itemData.count[g_excaliberItem] = 0;
-						soundManager.Play(g_pD3DSound[g_bgmAudio], true);
-					}
-
-					if (g_itemData.count[g_laserCannonItem] == 112)
-					{
-						g_itemData.count[g_laserCannonItem] = 0;
-						soundManager.Play(g_pD3DSound[g_bgmAudio], true);
-					}
-
-					if (g_itemData.count[g_ultraDrillItem] == 481)
-					{
-						g_itemData.count[g_ultraDrillItem] = 0;
-						soundManager.Play(g_pD3DSound[g_bgmAudio], true);
-					}
-
-					if (!(g_itemData.decideItemPos))
-					{
-						if (!(prevDiks[DIK_RETURN]))
-						{
-							if (diks[DIK_RETURN] & 0x80)
+							//前フレーム時にRが押されていたならば、この処理を通さない、とすることによって連続で同じ処理がされることを防いでいる
+							if (!(prevRKeyState))
 							{
-								g_itemData.decideItemPos = true;
+								if (diks[DIK_R] & 0x80)
+								{
+									memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+									SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+									SynchroTetlisBoardBufToTetlisBoard();
+
+									///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+									//g_minoIRoatationCountが３を超えていた場合0代入する、I型のテトリミノの場合g_minoIRoatationCountの値によって軸をずらす、
+									//X2、Y2を中心とするためにX2、Y2でそれぞれ4ブロックを引き中心を0,0に移動させる回転させる処理を行う前に
+									//g_tetlisBoardBufを参照して回転ができる場合に処理を行う、回転できない場合I型のテトリミノをずらした分だけ元に戻す
+									RotateTetlimino(&minoIRoatationCount, currentTetmino);
+								}
 							}
-						}
-					}
-				}
 
-				else
-				{
-					AddLand(&scoreBuf, &additionalLandCount);
-
-					//前フレーム時にスペースキーが押されていた場合この処理を通さない、とすることによって連続したフレーム毎にこの処理がされるのを防いでいる
-					if (!(prevSpaceKeyState))
-					{
-						if (diks[DIK_SPACE] & 0x80)
-						{
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-							SynchroTetlisBoardBufToTetlisBoard();
-
-							/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-							//canHoldがtrueならばg_holdに現在のテトリミノの値を代入し、すでに-1(空欄)以外が入っていた場合currentTetminoにg_holdの値を入れる、
-							//その後g_canCreateをtrueにしUpdateHoldNextNextNextBoardを呼び出す
-							HoldTetlimino(&canHold, &currentTetmino, &canCreate, &wasHold);
-						}
-					}
-
-					//ホールドが行われていた場合新しくテトリミノを生成するので、この処理を通さない
-					if (!(wasHold))
-					{
-						if (D[canInputRA])
-						{
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-							SynchroTetlisBoardBufToTetlisBoard();
-
-							//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-							//g_movMinoNumOfArBufに引数を足した配列番号をg_tetlisBoardBufで参照し、空欄だった場合g_movMinoNumOfArBufに引数を足した値を代入する
-							ShiftTetliminoX(1, &canInputRA);
-						}
-
-						if (A[canInputLA])
-						{
-							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-							SynchroTetlisBoardBufToTetlisBoard();
-
-							ShiftTetliminoX(-1, &canInputLA);
-						}
-
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
-
-						//前フレーム時にRが押されていたならば、この処理を通さない、とすることによって連続で同じ処理がされることを防いでいる
-						if (!(prevRKeyState))
-						{
-							if (diks[DIK_R] & 0x80)
+							if (S[canInputDA])
 							{
 								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 								SynchroTetlisBoardBufToTetlisBoard();
 
-								///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-								//g_minoIRoatationCountが３を超えていた場合0代入する、I型のテトリミノの場合g_minoIRoatationCountの値によって軸をずらす、
-								//X2、Y2を中心とするためにX2、Y2でそれぞれ4ブロックを引き中心を0,0に移動させる回転させる処理を行う前に
-								//g_tetlisBoardBufを参照して回転ができる場合に処理を行う、回転できない場合I型のテトリミノをずらした分だけ元に戻す
-								RotateTetlimino(&minoIRoatationCount, currentTetmino);
+								/////////////////////////////////////////////////////////////////////////////////////////////////
+								//g_movMinoNumOfArBufのY方向に１足した配列を用いてg_tetlisBoardBufを参照し、空欄の場合移動を行う
+								DownTetlimino(&canInputDA);
 							}
-						}
 
-						if (S[canInputDA])
-						{
+							//ハードドロップ　テトリミノのブロックを一個づつ下方を確認し、そこが空欄ではない場合、そこから1つ上にワープさせる
+							if (!(prevUpKeyState))
+							{
+								if (diks[DIK_W] & 0x80)
+								{
+									memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+									SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+									SynchroTetlisBoardBufToTetlisBoard();
+
+									///////////////////////////////////////////////////////////////////////////////////
+									//ループカウンタを用いg_tetlisBoardBufを参照し、空欄ではなかった場合g_movMinoNumOfArBufを
+									//ループカウンタ-1の場所にテトリミノを移動させる
+									HardDropTetlimino();
+								}
+							}
+
 							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
 							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
 							SynchroTetlisBoardBufToTetlisBoard();
 
+							//テトリミノの下方を確認し、空欄だった場合カウントをとり、FLAME_PER_DOWNに達した場合一つ下に移動させる
+							/////////////////////////////////////////////////////////////////////////////////////////////////////
+							//g_movMinoNumOfArBuf+1した配列番号を用いてg_tetlisBoardBufを参照し、空欄だった場合カウントを1増やし、
+							//一定値ならばg_movMinoNumOfArBufに１を足し、カウントを初期状態にする
+							CountToDawnTetlimino(&downCount);
+
+							memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+							SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							/*テトリミノ下方を確認し、そこが空欄ではない場合カウントをとり、FLAME_PER_STOPに達した場合
+							可動テトリミノのナンバーに100を足し(簡単に可動か非可動を判別するため)、新しい可動テトリミノを生成する*/
 							/////////////////////////////////////////////////////////////////////////////////////////////////
-							//g_movMinoNumOfArBufのY方向に１足した配列を用いてg_tetlisBoardBufを参照し、空欄の場合移動を行う
-							DownTetlimino(&canInputDA);
-						}
-
-						//ハードドロップ　テトリミノのブロックを一個づつ下方を確認し、そこが空欄ではない場合、そこから1つ上にワープさせる
-						if (!(prevUpKeyState))
-						{
-							if (diks[DIK_W] & 0x80)
-							{
-								memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-								SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-								SynchroTetlisBoardBufToTetlisBoard();
-
-								///////////////////////////////////////////////////////////////////////////////////
-								//ループカウンタを用いg_tetlisBoardBufを参照し、空欄ではなかった場合g_movMinoNumOfArBufを
-								//ループカウンタ-1の場所にテトリミノを移動させる
-								HardDropTetlimino();
-							}
-						}
-
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
-
-						//テトリミノの下方を確認し、空欄だった場合カウントをとり、FLAME_PER_DOWNに達した場合一つ下に移動させる
-						/////////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_movMinoNumOfArBuf+1した配列番号を用いてg_tetlisBoardBufを参照し、空欄だった場合カウントを1増やし、
-						//一定値ならばg_movMinoNumOfArBufに１を足し、カウントを初期状態にする
-						CountToDawnTetlimino(&downCount);
-
-						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-						SynchroTetlisBoardBufToTetlisBoard();
-
-						/*テトリミノ下方を確認し、そこが空欄ではない場合カウントをとり、FLAME_PER_STOPに達した場合
-						可動テトリミノのナンバーに100を足し(簡単に可動か非可動を判別するため)、新しい可動テトリミノを生成する*/
-						/////////////////////////////////////////////////////////////////////////////////////////////////
-						//g_movMinoNumOfArBuf+1をした配列番号を用いg_tetlisBoardBufを参照し、空欄(-1)以外が入っていた場合
-						//カウントを１増やし、一定値ならばcurrentTetmino + 10をg_tetlisBoardに代入し、
-						//テトリミノを生成できるか否か、ホールドができるか否かのフラグをtrue、
-						//ホールドが行われたかのフラグをfalseにし、currentTetminoにg_next、g_nextにg_nextNextを代入して、
-						//g_nextNextにテトリミノ番号の範囲の乱数を代入する
-						CountToStopTetlimino(&stopCount, &currentTetmino, &canCreate, &canHold, &wasHold);
-					}
-				}
-			}
-
-			memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-			SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-			SynchroTetlisBoardBufToTetlisBoard();
-
-			if (!(g_itemData.useItem))
-			{
-				if (deletedLineCount == 0)
-				{
-					INT diggingCount = 0;
-
-					for (INT column = 19; column < TETLIS_HEIGHT - 1; column++)
-					{
-						INT nothingInRowCount = 0;
-
-						for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
-						{
-							if (g_tetlisBoardBuf[column][row] == -1)
-							{
-								nothingInRowCount++;
-							}
-
-							if (nothingInRowCount == 10)
-							{
-								diggingCount++;
-							}
+							//g_movMinoNumOfArBuf+1をした配列番号を用いg_tetlisBoardBufを参照し、空欄(-1)以外が入っていた場合
+							//カウントを１増やし、一定値ならばcurrentTetmino + 10をg_tetlisBoardに代入し、
+							//テトリミノを生成できるか否か、ホールドができるか否かのフラグをtrue、
+							//ホールドが行われたかのフラグをfalseにし、currentTetminoにg_next、g_nextにg_nextNextを代入して、
+							//g_nextNextにテトリミノ番号の範囲の乱数を代入する
+							CountToStopTetlimino(&stopCount, &currentTetmino, &canCreate, &canHold, &wasHold);
 						}
 					}
-
-					if (diggingCount > 60)
-					{
-						INT swapTetlisBoardBuf[60][TETLIS_WIDTH];
-
-						for (INT column = 0; column < 60; column++)
-						{
-							for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
-							{
-								swapTetlisBoardBuf[column][row] = g_tetlisBoard[column + 19 + 60][row];
-							}
-						}
-
-						ChooseAndCpyTetlisBoardSourceToBoard();
-
-						for (INT column = 0; column < 60; column++)
-						{
-							for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
-							{
-								g_tetlisBoard[column + 19][row] = swapTetlisBoardBuf[column][row];
-							}
-						}
-
-						SynchroTetlisBoardBufToTetlisBoard();
-
-						INT shiftUpY[4];
-
-						for (INT block = 0; block < 4; block++)
-						{
-							shiftUpY[block] = g_movMinoNumOfArBuf.YX[block][0] -(g_deletedLineCount + 4);
-						}
-
-						/*for (INT block = 0; block < 4; block++)
-						{
-							if (shiftUpY[block] < -3)
-							{
-								shiftUpY[block] = -3;
-							}
-						}*/
-
-						CountDeletedLine();
-
-						for (INT block = 0; block < 4; block++)
-						{
-							g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount +4+ shiftUpY[block];
-						}
-					}
-
-					//そろっている列があるか確認しカウントをとる
-					//////////////////////////////////////////////////////////////////////////////
-					//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合空欄にする
-					DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
-
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					/////////////////////////////////////////////////////////////////////////////////
-					//lineCountの値によってscoreBufの増やす値を変え、文字列にしg_scoreArrayに代入する
-					GetScoreByLineCount(lineCount, &scoreBuf);
-
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
 				}
 
-				///////////////////////////////////////////////////////
-				//フラグがtrueならば、カウントをとりフラグをfalseにする
-				CountToMakeFlagFalse(&deletedLineCount);
-
-				if (deletedLineCount == 60)
-				{
-					g_swellingUpSaver = 0;
-					g_swellingUpHolder = 0;
-
-					//そろった列を空欄にして下にずらしている
-					/////////////////////////////////////////////////////////////////////////////////////////////
-					//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
-					//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
-					ShiftTetlisLine(&lineCount, &additionalDeletableLine);
-
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					//////////////////////////////////////////////////
-					//いくつ初期状態からラインを消されたか確認する関数
-					CountDeletedLine();
-					g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
-				}
-
-				if (deletedLineCount == 0)
-				{
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					////////////////////////////////////////
-					//ハードドロップと同じ原理を利用している
-					SetTetliminoTarget();
-
-					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
-					SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
-					SynchroTetlisBoardBufToTetlisBoard();
-
-					////////////////////////////////////////////////////////////////////////////////////////
-					//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
-					CheckGameover(&isGameover);
-				}
-			}
-
-			//キー入力状態を保存
-			prevRKeyState = diks[DIK_R] & 0x80;
-			prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
-			prevUpKeyState = diks[DIK_W] & 0x80;
-			prevCKeyState = diks[DIK_C] & 0x80;
-			memcpy(prevDiks, diks, sizeof(BYTE) * 256);
-
-			//ホールド時にブロックが表示されているので消す
-			if (wasHold || g_itemData.useItem)
-			{
 				memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+				SynchroTetlisBoardBufToTetlisBoard();
+
+				if (!(g_itemData.useItem))
+				{
+					if (deletedLineCount == 0)
+					{
+						INT diggingCount = 0;
+
+						for (INT column = 19; column < TETLIS_HEIGHT - 1; column++)
+						{
+							INT nothingInRowCount = 0;
+
+							for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+							{
+								if (g_tetlisBoardBuf[column][row] == -1)
+								{
+									nothingInRowCount++;
+								}
+
+								if (nothingInRowCount == 10)
+								{
+									diggingCount++;
+								}
+							}
+						}
+
+						if (diggingCount > 60)
+						{
+							INT swapTetlisBoardBuf[60][TETLIS_WIDTH];
+
+							for (INT column = 0; column < 60; column++)
+							{
+								for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+								{
+									swapTetlisBoardBuf[column][row] = g_tetlisBoard[column + 19 + 60][row];
+								}
+							}
+
+							ChooseAndCpyTetlisBoardSourceToBoard();
+
+							for (INT column = 0; column < 60; column++)
+							{
+								for (INT row = 1; row < TETLIS_WIDTH - 1; row++)
+								{
+									g_tetlisBoard[column + 19][row] = swapTetlisBoardBuf[column][row];
+								}
+							}
+
+							SynchroTetlisBoardBufToTetlisBoard();
+
+							INT shiftUpY[4];
+
+							for (INT block = 0; block < 4; block++)
+							{
+								shiftUpY[block] = g_movMinoNumOfArBuf.YX[block][0] - (g_deletedLineCount + 4);
+							}
+
+							/*for (INT block = 0; block < 4; block++)
+							{
+								if (shiftUpY[block] < -3)
+								{
+									shiftUpY[block] = -3;
+								}
+							}*/
+
+							CountDeletedLine();
+
+							for (INT block = 0; block < 4; block++)
+							{
+								g_movMinoNumOfArBuf.YX[block][0] = g_deletedLineCount + 4 + shiftUpY[block];
+							}
+						}
+
+						//そろっている列があるか確認しカウントをとる
+						//////////////////////////////////////////////////////////////////////////////
+						//g_tetlisBoardBuf中身を確認し一列が空欄(-1)以外の場合空欄にする
+						DeleteAndCountFilledLine(&lineCount, &additionalDeletableLine);
+
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						/////////////////////////////////////////////////////////////////////////////////
+						//lineCountの値によってscoreBufの増やす値を変え、文字列にしg_scoreArrayに代入する
+						GetScoreByLineCount(lineCount, &scoreBuf);
+
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+					}
+
+					///////////////////////////////////////////////////////
+					//フラグがtrueならば、カウントをとりフラグをfalseにする
+					CountToMakeFlagFalse(&deletedLineCount);
+
+					if (deletedLineCount == 60)
+					{
+						g_swellingUpSaver = 0;
+						g_swellingUpHolder = 0;
+
+						//そろった列を空欄にして下にずらしている
+						/////////////////////////////////////////////////////////////////////////////////////////////
+						//g_tetlisBoardBufを参照し、空欄(-1)以外の場合ループカウンタ+1した配列番号を用い、再度参照し、
+						//一列全て空欄の場合ループカウンタ+1の配列番号にコピーし、コピー元を空欄に書き換える
+						ShiftTetlisLine(&lineCount, &additionalDeletableLine);
+
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						//////////////////////////////////////////////////
+						//いくつ初期状態からラインを消されたか確認する関数
+						CountDeletedLine();
+						g_deletedLineOverall += g_deletedLineCount - prevDeletedLineCount;
+					}
+
+					if (deletedLineCount == 0)
+					{
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						////////////////////////////////////////
+						//ハードドロップと同じ原理を利用している
+						SetTetliminoTarget();
+
+						memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+						SynchroTetlisBoardToMovMinoNumOfArBuf(currentTetmino);
+						SynchroTetlisBoardBufToTetlisBoard();
+
+						////////////////////////////////////////////////////////////////////////////////////////
+						//プレイ時の見える範囲内で一番上の部分に非可動テトリミノがある場合isGameoverをtrueにする
+						CheckGameover(&isGameover);
+					}
+				}
+
+				//キー入力状態を保存
+				prevRKeyState = diks[DIK_R] & 0x80;
+				prevSpaceKeyState = diks[DIK_SPACE] & 0x80;
+				prevUpKeyState = diks[DIK_W] & 0x80;
+				prevCKeyState = diks[DIK_C] & 0x80;
+				memcpy(prevDiks, diks, sizeof(BYTE) * 256);
+
+				//ホールド時にブロックが表示されているので消す
+				if (wasHold || g_itemData.useItem)
+				{
+					memcpy(g_tetlisBoard, g_tetlisBoardBuf, sizeof(INT)*TETLIS_HEIGHT*TETLIS_WIDTH);
+				}
 			}
 		}
 
@@ -2043,6 +2396,9 @@ VOID CheckGameover(BOOL *isGameover)
 	{
 		if (g_tetlisBoardBuf[4 + g_deletedLineCount+ g_additionalLand][coordinateX] != -1)
 		{
+			SoundManager& soundManager = SoundManager::GetInstance();
+			soundManager.Stop(g_pD3DSound[g_bgmAudio]);
+			soundManager.Play(g_pD3DSound[g_gameoverAudio], 0);
 			*isGameover = true;
 		}
 	}

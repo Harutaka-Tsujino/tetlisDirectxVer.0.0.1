@@ -57,6 +57,8 @@ INT g_holdBoard[4][4];
 INT g_nextBoard[4][4];
 INT g_nextNextBoard[4][4];
 
+INT teamLogo = 0;
+
 BOOL g_showGameoverStr = false;
 BOOL g_hardDropedTetmino = false;
 
@@ -132,6 +134,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 	soundManager.Load(g_pD3DSound[g_laserCannonAudio]="sound/レーザー.wav");
 	soundManager.Load(g_pD3DSound[g_bulletAudio]="sound/銃.wav");
 	///////////////////////////////////////////////////////////////
+	
 
 	//メッセージの中身の消去
 	ZeroMemory(&msg, sizeof(msg));
@@ -162,8 +165,21 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szStr, INT iCmdSh
 			//1秒間に60回この中に入る
 			if (sync_current - sync_prev >= 1000 / 60) 
 			{
-				Control();
-				Render();
+				if (teamLogo <= 200)
+				{
+					teamLogo++;
+				}
+				switch (scene)
+				{
+				case g_titleScene:
+					titleControl();
+					titleRender();
+					break;
+				case g_gameScene:
+					Control();
+					Render();
+					break;
+				}
 				sync_prev = sync_current;
 			}
 		}
@@ -189,9 +205,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)////
 	case WM_KEYDOWN:
 		switch ((CHAR)wParam)
 		{
-		case VK_ESCAPE:
+		/*case VK_ESCAPE:
 			PostQuitMessage(0);
-			break;
+			break;*/
 		}
 
 		break;

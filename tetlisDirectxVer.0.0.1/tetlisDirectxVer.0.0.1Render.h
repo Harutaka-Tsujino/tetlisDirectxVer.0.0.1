@@ -14,6 +14,11 @@
 
 typedef struct
 {
+	FLOAT x, y, scale;
+}ICON;
+
+typedef struct
+{
 	FLOAT x, y, xScale, yScale;
 }ImageState;
 
@@ -23,12 +28,17 @@ extern ImageState g_scopeStrState;
 extern ImageState g_undergroundStrState;
 extern INT g_scopeShakeCount;
 
+extern ICON arrowIconState, pauseIconState, resultIconState;
+
 typedef struct
 {
 	FLOAT x, y, z, rhw;
 	DWORD	color;
 	FLOAT	tu, tv;
 }CustomVertex;
+
+//タイトル画面の描画関数
+VOID titleRender(VOID);
 
 //描画に関する関数
 VOID Render(VOID);
@@ -83,5 +93,7 @@ VOID UnderGoChangeTarAlpha(CustomVertex *cusV4TarTetmino);
 
 //度数法によるテクスチャの回転関数
 VOID RotateTexDeg(INT axis, CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shiftX, FLOAT shiftY);
+
+VOID pauseRender(VOID);
 
 #endif

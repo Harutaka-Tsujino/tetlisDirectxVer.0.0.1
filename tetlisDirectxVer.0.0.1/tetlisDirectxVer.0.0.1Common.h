@@ -51,9 +51,13 @@
 
 enum TEX
 {
+	g_teamLogoBgTex,
+	g_teamLogoTex,
+	g_titleBgTex,
+	g_titleLogoTex,
+	g_titleIconTex,
 	g_backgroundTex,
 	g_frameTex,
-	g_titleLogoTex,
 	g_tetminoITex,
 	g_tetminoJTex,
 	g_tetminoLTex,
@@ -87,15 +91,29 @@ enum TEX
 	g_excaliberFlameTex,
 	g_excaliberSlashTex,
 	g_saito_toukaTex,
+	g_pauseTex,
+	g_pauseIconTex,
+	g_resultTex,
+	g_resultIconTex,
 	g_texMax
 };
 
 enum FONT
 {
+	g_titleFont,
 	g_gameoverFont,
 	g_scoreFont,
 	g_undergroundFont,
+	g_finalScoreFont,
 	g_fontMax
+};
+
+enum SCENE
+{
+	g_titleScene,
+	g_tutorialScene,
+	g_gameScene,
+	g_resultScene
 };
 
 enum ITEM
@@ -159,6 +177,10 @@ extern INT g_nextNextBoard[4][4];
 
 extern BOOL g_showGameoverStr;
 extern BOOL g_hardDropedTetmino;
+
+extern INT scene, teamLogo;
+
+extern BOOL sceneChange, changeFont, deleteFont, arrowMoveUp, arrowMoveDown, arrowMoveRight, arrowMoveLeft, flashing, pause;
 
 extern CHAR g_scoreArray[8];
 extern CHAR g_undergroundArray[5];

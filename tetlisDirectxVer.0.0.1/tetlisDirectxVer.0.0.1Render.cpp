@@ -13,13 +13,218 @@
 #include "tetlisDirectxVer.0.0.1Control.h"
 #include <d3dx9.h>
 
+//
+ICON arrowIconState = { 530.f, 425.f, 20.f };
+
+ICON pauseIconState = { 510.f, 305.f, 20.f };
+
+ICON resultIconState = { 300.f, 560.f, 20.f };
+
+BOOL flashing = true;
+
+DWORD logoAlpha = 0x00FFFFFF;
+//
+
 ImageState g_tetminoState = { 0.f, 0.f, 30.f / 2, 30.f / 2 };
 ImageState g_deletedLineEffectState = { 545.f,0.f,150.f,15.f };
-ImageState g_gameoverStrState = { 990,790,800.f, 450.f };
+ImageState g_gameoverStrState = { 990,590,800.f, 450.f };
 ImageState g_scoreStrState = { 800.f,790.f,400.f, 225.f };
 ImageState g_undergroundStrState = { 800.f,500.f,400.f, 225.f };
 
 INT g_scopeShakeCount = 0;
+
+void titleRender()
+{
+	static DWORD titleAlpha = 0xFF;
+
+	CustomVertex titleLogo[4]
+	{
+		{ 30.f,  50.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ 1230.f,  50.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ 1230.f, 370.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ 30.f, 370.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	//背景の頂点情報
+	CustomVertex titleBackGround[4]
+	{
+		{ 0.f,   0.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ 1280.f,   0.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ 1280.f, 720.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ 0.f, 720.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	CustomVertex logoBackGround[4]
+	{
+		{ 0.f,   0.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ 1280.f,   0.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ 1280.f, 720.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ 0.f, 720.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	CustomVertex teamLogoStr[4]
+	{
+		{ 107.5,  38.5, 1.f, 1.f, logoAlpha, 0.f, 0.f },
+	{ 1172.5,  38.5, 1.f, 1.f, logoAlpha, 1.f, 0.f },
+	{ 1172.5, 681.5, 1.f, 1.f, logoAlpha, 1.f, 1.f },
+	{ 107.5, 681.5, 1.f, 1.f, logoAlpha, 0.f, 1.f }
+	};
+
+	//矢印の頂点情報
+	CustomVertex arrow[4]
+	{
+		{ arrowIconState.x - arrowIconState.scale, arrowIconState.y - arrowIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ arrowIconState.x + arrowIconState.scale, arrowIconState.y - arrowIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ arrowIconState.x + arrowIconState.scale, arrowIconState.y + arrowIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ arrowIconState.x - arrowIconState.scale, arrowIconState.y + arrowIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	RECT PressAnyEnterState, playState, exitState;
+
+	//Press Any Buttonの表示座標の設定
+	PressAnyEnterState.left = 465;		//左上のx座標
+	PressAnyEnterState.top = 450;		//左上のy座標
+	PressAnyEnterState.right = 0;		//右上のx座標
+	PressAnyEnterState.bottom = 0;		//右上のy座標
+
+										//playStateの表示座標の設定	
+	playState.left = 580;
+	playState.top = 400;
+	playState.right = 0;
+	playState.bottom = 0;
+
+	//exitStateの表示座標
+	exitState.left = 580;
+	exitState.top = 500;
+	exitState.right = 0;
+	exitState.bottom = 0;
+
+	//画面の消去
+	g_pD3dDevice->Clear(0, NULL,
+		D3DCLEAR_TARGET,
+		D3DCOLOR_XRGB(0x00, 0x00, 0x00),
+		1.0, 0);
+
+	//描画の開始
+	g_pD3dDevice->BeginScene();
+
+	if (teamLogo <= 200)
+	{
+		/*if (teamLogo >= 0xFF)
+		{
+		teamLogo = 0xFF;
+		}*/
+		if (teamLogo >= 10 && teamLogo < 50)
+		{
+			logoAlpha += 0x04000000;
+		}
+		else if (teamLogo >= 50 && teamLogo < 60)
+		{
+			logoAlpha += 0x05000000;
+		}
+
+		if (teamLogo == 60)
+		{
+			logoAlpha = 0xFFFFFFFF;
+		}
+
+		/*if (teamLogo >= 0x00)
+		{
+		logoAlpha = 0x00;
+		}*/
+		if (teamLogo >= 120 && teamLogo < 170)
+		{
+			logoAlpha -= 0x04000000;
+		}
+		else if (teamLogo >= 170 && teamLogo < 180)
+		{
+			logoAlpha -= 0x05000000;
+		}
+
+		if (teamLogo == 180)
+		{
+			logoAlpha = 0x00FFFFFF;
+		}
+
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_teamLogoBgTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, logoBackGround, sizeof(CustomVertex));
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_teamLogoTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, teamLogoStr, sizeof(CustomVertex));
+	}
+	else if (teamLogo >= 200)
+	{
+		SoundManager& soundManager = SoundManager::GetInstance();
+		//背景テクスチャの描画
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_titleBgTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, titleBackGround, sizeof(CustomVertex));
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_titleLogoTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, titleLogo, sizeof(CustomVertex));
+
+		//フラグチェック
+		if (!deleteFont)
+		{
+			if (flashing)
+			{
+				titleAlpha -= 0x03;
+			}
+			else if (!flashing)
+			{
+				titleAlpha += 0x03;
+			}
+
+			if (titleAlpha == 0x00)
+			{
+				flashing = false;
+			}
+			else if (titleAlpha == 0xFF)
+			{
+				flashing = true;
+			}
+
+			//フォントの描画
+			g_pFont[g_titleFont]->DrawText(NULL,
+				"PRESS ANY ENTER",
+				-1,
+				&PressAnyEnterState,
+				DT_LEFT | DT_NOCLIP,
+				D3DCOLOR_ARGB(titleAlpha, 0xFF, 0xFF, 0x5F)
+			);
+		}
+
+		//フラグチェック
+		if (changeFont)
+		{
+			//矢印テクスチャの描画
+			g_pD3dDevice->SetTexture(0, g_pTexture[g_titleIconTex]);
+			g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, arrow, sizeof(CustomVertex));
+
+			//その他フォントの描画
+			g_pFont[g_titleFont]->DrawText(NULL,
+				"PLAY",
+				-1,
+				&playState,
+				DT_LEFT | DT_NOCLIP,
+				D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0x5F)
+			);
+
+			//その他フォントの描画
+			g_pFont[g_titleFont]->DrawText(NULL,
+				"EXIT",
+				-1,
+				&exitState,
+				DT_LEFT | DT_NOCLIP,
+				D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0x5F)
+			);
+		}
+	}
+
+	//描画の終了
+	g_pD3dDevice->EndScene();
+
+	//表示
+	g_pD3dDevice->Present(NULL, NULL, NULL, NULL);
+}
+
 
 VOID Render(VOID)//////////////////////////////////////////////////////////////////////////////////
 {
@@ -238,6 +443,12 @@ VOID Render(VOID)///////////////////////////////////////////////////////////////
 	//ゲームオーバー時の文字列の描画
 	RenderGameoverStr();
 	
+	if (pause)
+	{
+		//ポーズ画面の描画
+		pauseRender();
+	}
+
 	//描画の終了
 	g_pD3dDevice->EndScene();
 
@@ -2063,6 +2274,29 @@ VOID RnderFrame(VOID)
 
 VOID RenderGameoverStr(VOID)
 {
+	CustomVertex resultState[4]
+	{
+		{ 0.f,    0.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ 1280.f,    0.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ 1280.f,  720.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ 0.f,  720.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	CustomVertex resultIcon[4]
+	{
+		{ resultIconState.x - resultIconState.scale, resultIconState.y - resultIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ resultIconState.x + resultIconState.scale, resultIconState.y - resultIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ resultIconState.x + resultIconState.scale, resultIconState.y + resultIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ resultIconState.x - resultIconState.scale, resultIconState.y + resultIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	RECT finalScoreStr;
+
+	finalScoreStr.left = 320.f;
+	finalScoreStr.top = 450.f;
+	finalScoreStr.right = 960.f;
+	finalScoreStr.bottom = 530.f;
+
 	RECT rectGameoverStr
 	{
 		(LONG)(g_gameoverStrState.x - g_gameoverStrState.xScale), (LONG)(g_gameoverStrState.y - g_gameoverStrState.yScale), (LONG)(g_gameoverStrState.x + g_gameoverStrState.xScale), (LONG)(g_gameoverStrState.y + g_gameoverStrState.yScale)
@@ -2070,7 +2304,17 @@ VOID RenderGameoverStr(VOID)
 
 	if (g_showGameoverStr)
 	{
-		g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, &rectGameoverStr, NULL, GAMEOVER_COLOR);
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_resultTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, resultState, sizeof(CustomVertex));
+		g_pD3dDevice->SetTexture(0, g_pTexture[g_pauseIconTex]);
+		g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, resultIcon, sizeof(CustomVertex));
+
+		g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, &rectGameoverStr, NULL, 0xFFFFFF5F);
+		g_pFont[g_finalScoreFont]->DrawText(NULL, g_scoreArray, -1, &finalScoreStr, DT_CENTER, 0xFFFFFF5F);
+
+
+
+		//g_pFont[g_gameoverFont]->DrawText(NULL, GAMEOVER, -1, &rectGameoverStr, NULL, GAMEOVER_COLOR);
 	}
 
 	return;
@@ -2448,4 +2692,29 @@ VOID RotateTexDeg(CustomVertex *dest, CustomVertex *src, FLOAT degree, FLOAT shi
 	}
 
 	return;
+}
+
+VOID pauseRender()
+{
+	//ポーズ画面の頂点情報
+	CustomVertex pause[4]
+	{
+		{ 0.f,   0.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ 1280.f,   0.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ 1280.f, 720.f, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ 0.f, 720.f, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	CustomVertex pauseIcon[4]
+	{
+		{ pauseIconState.x - pauseIconState.scale, pauseIconState.y - pauseIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 0.f },
+	{ pauseIconState.x + pauseIconState.scale, pauseIconState.y - pauseIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 0.f },
+	{ pauseIconState.x + pauseIconState.scale, pauseIconState.y + pauseIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 1.f, 1.f },
+	{ pauseIconState.x - pauseIconState.scale, pauseIconState.y + pauseIconState.scale, 1.f, 1.f, 0xFFFFFFFF, 0.f, 1.f }
+	};
+
+	g_pD3dDevice->SetTexture(0, g_pTexture[g_pauseTex]);
+	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, pause, sizeof(CustomVertex));
+	g_pD3dDevice->SetTexture(0, g_pTexture[g_pauseIconTex]);
+	g_pD3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, pauseIcon, sizeof(CustomVertex));
 }
